@@ -62,7 +62,7 @@ for (const [i, id] of LESSON_IDS.entries()) {
       }
     }
     await expect(page.locator('.done-screen')).toContainText(`Lesson ${i + 1} complete`);
-    await page.getByRole('button', { name: 'Course map' }).click();
+    await page.getByRole('button', { name: 'Back to course map' }).click();
     await expect(page.getByRole('button', { name: new RegExp(`^Lesson ${i + 1}:.*complete`) })).toBeVisible();
     await page.reload();
     await expect(page.getByRole('button', { name: new RegExp(`^Lesson ${i + 1}:.*complete`) })).toBeVisible();
@@ -189,20 +189,30 @@ test.describe('moving back and forth inside a lesson', () => {
     await expect(page.locator('.p-steps .p-seg').nth(0)).toBeEnabled();
   });
 
-  test('previous and next lesson are one click away', async ({ page, isMobile }) => {
+  test('a lesson is self-contained: other lessons are reached only from the course map', async ({ page }) => {
     await openApp(page, { hash: 'tokens' });
-    if (!isMobile) {
-      await page.getByRole('button', { name: /^Next lesson: Attention/ }).click();
-      await expect(page.locator('.p-title .l-name')).toHaveText('4. Attention');
-      await page.getByRole('button', { name: /^Previous lesson: Tokens and embeddings/ }).click();
-      await expect(page.locator('.p-title .l-name')).toHaveText('3. Tokens and embeddings');
-    }
+    const player = page.locator('.player');
+    // nothing inside the lesson leads to another lesson
+    await expect(player.getByRole('button', { name: /lesson:/i })).toHaveCount(0);
+    await expect(player.locator('.l-arrow')).toHaveCount(0);
+    // stepping is confined to this lesson: the last step does not roll over into the next lesson
+    await page.evaluate(() => { L.max = L.lesson.steps.length - 1; gotoStep(L.max); });
+    await page.keyboard.press('ArrowRight');
+    expect(await page.evaluate(() => [L.lesson.id, L.si === L.lesson.steps.length - 1])).toEqual(['tokens', true]);
+    // the completion screen has one way on: back to the track, with the next lesson in view and focused
     await page.evaluate(() => finishLesson());
-    await page.locator('#p-foot').getByRole('button', { name: /^Previous lesson/ }).click();
-    expect(await page.evaluate(() => L.lesson.id)).toBe('next-token');
-    // from the completion screen the arrows step back into the lesson
-    await page.evaluate(() => finishLesson());
+    const foot = page.locator('#p-foot');
+    await expect(foot.getByRole('button')).toHaveCount(1);
+    await expect(foot.locator('[data-primary]')).toHaveText('Back to course map');
+    await expect(foot).toContainText('Up next on the track: Two boxes');
+    // from the completion screen the arrows still step back into this lesson
     await page.keyboard.press('ArrowLeft');
-    expect(await page.evaluate(() => [L.phase, L.si])).toEqual(['step', 5]);
+    expect(await page.evaluate(() => [L.lesson.id, L.phase, L.si === L.lesson.steps.length - 1])).toEqual(['tokens', 'step', true]);
+    await page.evaluate(() => finishLesson());
+    await foot.locator('[data-primary]').click();
+    await expect(page.locator('.player')).toHaveCount(0);
+    const next = page.getByRole('button', { name: /^Lesson 1: Two boxes, start here/ });
+    await expect(next).toBeFocused();
+    await expect(next).toBeInViewport();
   });
 });

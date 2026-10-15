@@ -245,20 +245,17 @@ function openLesson(i) {
   const n = lesson.steps.length, done = !!P.done[lesson.id];
   const at = done ? 0 : clamp(Math.floor(+(P.at && P.at[lesson.id]) || 0), 0, n - 1); // resume where you left off
   L = { lesson, si: at, max: done ? n - 1 : at, xp: 0, phase: 'step', sel: null, tries: 0, widget: null, ready: true, beats: [], beat: 0 };
-  const prevL = LESSONS[i - 1], nextL = LESSONS[i + 1];
   if (!docked) { try { history.replaceState(null, '', '#' + lesson.id); } catch (e) { /* ignore */ } }
   const old = $('.player'); if (old) old.remove();
   const player = h('div', { class: 'player' + (docked ? ' docked' : ''), role: docked ? 'region' : 'dialog', 'aria-label': lesson.title, style: { '--u': lesson.unit.color } },
     h('div', { class: 'p-top' },
       h('button', { class: 'p-close', 'aria-label': 'Close lesson', onclick: closeLesson, html: ICON.close }),
-      h('div', { class: 'p-title' },
-        h('button', { class: 'l-arrow', 'aria-label': prevL ? `Previous lesson: ${prevL.title}` : 'No previous lesson', title: prevL ? `Previous lesson: ${prevL.idx + 1}. ${prevL.title}` : '', disabled: !prevL, onclick: () => prevL && openLesson(prevL.idx), html: ICON.left }),
-        h('span', { class: 'l-name' }, `${lesson.idx + 1}. ${lesson.title}`),
-        h('button', { class: 'l-arrow next', 'aria-label': nextL ? `Next lesson: ${nextL.title}` : 'No next lesson', title: nextL ? `Next lesson: ${nextL.idx + 1}. ${nextL.title}` : '', disabled: !nextL, onclick: () => nextL && openLesson(nextL.idx), html: ICON.left })),
-      h('button', { class: 'step-arrow prev', 'aria-label': 'Previous step', title: 'Previous step (←)', onclick: () => gotoStep(L.si - 1), html: ICON.left }),
+      // a lesson is self-contained: other lessons are reached from the course map, never from inside
+      h('div', { class: 'p-title' }, h('span', { class: 'l-name' }, `${lesson.idx + 1}. ${lesson.title}`)),
+      h('button', { class: 'step-arrow prev', 'aria-label': 'Previous step', title: 'Previous step (←)', onclick: () => stepBy(-1), html: ICON.left }),
       h('div', { class: 'p-steps', role: 'group', 'aria-label': 'Lesson steps' }, lesson.steps.map((s, k) =>
         h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
-      h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => gotoStep(L.si + 1), html: ICON.left }),
+      h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => stepBy(1), html: ICON.left }),
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
       null),
     h('div', { class: 'p-body' },
@@ -276,12 +273,22 @@ function syncInert() {
 }
 function closeLesson() {
   const p = $('.player'); if (!p) return;
+  const left = L && L.lesson, finished = !!(L && L.phase === 'done');
   SFX.close(); const wasDocked = p.classList.contains('docked'); p.remove(); L = null;
   if (wasDocked && BOARD) { boardShowIndex(); return; }
   syncInert();
   document.body.style.overflow = BOARD ? 'hidden' : '';
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
   renderHome();
+  if (left) showOnTrack(finished ? nextLesson() || left : left);
+}
+// back on the course map, bring the lesson you left (or the one that comes next) into view and focus it
+function showOnTrack(l) {
+  const node = $$('.mnode').find(n => (n.getAttribute('aria-label') || '').startsWith(`Lesson ${l.idx + 1}:`));
+  if (!node) return;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  node.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+  node.focus({ preventScroll: true }); flash(node);
 }
 function renderAside(animate) {
   const el = $('#p-aside'); if (!el || !L) return;
@@ -426,6 +433,8 @@ function revealAnswer() {
   else { const r = L.widget && L.widget.reveal ? L.widget.reveal() : null; renderFoot({ kind: 'good', title: 'Here is the answer', msg: (r && r.msg) || st.explain }); }
   L.phase = 'answered';
 }
+// one step back or forward; from the completion screen, back returns to the lesson's last step
+function stepBy(d) { if (!L) return; if (L.phase === 'done') { if (d < 0) gotoStep(L.lesson.steps.length - 1); return; } gotoStep(L.si + d); }
 function gotoStep(k) {
   if (!L) return; const n = L.lesson.steps.length;
   if (L.phase === 'done' && k >= n) return;
@@ -483,7 +492,7 @@ function finishLesson() {
   const newDay = !P.days.includes(today());
   L.xp += first ? 20 : 0; P.xp += L.xp; P.done[l.id] = true; markDay(); saveP();
   L.max = l.steps.length - 1; L.phase = 'done'; setProgress(); SFX.complete();
-  const nx = LESSONS[l.idx + 1];
+  const nx = nextLesson(); // the lesson the course map will highlight next
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
   const bp = h('div', { class: 'bp-card', html: bpSVG(l.stage, l.hl, { enter: l.stage, uid: 'd' }) });
   main.append(h('section', { class: 'done-screen', style: { '--u': l.unit.color } },
@@ -497,10 +506,10 @@ function finishLesson() {
     h('div', { class: 'xp-burst' }, h('span', { class: 'chip streak-chip tnum' + (newDay ? ' up' : ''), html: `<span class="fl">${flameSVG(true)}</span>${newDay ? 'Streak extended · ' : ''}${streak()}-day streak` }))));
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
-  foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Next: ${nx.title}` : 'You finished the whole blueprint.')),
-    h('div', { class: 'actions' }, l.idx > 0 ? h('button', { class: 'btn btn-ghost', 'aria-label': `Previous lesson: ${LESSONS[l.idx - 1].title}`, onclick: () => openLesson(l.idx - 1) }, 'Previous lesson') : null,
-      h('button', { class: 'btn btn-ghost', onclick: closeLesson }, docked ? 'Lesson list' : 'Course map'),
-      nx ? h('button', { class: 'btn btn-accent', 'data-primary': 1, 'data-sfx': 'none', onclick: () => openLesson(nx.idx) }, 'Next lesson') : null)));
+  // the only way on is back to the track, where the next lesson waits (as in Brilliant and Duolingo)
+  foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Up next on the track: ${nx.title}` : 'You finished the whole blueprint.')),
+    h('div', { class: 'actions' },
+      h('button', { class: 'btn btn-accent', 'data-primary': 1, 'data-sfx': 'none', onclick: closeLesson }, docked ? 'Back to lessons' : 'Back to course map'))));
   if (docked) boardRefresh();
   focusPrimary();
 }
@@ -514,7 +523,7 @@ document.addEventListener('keydown', e => {
   const st = L.lesson.steps[L.si];
   if (st && st.kind === 'quiz' && L.phase === 'step' && L.beat >= L.beats.length && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) b.click(); }
   if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.altKey && !e.metaKey && !e.ctrlKey && !(e.target.closest && e.target.closest('.seg,.bp-n,.board-canvas,[role="radiogroup"]'))) {
-    e.preventDefault(); gotoStep(L.si + (e.key === 'ArrowLeft' ? -1 : 1)); return;
+    e.preventDefault(); stepBy(e.key === 'ArrowLeft' ? -1 : 1); return;
   }
   if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,a,summary,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
 });
