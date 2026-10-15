@@ -240,8 +240,9 @@ footer.site{align-items:center}
 /* done: the unit's colour, darker lip of the same hue */
 .mnode.done,.mnode.next{--face:var(--accent);--lipc:var(--accent-shadow);--ic:var(--accent-fg)}
 /* selection: a crisp ring around the whole coin (face + lip), centred on it, no glow */
-.mnode .selring{position:absolute;left:-9px;right:-9px;top:-9px;bottom:-9px;border-radius:50%;border:3px solid var(--accent-ink);pointer-events:none;
-  opacity:0;transform:scale(1.18);transition:opacity .18s, transform .3s cubic-bezier(.34,1.56,.64,1)}
+/* the visible coin is the lifted face plus the lip under it: hug that, with an even 9px gap all round */
+.mnode .selring{position:absolute;left:-9px;right:-9px;top:calc(var(--lip) - var(--lift) - 9px);bottom:-9px;border-radius:50%;border:3px solid var(--accent-ink);pointer-events:none;
+  opacity:0;transform:scale(1.18);transition:opacity .18s, transform .3s cubic-bezier(.34,1.56,.64,1), top .24s cubic-bezier(.34,1.56,.64,1)}
 .mnode.sel .selring{opacity:1;transform:none}
 .mnode.sel{--lift:4px}
 /* shine: one diagonal light line sweeps across the face */
@@ -315,8 +316,8 @@ footer.site a{color:var(--ink);font-weight:700}
 .p-close{width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;flex:none;color:var(--muted)}
 .p-close:hover{background:var(--hover);color:var(--ink)}
 .p-close svg{width:18px;height:18px}
-.p-progress{flex:1;height:12px;border-radius:999px;background:var(--line);overflow:hidden;min-width:60px}
-.p-progress > div{height:100%;background:var(--good-btn);border-radius:999px;transition:width .4s cubic-bezier(.3,1.3,.5,1)}
+
+
 .p-title{font-weight:700;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26vw}
 .p-xp{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:14px;color:var(--ink)}
 .p-xp svg{width:18px;height:18px}
@@ -671,7 +672,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .sc-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .sc-day{display:grid;justify-items:center;gap:4px}
 .sc-day .dot{width:34px;height:34px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;padding:6px}
-.sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:0 3px 0 0 var(--fire-deep)}
+.sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:inset 0 -3px 0 0 color-mix(in srgb, var(--fire) 35%, transparent)}
 .sc-day.today .dot{outline:2px dashed var(--fire-deep);outline-offset:2px}
 .sc-day small{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted)}
 .sc-day.today small{color:var(--ink)}
@@ -863,3 +864,29 @@ mi.tt{font-family:var(--f-mono)}
 }
 
 .insp .btn svg{width:18px;height:18px;flex:none}
+
+/* ---------- lesson navigation: step segments, step arrows, lesson switcher ---------- */
+.p-steps{flex:1;display:flex;gap:4px;min-width:0;align-items:center}
+.p-seg{appearance:none;flex:1 1 0;min-width:0;height:28px;padding:8px 0;border:0;background:none;cursor:pointer;display:block;border-radius:8px}
+.p-seg i{display:block;height:12px;border-radius:999px;background:var(--line);overflow:hidden;position:relative}
+.p-seg b{position:absolute;inset:0;width:calc(var(--f, 0) * 100%);background:var(--good-btn);border-radius:999px;transition:width .4s cubic-bezier(.3,1.3,.5,1)}
+.p-seg.seen:not(.cur) i{box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--good-btn) 55%, transparent)}
+.p-seg.cur i{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px color-mix(in srgb, var(--good-btn) 55%, transparent)}
+.p-seg:disabled{cursor:default}
+.p-seg:not(:disabled):hover i{filter:brightness(1.06);transform:scaleY(1.25)}
+.p-seg i{transition:transform .15s ease}
+.p-seg:focus-visible{outline:3px solid var(--sel);outline-offset:1px}
+.step-arrow{appearance:none;flex:none;width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 0 var(--line)}
+.step-arrow svg,.l-arrow svg{width:16px;height:16px}
+.step-arrow.next svg,.l-arrow.next svg{transform:scaleX(-1)}
+.step-arrow:hover:not(:disabled){background:var(--sunk)}
+.step-arrow:active:not(:disabled){transform:translateY(2px);box-shadow:none}
+.step-arrow:disabled{opacity:.38;cursor:default;box-shadow:none}
+.p-title{display:flex;align-items:center;gap:4px;max-width:30vw}
+.p-title .l-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l-arrow{appearance:none;flex:none;width:28px;height:28px;border-radius:8px;border:0;background:none;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.l-arrow:hover:not(:disabled){background:var(--sunk);color:var(--ink)}
+.l-arrow:disabled{opacity:.3;cursor:default}
+@container player (max-width: 420px){ .step-arrow{display:none} .p-steps{gap:3px} }
+
+@media (max-width: 1000px){ .p-title{display:none} }

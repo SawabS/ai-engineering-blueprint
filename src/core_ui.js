@@ -242,14 +242,23 @@ function openLesson(i) {
   hideTip(); closePop();
   const lesson = LESSONS[i];
   const docked = !!BOARD;
-  L = { lesson, si: 0, xp: 0, phase: 'step', sel: null, tries: 0, widget: null, ready: true, beats: [], beat: 0 };
+  const n = lesson.steps.length, done = !!P.done[lesson.id];
+  const at = done ? 0 : clamp(Math.floor(+(P.at && P.at[lesson.id]) || 0), 0, n - 1); // resume where you left off
+  L = { lesson, si: at, max: done ? n - 1 : at, xp: 0, phase: 'step', sel: null, tries: 0, widget: null, ready: true, beats: [], beat: 0 };
+  const prevL = LESSONS[i - 1], nextL = LESSONS[i + 1];
   if (!docked) { try { history.replaceState(null, '', '#' + lesson.id); } catch (e) { /* ignore */ } }
   const old = $('.player'); if (old) old.remove();
   const player = h('div', { class: 'player' + (docked ? ' docked' : ''), role: docked ? 'region' : 'dialog', 'aria-label': lesson.title, style: { '--u': lesson.unit.color } },
     h('div', { class: 'p-top' },
       h('button', { class: 'p-close', 'aria-label': 'Close lesson', onclick: closeLesson, html: ICON.close }),
-      h('div', { class: 'p-title' }, `${lesson.idx + 1}. ${lesson.title}`),
-      h('div', { class: 'p-progress', role: 'progressbar', 'aria-label': 'Lesson progress' }, h('div', { style: { width: '0%' } })),
+      h('div', { class: 'p-title' },
+        h('button', { class: 'l-arrow', 'aria-label': prevL ? `Previous lesson: ${prevL.title}` : 'No previous lesson', title: prevL ? `Previous lesson: ${prevL.idx + 1}. ${prevL.title}` : '', disabled: !prevL, onclick: () => prevL && openLesson(prevL.idx), html: ICON.left }),
+        h('span', { class: 'l-name' }, `${lesson.idx + 1}. ${lesson.title}`),
+        h('button', { class: 'l-arrow next', 'aria-label': nextL ? `Next lesson: ${nextL.title}` : 'No next lesson', title: nextL ? `Next lesson: ${nextL.idx + 1}. ${nextL.title}` : '', disabled: !nextL, onclick: () => nextL && openLesson(nextL.idx), html: ICON.left })),
+      h('button', { class: 'step-arrow prev', 'aria-label': 'Previous step', title: 'Previous step (←)', onclick: () => gotoStep(L.si - 1), html: ICON.left }),
+      h('div', { class: 'p-steps', role: 'group', 'aria-label': 'Lesson steps' }, lesson.steps.map((s, k) =>
+        h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
+      h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => gotoStep(L.si + 1), html: ICON.left }),
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
       null),
     h('div', { class: 'p-body' },
@@ -292,8 +301,17 @@ function renderAside(animate) {
 function setProgress() {
   if (!L) return;
   const n = L.lesson.steps.length;
-  const frac = L.phase === 'done' ? n : L.si + (L.beats.length ? (L.beat / L.beats.length) * 0.9 : 0);
-  const bar = $('.p-progress > div'); if (bar) bar.style.width = (frac / n * 100) + '%';
+  const done = L.phase === 'done';
+  const cur = L.beats.length ? Math.min(1, L.beat / L.beats.length) : 0;
+  $$('.player .p-seg').forEach(b => {
+    const k = +b.dataset.k; const fill = done || k < L.si ? 1 : k === L.si ? Math.max(0.12, cur * 0.9) : 0;
+    b.style.setProperty('--f', fill);
+    b.classList.toggle('cur', !done && k === L.si); b.classList.toggle('seen', k <= L.max);
+    b.disabled = k > L.max; if (!done && k === L.si) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+  });
+  const pa = $('.player .step-arrow.prev'), na = $('.player .step-arrow.next');
+  if (pa) pa.disabled = done ? false : L.si <= 0;
+  if (na) na.disabled = done || L.si >= L.max;
 }
 function splitBeats(html) {
   const tmp = h('div', { html: html || '' }); const beats = [];
@@ -306,7 +324,9 @@ function splitBeats(html) {
 }
 function renderStep(revealAll) {
   const l = L.lesson; const st = l.steps[L.si];
-  L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null; L.ready = !st.gate;
+  L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null;
+  const passed = L.si < L.max || !!P.done[l.id];
+  L.ready = !st.gate || passed;
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
   const groups = st.kind === 'quiz' ? [splitBeats(texify(st.body)).flat()] : splitBeats(texify(st.body));
   const beats = groups.map(nodes => h('div', { class: 'beat' }, h('div', { class: 'prose' }, nodes)));
@@ -359,13 +379,16 @@ function renderFoot(state) {
     inner.append(acts); focusPrimary(); return;
   }
   const more = L.beat < L.beats.length;
+  const passed = L.si < L.max || !!P.done[L.lesson.id];
   const gated = !more && st.kind !== 'quiz' && !L.ready;
-  const hint = more ? 'Enter to read on' : st.kind === 'quiz' ? `Pick an answer · keys 1–${st.options.length} · Enter to check` : (L.ready ? 'Enter to continue' : (st.gateText || 'Use the interactive to continue'));
+  const hint = more ? 'Enter to read on · ← → steps' : st.kind === 'quiz' && passed && L.sel == null ? 'Answered before · Enter to continue · ← → steps' : st.kind === 'quiz' ? `Pick an answer · keys 1–${st.options.length} · Enter to check` : (L.ready ? 'Enter to continue' : (st.gateText || 'Use the interactive to continue'));
   const left = h('div', { class: 'fb only-hint' + (gated ? ' gate' : '') }, h('span', { class: 'kbd-hint' + (gated ? '' : ' kbd-only') }, hint));
   const acts = h('div', { class: 'actions' });
-  if (L.si > 0 && !more) acts.append(h('button', { class: 'btn btn-ghost', onclick: () => { SFX.back(); L.si--; renderStep(true); } }, 'Back'));
+  if (L.si > 0) acts.append(h('button', { class: 'btn btn-ghost', 'data-sfx': 'none', onclick: () => gotoStep(L.si - 1) }, 'Back'));
   if (more) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: revealBeat }, 'Continue'));
+  else if (st.kind === 'quiz' && passed && L.sel == null) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   else if (st.kind === 'quiz') acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: L.sel == null, onclick: checkQuiz }, 'Check'));
+  else if (st.kind === 'task' && passed) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   else if (st.kind === 'task') acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: !L.ready, onclick: checkTask }, 'Check'));
   else acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: !L.ready, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   inner.append(left, acts);
@@ -403,8 +426,21 @@ function revealAnswer() {
   else { const r = L.widget && L.widget.reveal ? L.widget.reveal() : null; renderFoot({ kind: 'good', title: 'Here is the answer', msg: (r && r.msg) || st.explain }); }
   L.phase = 'answered';
 }
+function gotoStep(k) {
+  if (!L) return; const n = L.lesson.steps.length;
+  if (L.phase === 'done' && k >= n) return;
+  k = L.phase === 'done' && k < 0 ? n - 1 : k;
+  if (k < 0 || k >= n || k > L.max || (k === L.si && L.phase !== 'done')) return;
+  (k < L.si || L.phase === 'done' ? SFX.back : SFX.next)();
+  L.si = k; renderStep(true);
+}
+function saveAt() { if (!L) return; P.at = P.at || {}; P.at[L.lesson.id] = L.max; saveP(); }
 function advance() {
-  if (L.si < L.lesson.steps.length - 1) { SFX.next(); L.si++; renderStep(false); }
+  if (L.si < L.lesson.steps.length - 1) {
+    SFX.next(); L.si++;
+    const fresh = L.si > L.max; L.max = Math.max(L.max, L.si); saveAt();
+    renderStep(!fresh); // a step you have already read opens fully revealed
+  }
   else finishLesson();
 }
 /* ---- "Go deeper" drawer: maths, code, tools and sources for one step ---- */
@@ -446,7 +482,7 @@ function finishLesson() {
   const l = L.lesson; const first = !P.done[l.id];
   const newDay = !P.days.includes(today());
   L.xp += first ? 20 : 0; P.xp += L.xp; P.done[l.id] = true; markDay(); saveP();
-  L.phase = 'done'; setProgress(); SFX.complete();
+  L.max = l.steps.length - 1; L.phase = 'done'; setProgress(); SFX.complete();
   const nx = LESSONS[l.idx + 1];
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
   const bp = h('div', { class: 'bp-card', html: bpSVG(l.stage, l.hl, { enter: l.stage, uid: 'd' }) });
@@ -462,7 +498,8 @@ function finishLesson() {
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
   foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Next: ${nx.title}` : 'You finished the whole blueprint.')),
-    h('div', { class: 'actions' }, h('button', { class: 'btn btn-ghost', onclick: closeLesson }, docked ? 'Lesson list' : 'Course map'),
+    h('div', { class: 'actions' }, l.idx > 0 ? h('button', { class: 'btn btn-ghost', 'aria-label': `Previous lesson: ${LESSONS[l.idx - 1].title}`, onclick: () => openLesson(l.idx - 1) }, 'Previous lesson') : null,
+      h('button', { class: 'btn btn-ghost', onclick: closeLesson }, docked ? 'Lesson list' : 'Course map'),
       nx ? h('button', { class: 'btn btn-accent', 'data-primary': 1, 'data-sfx': 'none', onclick: () => openLesson(nx.idx) }, 'Next lesson') : null)));
   if (docked) boardRefresh();
   focusPrimary();
@@ -476,6 +513,9 @@ document.addEventListener('keydown', e => {
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
   const st = L.lesson.steps[L.si];
   if (st && st.kind === 'quiz' && L.phase === 'step' && L.beat >= L.beats.length && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) b.click(); }
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.altKey && !e.metaKey && !e.ctrlKey && !(e.target.closest && e.target.closest('.seg,.bp-n,.board-canvas,[role="radiogroup"]'))) {
+    e.preventDefault(); gotoStep(L.si + (e.key === 'ArrowLeft' ? -1 : 1)); return;
+  }
   if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,a,summary,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
 });
 

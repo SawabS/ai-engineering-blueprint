@@ -31,7 +31,8 @@ const P = (() => {
   const v = store.get(); const ok = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
   const done = ok.done && typeof ok.done === 'object' && !Array.isArray(ok.done) ? ok.done : {};
   const days = Array.isArray(ok.days) ? ok.days.filter(d => typeof d === 'string').slice(-60) : [];
-  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days };
+  const at = ok.at && typeof ok.at === 'object' && !Array.isArray(ok.at) ? Object.fromEntries(Object.entries(ok.at).filter(([, v]) => Number.isInteger(v) && v >= 0)) : {};
+  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days, at };
 })();
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 function saveP() { store.set(P); }

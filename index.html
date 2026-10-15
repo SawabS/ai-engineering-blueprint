@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-cgNiJfJ6MUOIuHP2sGqK21Xmsh5oK3LIsGGpZLrVZBU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UCDJP9t5/uJQ6O8OLjSOnD0nu7RirjBF1eq7xpAp9nQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Engineering Blueprint</title>
@@ -259,8 +259,9 @@ footer.site{align-items:center}
 /* done: the unit's colour, darker lip of the same hue */
 .mnode.done,.mnode.next{--face:var(--accent);--lipc:var(--accent-shadow);--ic:var(--accent-fg)}
 /* selection: a crisp ring around the whole coin (face + lip), centred on it, no glow */
-.mnode .selring{position:absolute;left:-9px;right:-9px;top:-9px;bottom:-9px;border-radius:50%;border:3px solid var(--accent-ink);pointer-events:none;
-  opacity:0;transform:scale(1.18);transition:opacity .18s, transform .3s cubic-bezier(.34,1.56,.64,1)}
+/* the visible coin is the lifted face plus the lip under it: hug that, with an even 9px gap all round */
+.mnode .selring{position:absolute;left:-9px;right:-9px;top:calc(var(--lip) - var(--lift) - 9px);bottom:-9px;border-radius:50%;border:3px solid var(--accent-ink);pointer-events:none;
+  opacity:0;transform:scale(1.18);transition:opacity .18s, transform .3s cubic-bezier(.34,1.56,.64,1), top .24s cubic-bezier(.34,1.56,.64,1)}
 .mnode.sel .selring{opacity:1;transform:none}
 .mnode.sel{--lift:4px}
 /* shine: one diagonal light line sweeps across the face */
@@ -334,8 +335,8 @@ footer.site a{color:var(--ink);font-weight:700}
 .p-close{width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;flex:none;color:var(--muted)}
 .p-close:hover{background:var(--hover);color:var(--ink)}
 .p-close svg{width:18px;height:18px}
-.p-progress{flex:1;height:12px;border-radius:999px;background:var(--line);overflow:hidden;min-width:60px}
-.p-progress > div{height:100%;background:var(--good-btn);border-radius:999px;transition:width .4s cubic-bezier(.3,1.3,.5,1)}
+
+
 .p-title{font-weight:700;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26vw}
 .p-xp{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:14px;color:var(--ink)}
 .p-xp svg{width:18px;height:18px}
@@ -690,7 +691,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .sc-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .sc-day{display:grid;justify-items:center;gap:4px}
 .sc-day .dot{width:34px;height:34px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;padding:6px}
-.sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:0 3px 0 0 var(--fire-deep)}
+.sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:inset 0 -3px 0 0 color-mix(in srgb, var(--fire) 35%, transparent)}
 .sc-day.today .dot{outline:2px dashed var(--fire-deep);outline-offset:2px}
 .sc-day small{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted)}
 .sc-day.today small{color:var(--ink)}
@@ -882,6 +883,32 @@ mi.tt{font-family:var(--f-mono)}
 }
 
 .insp .btn svg{width:18px;height:18px;flex:none}
+
+/* ---------- lesson navigation: step segments, step arrows, lesson switcher ---------- */
+.p-steps{flex:1;display:flex;gap:4px;min-width:0;align-items:center}
+.p-seg{appearance:none;flex:1 1 0;min-width:0;height:28px;padding:8px 0;border:0;background:none;cursor:pointer;display:block;border-radius:8px}
+.p-seg i{display:block;height:12px;border-radius:999px;background:var(--line);overflow:hidden;position:relative}
+.p-seg b{position:absolute;inset:0;width:calc(var(--f, 0) * 100%);background:var(--good-btn);border-radius:999px;transition:width .4s cubic-bezier(.3,1.3,.5,1)}
+.p-seg.seen:not(.cur) i{box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--good-btn) 55%, transparent)}
+.p-seg.cur i{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px color-mix(in srgb, var(--good-btn) 55%, transparent)}
+.p-seg:disabled{cursor:default}
+.p-seg:not(:disabled):hover i{filter:brightness(1.06);transform:scaleY(1.25)}
+.p-seg i{transition:transform .15s ease}
+.p-seg:focus-visible{outline:3px solid var(--sel);outline-offset:1px}
+.step-arrow{appearance:none;flex:none;width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 0 var(--line)}
+.step-arrow svg,.l-arrow svg{width:16px;height:16px}
+.step-arrow.next svg,.l-arrow.next svg{transform:scaleX(-1)}
+.step-arrow:hover:not(:disabled){background:var(--sunk)}
+.step-arrow:active:not(:disabled){transform:translateY(2px);box-shadow:none}
+.step-arrow:disabled{opacity:.38;cursor:default;box-shadow:none}
+.p-title{display:flex;align-items:center;gap:4px;max-width:30vw}
+.p-title .l-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.l-arrow{appearance:none;flex:none;width:28px;height:28px;border-radius:8px;border:0;background:none;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.l-arrow:hover:not(:disabled){background:var(--sunk);color:var(--ink)}
+.l-arrow:disabled{opacity:.3;cursor:default}
+@container player (max-width: 420px){ .step-arrow{display:none} .p-steps{gap:3px} }
+
+@media (max-width: 1000px){ .p-title{display:none} }
 </style>
 </head>
 <body>
@@ -4412,7 +4439,8 @@ const P = (() => {
   const v = store.get(); const ok = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
   const done = ok.done && typeof ok.done === 'object' && !Array.isArray(ok.done) ? ok.done : {};
   const days = Array.isArray(ok.days) ? ok.days.filter(d => typeof d === 'string').slice(-60) : [];
-  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days };
+  const at = ok.at && typeof ok.at === 'object' && !Array.isArray(ok.at) ? Object.fromEntries(Object.entries(ok.at).filter(([, v]) => Number.isInteger(v) && v >= 0)) : {};
+  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days, at };
 })();
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 function saveP() { store.set(P); }
@@ -4849,14 +4877,23 @@ function openLesson(i) {
   hideTip(); closePop();
   const lesson = LESSONS[i];
   const docked = !!BOARD;
-  L = { lesson, si: 0, xp: 0, phase: 'step', sel: null, tries: 0, widget: null, ready: true, beats: [], beat: 0 };
+  const n = lesson.steps.length, done = !!P.done[lesson.id];
+  const at = done ? 0 : clamp(Math.floor(+(P.at && P.at[lesson.id]) || 0), 0, n - 1); // resume where you left off
+  L = { lesson, si: at, max: done ? n - 1 : at, xp: 0, phase: 'step', sel: null, tries: 0, widget: null, ready: true, beats: [], beat: 0 };
+  const prevL = LESSONS[i - 1], nextL = LESSONS[i + 1];
   if (!docked) { try { history.replaceState(null, '', '#' + lesson.id); } catch (e) { /* ignore */ } }
   const old = $('.player'); if (old) old.remove();
   const player = h('div', { class: 'player' + (docked ? ' docked' : ''), role: docked ? 'region' : 'dialog', 'aria-label': lesson.title, style: { '--u': lesson.unit.color } },
     h('div', { class: 'p-top' },
       h('button', { class: 'p-close', 'aria-label': 'Close lesson', onclick: closeLesson, html: ICON.close }),
-      h('div', { class: 'p-title' }, `${lesson.idx + 1}. ${lesson.title}`),
-      h('div', { class: 'p-progress', role: 'progressbar', 'aria-label': 'Lesson progress' }, h('div', { style: { width: '0%' } })),
+      h('div', { class: 'p-title' },
+        h('button', { class: 'l-arrow', 'aria-label': prevL ? `Previous lesson: ${prevL.title}` : 'No previous lesson', title: prevL ? `Previous lesson: ${prevL.idx + 1}. ${prevL.title}` : '', disabled: !prevL, onclick: () => prevL && openLesson(prevL.idx), html: ICON.left }),
+        h('span', { class: 'l-name' }, `${lesson.idx + 1}. ${lesson.title}`),
+        h('button', { class: 'l-arrow next', 'aria-label': nextL ? `Next lesson: ${nextL.title}` : 'No next lesson', title: nextL ? `Next lesson: ${nextL.idx + 1}. ${nextL.title}` : '', disabled: !nextL, onclick: () => nextL && openLesson(nextL.idx), html: ICON.left })),
+      h('button', { class: 'step-arrow prev', 'aria-label': 'Previous step', title: 'Previous step (←)', onclick: () => gotoStep(L.si - 1), html: ICON.left }),
+      h('div', { class: 'p-steps', role: 'group', 'aria-label': 'Lesson steps' }, lesson.steps.map((s, k) =>
+        h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
+      h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => gotoStep(L.si + 1), html: ICON.left }),
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
       null),
     h('div', { class: 'p-body' },
@@ -4899,8 +4936,17 @@ function renderAside(animate) {
 function setProgress() {
   if (!L) return;
   const n = L.lesson.steps.length;
-  const frac = L.phase === 'done' ? n : L.si + (L.beats.length ? (L.beat / L.beats.length) * 0.9 : 0);
-  const bar = $('.p-progress > div'); if (bar) bar.style.width = (frac / n * 100) + '%';
+  const done = L.phase === 'done';
+  const cur = L.beats.length ? Math.min(1, L.beat / L.beats.length) : 0;
+  $$('.player .p-seg').forEach(b => {
+    const k = +b.dataset.k; const fill = done || k < L.si ? 1 : k === L.si ? Math.max(0.12, cur * 0.9) : 0;
+    b.style.setProperty('--f', fill);
+    b.classList.toggle('cur', !done && k === L.si); b.classList.toggle('seen', k <= L.max);
+    b.disabled = k > L.max; if (!done && k === L.si) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+  });
+  const pa = $('.player .step-arrow.prev'), na = $('.player .step-arrow.next');
+  if (pa) pa.disabled = done ? false : L.si <= 0;
+  if (na) na.disabled = done || L.si >= L.max;
 }
 function splitBeats(html) {
   const tmp = h('div', { html: html || '' }); const beats = [];
@@ -4913,7 +4959,9 @@ function splitBeats(html) {
 }
 function renderStep(revealAll) {
   const l = L.lesson; const st = l.steps[L.si];
-  L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null; L.ready = !st.gate;
+  L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null;
+  const passed = L.si < L.max || !!P.done[l.id];
+  L.ready = !st.gate || passed;
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
   const groups = st.kind === 'quiz' ? [splitBeats(texify(st.body)).flat()] : splitBeats(texify(st.body));
   const beats = groups.map(nodes => h('div', { class: 'beat' }, h('div', { class: 'prose' }, nodes)));
@@ -4966,13 +5014,16 @@ function renderFoot(state) {
     inner.append(acts); focusPrimary(); return;
   }
   const more = L.beat < L.beats.length;
+  const passed = L.si < L.max || !!P.done[L.lesson.id];
   const gated = !more && st.kind !== 'quiz' && !L.ready;
-  const hint = more ? 'Enter to read on' : st.kind === 'quiz' ? `Pick an answer · keys 1–${st.options.length} · Enter to check` : (L.ready ? 'Enter to continue' : (st.gateText || 'Use the interactive to continue'));
+  const hint = more ? 'Enter to read on · ← → steps' : st.kind === 'quiz' && passed && L.sel == null ? 'Answered before · Enter to continue · ← → steps' : st.kind === 'quiz' ? `Pick an answer · keys 1–${st.options.length} · Enter to check` : (L.ready ? 'Enter to continue' : (st.gateText || 'Use the interactive to continue'));
   const left = h('div', { class: 'fb only-hint' + (gated ? ' gate' : '') }, h('span', { class: 'kbd-hint' + (gated ? '' : ' kbd-only') }, hint));
   const acts = h('div', { class: 'actions' });
-  if (L.si > 0 && !more) acts.append(h('button', { class: 'btn btn-ghost', onclick: () => { SFX.back(); L.si--; renderStep(true); } }, 'Back'));
+  if (L.si > 0) acts.append(h('button', { class: 'btn btn-ghost', 'data-sfx': 'none', onclick: () => gotoStep(L.si - 1) }, 'Back'));
   if (more) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: revealBeat }, 'Continue'));
+  else if (st.kind === 'quiz' && passed && L.sel == null) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   else if (st.kind === 'quiz') acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: L.sel == null, onclick: checkQuiz }, 'Check'));
+  else if (st.kind === 'task' && passed) acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   else if (st.kind === 'task') acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: !L.ready, onclick: checkTask }, 'Check'));
   else acts.append(h('button', { class: 'btn btn-primary', 'data-primary': 1, disabled: !L.ready, onclick: advance }, L.si === L.lesson.steps.length - 1 ? 'Finish lesson' : 'Continue'));
   inner.append(left, acts);
@@ -5010,8 +5061,21 @@ function revealAnswer() {
   else { const r = L.widget && L.widget.reveal ? L.widget.reveal() : null; renderFoot({ kind: 'good', title: 'Here is the answer', msg: (r && r.msg) || st.explain }); }
   L.phase = 'answered';
 }
+function gotoStep(k) {
+  if (!L) return; const n = L.lesson.steps.length;
+  if (L.phase === 'done' && k >= n) return;
+  k = L.phase === 'done' && k < 0 ? n - 1 : k;
+  if (k < 0 || k >= n || k > L.max || (k === L.si && L.phase !== 'done')) return;
+  (k < L.si || L.phase === 'done' ? SFX.back : SFX.next)();
+  L.si = k; renderStep(true);
+}
+function saveAt() { if (!L) return; P.at = P.at || {}; P.at[L.lesson.id] = L.max; saveP(); }
 function advance() {
-  if (L.si < L.lesson.steps.length - 1) { SFX.next(); L.si++; renderStep(false); }
+  if (L.si < L.lesson.steps.length - 1) {
+    SFX.next(); L.si++;
+    const fresh = L.si > L.max; L.max = Math.max(L.max, L.si); saveAt();
+    renderStep(!fresh); // a step you have already read opens fully revealed
+  }
   else finishLesson();
 }
 /* ---- "Go deeper" drawer: maths, code, tools and sources for one step ---- */
@@ -5053,7 +5117,7 @@ function finishLesson() {
   const l = L.lesson; const first = !P.done[l.id];
   const newDay = !P.days.includes(today());
   L.xp += first ? 20 : 0; P.xp += L.xp; P.done[l.id] = true; markDay(); saveP();
-  L.phase = 'done'; setProgress(); SFX.complete();
+  L.max = l.steps.length - 1; L.phase = 'done'; setProgress(); SFX.complete();
   const nx = LESSONS[l.idx + 1];
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
   const bp = h('div', { class: 'bp-card', html: bpSVG(l.stage, l.hl, { enter: l.stage, uid: 'd' }) });
@@ -5069,7 +5133,8 @@ function finishLesson() {
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
   foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Next: ${nx.title}` : 'You finished the whole blueprint.')),
-    h('div', { class: 'actions' }, h('button', { class: 'btn btn-ghost', onclick: closeLesson }, docked ? 'Lesson list' : 'Course map'),
+    h('div', { class: 'actions' }, l.idx > 0 ? h('button', { class: 'btn btn-ghost', 'aria-label': `Previous lesson: ${LESSONS[l.idx - 1].title}`, onclick: () => openLesson(l.idx - 1) }, 'Previous lesson') : null,
+      h('button', { class: 'btn btn-ghost', onclick: closeLesson }, docked ? 'Lesson list' : 'Course map'),
       nx ? h('button', { class: 'btn btn-accent', 'data-primary': 1, 'data-sfx': 'none', onclick: () => openLesson(nx.idx) }, 'Next lesson') : null)));
   if (docked) boardRefresh();
   focusPrimary();
@@ -5083,6 +5148,9 @@ document.addEventListener('keydown', e => {
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
   const st = L.lesson.steps[L.si];
   if (st && st.kind === 'quiz' && L.phase === 'step' && L.beat >= L.beats.length && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) b.click(); }
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.altKey && !e.metaKey && !e.ctrlKey && !(e.target.closest && e.target.closest('.seg,.bp-n,.board-canvas,[role="radiogroup"]'))) {
+    e.preventDefault(); gotoStep(L.si + (e.key === 'ArrowLeft' ? -1 : 1)); return;
+  }
   if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,a,summary,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
 });
 

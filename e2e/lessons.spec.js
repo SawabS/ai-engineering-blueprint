@@ -118,3 +118,91 @@ test('the keyboard alone can work through a lesson', async ({ page, isMobile }) 
   await page.keyboard.press('Escape');
   await expect(page.locator('.player')).toHaveCount(0);
 });
+
+test.describe('moving back and forth inside a lesson', () => {
+  test('step segments jump to any step already reached, never ahead of it', async ({ page }) => {
+    await openApp(page, { hash: 'next-token' });
+    await page.evaluate(() => { advance(); advance(); advance(); });
+    const segs = page.locator('.p-steps .p-seg');
+    await expect(segs).toHaveCount(6);
+    await expect(segs.nth(3)).toHaveAttribute('aria-current', 'step');
+    await expect(segs.nth(4)).toBeDisabled();
+    await expect(segs.nth(1)).toBeEnabled();
+    await segs.nth(1).click();
+    await expect(page.locator('.step h2')).toHaveText('Turn the temperature to zero');
+    // a quiz you already passed can be skipped without answering again
+    await expect(page.locator('#p-foot [data-primary]')).toHaveText('Continue');
+    await page.locator('#p-foot [data-primary]').click();
+    await expect(page.locator('.step h2')).toHaveText('Trimming the tail: top-k and top-p');
+    // the furthest step keeps its gate until you finish the interactive
+    await segs.nth(3).click();
+    await expect(page.locator('#p-foot [data-primary]')).toBeDisabled();
+  });
+
+  test('a gated interactive you already passed is not gated again', async ({ page }) => {
+    await openApp(page, { hash: 'two-boxes' });
+    await expect(page.locator('#p-foot [data-primary]')).toBeVisible();
+    await page.evaluate(() => advance());
+    await page.locator('.p-steps .p-seg').nth(0).click();
+    await expect(page.locator('.step h2')).toHaveText('Start with the smallest true picture');
+    await expect(page.locator('.step .beat:visible')).toHaveCount(await page.locator('.step .beat').count()); // fully revealed
+    await expect(page.locator('#p-foot [data-primary]')).toBeEnabled();
+  });
+
+  test('arrow keys and the header arrows move between reached steps', async ({ page, isMobile }) => {
+    await openApp(page, { hash: 'next-token' });
+    await page.evaluate(() => { advance(); advance(); });
+    await page.locator('.step h2').click();
+    await page.keyboard.press('ArrowLeft');
+    expect(await page.evaluate(() => L.si)).toBe(1);
+    await page.keyboard.press('ArrowRight');
+    expect(await page.evaluate(() => L.si)).toBe(2);
+    await page.keyboard.press('ArrowRight'); // cannot skip ahead of what you have reached
+    expect(await page.evaluate(() => L.si)).toBe(2);
+    if (!isMobile) {
+      await page.getByRole('button', { name: 'Previous step' }).click();
+      expect(await page.evaluate(() => L.si)).toBe(1);
+      await page.getByRole('button', { name: 'Next step' }).click();
+      expect(await page.evaluate(() => L.si)).toBe(2);
+      await expect(page.getByRole('button', { name: 'Next step' })).toBeDisabled();
+    }
+  });
+
+  test('Back is available on every step after the first', async ({ page }) => {
+    await openApp(page, { hash: 'two-boxes' });
+    await expect(page.locator('#p-foot').getByRole('button', { name: 'Back' })).toHaveCount(0);
+    await page.evaluate(() => advance());
+    await expect(page.locator('#p-foot').getByRole('button', { name: 'Back' })).toBeVisible();
+    await page.locator('#p-foot').getByRole('button', { name: 'Back' }).click();
+    expect(await page.evaluate(() => L.si)).toBe(0);
+  });
+
+  test('a lesson reopens at the furthest step you reached', async ({ page }) => {
+    await openApp(page, { hash: 'attention' });
+    await page.evaluate(() => { advance(); advance(); });
+    await page.getByRole('button', { name: 'Close lesson' }).click();
+    await page.evaluate(() => openLesson(LESSONS.find(l => l.id === 'attention').idx));
+    expect(await page.evaluate(() => L.si)).toBe(2);
+    await page.reload();
+    await page.evaluate(() => openLesson(LESSONS.find(l => l.id === 'attention').idx));
+    expect(await page.evaluate(() => L.si)).toBe(2);
+    await expect(page.locator('.p-steps .p-seg').nth(0)).toBeEnabled();
+  });
+
+  test('previous and next lesson are one click away', async ({ page, isMobile }) => {
+    await openApp(page, { hash: 'tokens' });
+    if (!isMobile) {
+      await page.getByRole('button', { name: /^Next lesson: Attention/ }).click();
+      await expect(page.locator('.p-title .l-name')).toHaveText('4. Attention');
+      await page.getByRole('button', { name: /^Previous lesson: Tokens and embeddings/ }).click();
+      await expect(page.locator('.p-title .l-name')).toHaveText('3. Tokens and embeddings');
+    }
+    await page.evaluate(() => finishLesson());
+    await page.locator('#p-foot').getByRole('button', { name: /^Previous lesson/ }).click();
+    expect(await page.evaluate(() => L.lesson.id)).toBe('next-token');
+    // from the completion screen the arrows step back into the lesson
+    await page.evaluate(() => finishLesson());
+    await page.keyboard.press('ArrowLeft');
+    expect(await page.evaluate(() => [L.phase, L.si])).toEqual(['step', 5]);
+  });
+});

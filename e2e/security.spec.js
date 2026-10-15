@@ -55,5 +55,5 @@ test('only expected keys are written to browser storage', async ({ page }) => {
   const keys = await page.evaluate(() => Object.keys(localStorage).sort());
   expect(keys.every(k => k.startsWith('ai-eng-blueprint.'))).toBe(true);
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('ai-eng-blueprint.v1')));
-  expect(Object.keys(saved).sort()).toEqual(['days', 'done', 'xp']);
+  expect(Object.keys(saved).sort()).toEqual(['at', 'days', 'done', 'xp']);
 });
