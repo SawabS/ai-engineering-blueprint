@@ -94,11 +94,15 @@ test('lesson steps reveal paragraph by paragraph and Back shows the whole step',
   const beats = page.locator('.step .beat');
   await expect(beats.nth(0)).toBeVisible();
   await expect(beats.nth(1)).toBeHidden();
-  await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
-  await expect(beats.nth(1)).toBeVisible();
+  const n = await beats.count();
+  expect(n).toBeGreaterThan(1);
+  for (let k = 1; k < n; k++) {
+    await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
+    await expect(beats.nth(k)).toBeVisible();
+  }
   await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click(); // to step 2 (quiz)
   await page.locator('#p-foot').getByRole('button', { name: 'Back' }).click();
-  await expect(page.locator('.step .beat:visible')).toHaveCount(2);
+  await expect(page.locator('.step .beat:visible')).toHaveCount(n);
 });
 
 test('the keyboard alone can work through a lesson', async ({ page, isMobile }) => {

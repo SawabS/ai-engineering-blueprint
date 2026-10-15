@@ -22,7 +22,7 @@ const COURSE = { units: [
         explain: 'Weights do not change between conversations. A memory feature is application code that stores facts and pastes them into the next request. Everything the model knows about you on a given call is text inside that call.' },
       { kind: 'learn', title: 'The model is a function',
         body: `<p>Write it down once and keep it in your head for the rest of the course:</p>
-<div class="mono-box" style="margin:14px 0">P( next token | context ) = model( context ; weights )</div>
+\\[ P(\\text{next token} \\mid \\text{context}) = \\operatorname{model}(\\text{context};\\; \\theta) \\]
 <p>Two consequences follow. First, the model keeps <span class="k">no state between calls</span>. Chat history, memory, documents and tool results only exist for the model if an application writes them into the context.</p>
 <p>Second, every improvement you will ever ship falls on one side of that equation. You either make the function better or cheaper to run (training, hardware, serving), or you make its input better (prompts, retrieval, tools, agents).</p>` },
       { kind: 'learn', title: 'A house and a garden',
@@ -39,7 +39,9 @@ const COURSE = { units: [
     steps: [
       { kind: 'learn', title: 'A score for every possible token',
         body: `<p>Feed the model <code>The capital of France is</code>. Its last layer emits one raw score, a <span class="k">logit</span>, for every entry in its vocabulary, which typically holds 100,000 to 200,000 tokens.</p>
-<p><span class="k">Softmax</span> turns scores into probabilities: each score is divided by a <span class="k">temperature</span> T, exponentiated, and normalised so everything sums to 1. Low T exaggerates the gaps between scores. High T flattens them. Move the slider, then sample.</p>`,
+<p><span class="k">Softmax</span> turns scores into probabilities: each score \\(z_i\\) is divided by a <span class="k">temperature</span> \\(T\\), exponentiated, and normalised so everything sums to 1:</p>
+\\[ p_i = \\frac{e^{z_i / T}}{\\sum_{j} e^{z_j / T}} \\]
+<p>Low \\(T\\) exaggerates the gaps between scores. High \\(T\\) flattens them. Move the slider, then sample. Open <em>Go deeper</em> below for a worked example and how to choose a value.</p>`,
         widget: { type: 'nextToken' } },
       { kind: 'quiz', title: 'Turn the temperature to zero',
         body: '<p>At temperature 0, APIs switch to <em>greedy decoding</em>. What does the model output for this prompt?</p>',
@@ -113,7 +115,7 @@ const COURSE = { units: [
     steps: [
       { kind: 'learn', title: 'Each token asks a question',
         body: `<p>Inside each block, every token produces three vectors: a <span class="k">query</span> (what am I looking for?), a <span class="k">key</span> (what do I contain?) and a <span class="k">value</span> (what do I hand over if chosen?). A token compares its query with every earlier key, softmaxes the scores into weights, and takes a weighted average of the values.</p>
-<div class="mono-box" style="margin:12px 0">Attention(Q, K, V) = softmax( Q·Kᵀ / √d ) · V</div>
+\\[ \\operatorname{Attention}(Q,K,V) = \\operatorname{softmax}\\left( \\frac{QK^\\top}{\\sqrt{d}} \\right) V \\]
 <p>Click a word to see where it looks. Then change the last word and watch what <em>it</em> refers to.</p>`,
         widget: { type: 'attention' } },
       { kind: 'learn', title: 'No peeking at the future',
@@ -148,7 +150,7 @@ const COURSE = { units: [
     recap: 'Pretraining teaches prediction from trillions of tokens. Supervised fine-tuning teaches the assistant format. Reinforcement learning sharpens helpfulness, safety and reasoning. Facts that change belong in context, not weights.',
     steps: [
       { kind: 'learn', title: 'Be the model for a minute',
-        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is <code>−ln p(correct token)</code>. Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
+        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is \\(-\\ln p(\\text{correct token})\\). Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
 <p>Play three rounds. Your choice is the model's sample; the loss shows what gradient descent would push against.</p>`,
         widget: { type: 'nextWordGame' }, gate: true, gateText: 'Play three rounds to continue' },
       { kind: 'learn', title: 'From autocomplete to assistant',
@@ -227,7 +229,7 @@ const COURSE = { units: [
         widget: { type: 'kvReuse' } },
       { kind: 'learn', title: 'How big is the cache?',
         body: `<p>Per token, every layer stores one key and one value vector for each KV head:</p>
-<div class="mono-box" style="margin:12px 0">bytes per token = 2 × layers × kv_heads × head_dim × bytes_per_value</div>
+\\[ \\text{bytes per token} = 2 \\times \\text{layers} \\times \\text{kv heads} \\times \\text{head dim} \\times \\text{bytes per value} \\]
 <p>The calculator uses the shape of a typical 70B model: 80 layers, 8 KV heads of dimension 128, stored in BF16. Push the context length and the number of concurrent users until the GPUs run out.</p>`,
         widget: { type: 'kvCalc' } },
       { kind: 'quiz', title: 'One long conversation',
@@ -265,7 +267,8 @@ const COURSE = { units: [
 <p>Static batching waits for the slowest sequence in a batch before admitting new work. <span class="k">Continuous batching</span> swaps finished sequences out and new ones in at every step. Compare the two schedules.</p>`,
         widget: { type: 'batching' } },
       { kind: 'learn', title: 'The numbers users feel',
-        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time ≈ TTFT + output tokens × TPOT.</p>`,
+        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time is approximately:</p>
+\\[ T_{\\text{total}} \\approx \\text{TTFT} + n_{\\text{out}} \\times \\text{TPOT} \\]`,
         widget: { type: 'latencyCalc' } },
       { kind: 'quiz', title: 'Diagnose the complaint',
         body: '<p>Users say: "It takes four seconds before anything appears, then the text flows quickly." Which number is bad, and where would you look?</p>',

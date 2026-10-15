@@ -91,10 +91,10 @@ const SFX = (() => {
 
 /* Delegated sounds for generic controls; specific moments call SFX directly. */
 document.addEventListener('click', e => {
-  const t = e.target.closest && e.target.closest('button, [role="button"], .bp-n');
+  const t = e.target.closest && e.target.closest('button, [role="button"], .bp-n, summary');
   if (!t || t.disabled) return;
   if (t.closest('#p-foot') || t.dataset.sfx === 'none' || t.classList.contains('opt')) return;
-  if (t.closest('.seg')) { SFX.toggle(); return; }
+  if (t.closest('.seg') || t.tagName === 'SUMMARY') { SFX.toggle(); return; }
   if (t.classList.contains('bp-n') || t.closest('.bp-n')) { SFX.block(); return; }
   if (t.classList.contains('cell')) { SFX.tick(0.6); return; }
   SFX.tap();

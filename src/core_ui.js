@@ -82,10 +82,23 @@ const app = $('#app');
 let scrubStage = null;
 const STEP_TOTAL = LESSONS.reduce((a, l) => a + l.steps.length, 0);
 
+/* streak flame: gradient ids must be unique per instance, or hidden copies break the paint */
+let FLAME_N = 0;
+function flameSVG(on) {
+  const id = 'fl' + (++FLAME_N);
+  const o = on ? ['--fl-o1', '--fl-o2', '--fl-o3'] : ['--fl-x1', '--fl-x2', '--fl-x3'];
+  const i = on ? ['--fl-i1', '--fl-i2'] : ['--fl-y1', '--fl-y2'];
+  return `<svg class="flame${on ? ' on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><defs>` +
+    `<linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(${o[0]})"/><stop offset=".55" style="stop-color:var(${o[1]})"/><stop offset="1" style="stop-color:var(${o[2]})"/></linearGradient>` +
+    `<linearGradient id="${id}i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(${i[0]})"/><stop offset="1" style="stop-color:var(${i[1]})"/></linearGradient></defs>` +
+    `<path class="fo" d="M12.1 1.6c.5 2.4 2.1 4 3.9 5.8 2 2 3.8 4.3 3.8 7.6 0 4.6-3.5 7.6-7.8 7.6S4.2 19.6 4.2 15c0-2.7 1.1-4.8 2.8-6.5.2 1.7 1 2.9 2.3 3.3-.4-4 1-7.5 2.8-10.2z" fill="url(#${id}o)"/>` +
+    `<path class="fi" d="M12.3 10.6c1.6 1.5 3.4 3.1 3.4 5.6 0 2.3-1.6 3.9-3.7 3.9s-3.6-1.5-3.6-3.6c0-1.5.8-2.6 1.8-3.5.1.9.5 1.5 1.1 1.8-.1-1.6.3-3 1-4.2z" fill="url(#${id}i)"/>` +
+    `<path d="M7.4 13.6c-.4 1.1-.5 2.1-.3 3.1" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round"/></svg>`;
+}
 function statPills() {
   const s = streak();
   return [
-    h('span', { class: 'stat-pill streak' + (s ? '' : ' off'), title: 'Days in a row', html: `<span style="color:${s ? 'var(--pear-deep)' : 'var(--faint)'};display:inline-flex">${ICON.flame}</span>${s}` })
+    h('span', { class: 'stat-pill streak' + (s ? '' : ' off'), title: 'Days in a row', html: `<span class="fl">${flameSVG(s > 0)}</span>${s}` })
   ];
 }
 
@@ -102,13 +115,13 @@ function streakCard() {
   const msg = learnedToday ? 'You learned today. Come back tomorrow to keep it going.' : s ? `Finish a lesson today to keep your ${s}-day streak.` : 'Finish a lesson to start a streak.';
   return h('div', { class: 'streak-card' + (s ? ' on' : '') },
     h('div', { class: 'sc-top' },
-      h('span', { class: 'sc-flame', html: ICON.flame }),
+      h('span', { class: 'sc-flame', html: flameSVG(s > 0) }),
       h('div', { class: 'sc-txt' }, h('b', { class: 'tnum' }, `${s}-day streak`), h('span', null, msg)),
       h('span', { class: 'sc-best tnum', title: 'Best streak' }, `Best ${Math.max(bestStreak(), s)}`)),
     h('div', { class: 'sc-week' }, days.map(d => {
       const k = dayKey(d); const on = set.has(k); const isT = k === today();
       return h('div', { class: 'sc-day' + (on ? ' on' : '') + (isT ? ' today' : '') },
-        h('span', { class: 'dot', html: on ? ICON.flame : '' }), h('small', null, 'SMTWTFS'[d.getDay()]));
+        h('span', { class: 'dot', html: on ? flameSVG(true) : '' }), h('small', null, 'SMTWTFS'[d.getDay()]));
     })));
 }
 function renderHome() {
@@ -295,7 +308,7 @@ function renderStep(revealAll) {
   const l = L.lesson; const st = l.steps[L.si];
   L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null; L.ready = !st.gate;
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
-  const groups = st.kind === 'quiz' ? [splitBeats(st.body).flat()] : splitBeats(st.body);
+  const groups = st.kind === 'quiz' ? [splitBeats(texify(st.body)).flat()] : splitBeats(texify(st.body));
   const beats = groups.map(nodes => h('div', { class: 'beat' }, h('div', { class: 'prose' }, nodes)));
   const last = beats[beats.length - 1];
   if (st.widget) {
@@ -303,12 +316,13 @@ function renderStep(revealAll) {
     const api = { ready: () => { if (!L.ready) SFX.unlock(); L.ready = true; renderFoot(); }, xp: n => { L.xp += n; setProgress(); } };
     try { L.widget = WIDGETS[st.widget.type](wbox, st.widget, api) || null; } catch (err) { wbox.textContent = 'This interactive failed to load.'; console.error(err); L.ready = true; }
   }
-  if (st.after) last.append(h('div', { class: 'callout', html: st.after }));
+  if (st.after) last.append(h('div', { class: 'callout', html: texify(st.after) }));
+  if (st.deep && st.kind !== 'quiz') last.append(deepPanel(st.deep));
   if (st.kind === 'quiz') {
     const opts = h('div', { class: 'opts', role: 'radiogroup' }, st.options.map((o, i) => h('button', {
       class: 'opt', role: 'radio', 'aria-checked': 'false', 'data-i': i,
       onclick: () => { if (L.phase !== 'step') return; SFX.select(); L.sel = i; $$('.opt', opts).forEach(b => { b.classList.toggle('sel', +b.dataset.i === i); b.setAttribute('aria-checked', String(+b.dataset.i === i)); }); renderFoot(); }
-    }, h('span', { class: 'key' }, String.fromCharCode(65 + i)), h('span', { html: o }))));
+    }, h('span', { class: 'key' }, String.fromCharCode(65 + i)), h('span', { html: texify(o) }))));
     last.append(opts);
   }
   L.beats = beats; L.beat = revealAll ? beats.length : 1;
@@ -336,7 +350,7 @@ function renderFoot(state) {
   if (state && state.kind) {
     foot.classList.add(state.kind);
     inner.append(h('div', { class: 'fb' }, h('span', { class: 'ico', html: state.kind === 'good' ? ICON.check.replace('<svg', '<svg width="20" height="20"') : '!' }),
-      h('div', null, h('h4', null, state.title), h('p', { html: state.msg || '' }))));
+      h('div', null, h('h4', null, state.title), h('p', { html: texify(state.msg || '') }))));
     const acts = h('div', { class: 'actions' });
     if (state.kind === 'bad') {
       acts.append(h('button', { class: 'btn btn-ghost', onclick: revealAnswer }, 'Show answer'));
@@ -393,6 +407,37 @@ function advance() {
   if (L.si < L.lesson.steps.length - 1) { SFX.next(); L.si++; renderStep(false); }
   else finishLesson();
 }
+/* ---- "Go deeper" drawer: maths, code, tools and sources for one step ---- */
+const DEEP_TABS = [['math', 'Maths'], ['code', 'Code'], ['tools', 'Tools'], ['refs', 'Sources']];
+function extLink(u, cls, kids) { return h('a', { class: cls, href: u, target: '_blank', rel: 'noopener noreferrer' }, kids); }
+function deepSection(d, k) {
+  if (k === 'math') return [h('div', { class: 'prose deep-prose', html: texify(d.math) })];
+  if (k === 'code') return [...(d.codeNote ? [h('p', { class: 'deep-note', html: texify(d.codeNote) })] : []), ...d.code.map(codeBlock)];
+  if (k === 'tools') return [h('div', { class: 'tool-grid' }, d.tools.map(t => extLink(t.u, 'tool', [h('span', { class: 'tn' }, h('b', null, t.n), t.tag ? h('em', null, t.tag) : null), h('span', { class: 'td' }, t.d)])))];
+  return [h('ol', { class: 'refs' }, d.refs.map(r => h('li', null, extLink(r.u, 'ref', [r.t]), h('span', null, r.s))))];
+}
+function deepPanel(d) {
+  const tabs = DEEP_TABS.filter(([k]) => d[k] && (!Array.isArray(d[k]) || d[k].length))
+    .map(([k, l]) => [k, k === 'math' && !/\\[\[(]/.test(d.math) ? 'Guide' : l]);
+  const body = h('div', { class: 'deep-body' });
+  let cur = tabs[0][0];
+  const show = k => { cur = k; body.innerHTML = ''; body.append(...deepSection(d, k)); };
+  const bar = tabs.length > 1 ? seg(tabs, cur, show, 'Go deeper sections') : null;
+  show(cur);
+  return h('details', { class: 'deep' },
+    h('summary', null,
+      h('span', { class: 'deep-ico', 'aria-hidden': 'true', html: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h12v15H6a2 2 0 0 0-2 2zm0 0A2 2 0 0 0 6 21.5h12"/><path d="M9 8h5M9 11.5h3"/></svg>' }),
+      h('span', { class: 'deep-t' }, h('b', null, d.title || 'Go deeper'), h('small', null, tabs.map(t => t[1]).join(' · '))),
+      h('span', { class: 'deep-chev', 'aria-hidden': 'true' })),
+    h('div', { class: 'deep-in' }, bar, body));
+}
+function lessonToolkit(l) {
+  const seen = new Set(); const tools = [];
+  l.steps.forEach(s => ((s.deep && s.deep.tools) || []).forEach(t => { if (!seen.has(t.n)) { seen.add(t.n); tools.push(t); } }));
+  if (!tools.length) return null;
+  return h('div', { class: 'toolkit' }, h('div', { class: 'eyebrow' }, 'Your toolkit from this lesson'),
+    h('div', { class: 'tk-chips' }, tools.map(t => extLink(t.u, 'tk-chip', [t.n]))));
+}
 function finishLesson() {
   const l = L.lesson; const first = !P.done[l.id];
   const newDay = !P.days.includes(today());
@@ -408,7 +453,8 @@ function finishLesson() {
     h('span', { class: 'added' }, '+ ' + l.short),
     h('p', { class: 'lede', style: { marginTop: '14px' } }, l.recap),
     bp,
-    h('div', { class: 'xp-burst' }, h('span', { class: 'chip streak-chip tnum' + (newDay ? ' up' : ''), html: `<span class="fl">${ICON.flame}</span>${newDay ? 'Streak extended · ' : ''}${streak()}-day streak` }))));
+    lessonToolkit(l),
+    h('div', { class: 'xp-burst' }, h('span', { class: 'chip streak-chip tnum' + (newDay ? ' up' : ''), html: `<span class="fl">${flameSVG(true)}</span>${newDay ? 'Streak extended · ' : ''}${streak()}-day streak` }))));
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
   foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Next: ${nx.title}` : 'You finished the whole blueprint.')),
@@ -426,7 +472,7 @@ document.addEventListener('keydown', e => {
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
   const st = L.lesson.steps[L.si];
   if (st && st.kind === 'quiz' && L.phase === 'step' && L.beat >= L.beats.length && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) b.click(); }
-  if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
+  if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,a,summary,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
 });
 
 function boot() {

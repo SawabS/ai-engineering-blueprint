@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-yk1A60Ve106HdsLaNw0QNw5dJsNhnqx0H3MxHtCmXI8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-pm9BLErkGERX001VTyCYhVC+6ACHsQ+5EVCRAWsr2x8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Engineering Blueprint</title>
@@ -14,7 +14,7 @@
 <meta name="theme-color" content="#A6E9BE">
 <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect x="2" y="6" width="36" height="32" rx="11" fill="%236FC68E"/%3E%3Crect x="2" y="2" width="36" height="32" rx="11" fill="%23A6E9BE"/%3E%3Cpath d="M20 11.2V8.4" stroke="%230E3B21" stroke-width="2.2" stroke-linecap="round"/%3E%3Ccircle cx="20" cy="6.9" r="2.1" fill="%230E3B21"/%3E%3Crect x="6.6" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/%3E%3Crect x="30.4" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/%3E%3Crect x="9.6" y="11.6" width="20.8" height="17.4" rx="6" fill="%230E3B21"/%3E%3Crect x="13.6" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/%3E%3Crect x="22" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/%3E%3Cpath d="M16.4 25.2h7.2" stroke="%23A6E9BE" stroke-width="1.8" stroke-linecap="round"/%3E%3C/svg%3E'>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Source+Code+Pro:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Source+Code+Pro:wght@400;600;700&family=Noto+Sans+Math&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}
 /* Layout concept: Brilliant-style course page. A winding lesson map beside a course card, a focused lesson
    player, and a pannable blueprint board with the lesson docked in a side panel (bottom sheet on phones).
@@ -34,6 +34,10 @@
   --cta:#000000; --cta-ink:#FFFFFF; --cta-shadow:#4C4C4C;
   /* streak pear */
   --pear:#D8E82E; --pear-deep:#BBCC00; --pear-ink:#000000; --pear-soft:#F7FAD5;
+  /* streak fire */
+  --fire:#FF9600; --fire-deep:#E07400; --fire-soft:#FFF1DC; --fire-ink:#5C2A00;
+  --fl-o1:#FFC233; --fl-o2:#FF8A00; --fl-o3:#FF6200; --fl-i1:#FFF7C2; --fl-i2:#FFD43B;
+  --fl-x1:#D9DEE4; --fl-x2:#B9C1CB; --fl-x3:#A3ADB9; --fl-y1:#F2F4F7; --fl-y2:#DDE2E8;
   /* blueprint blocks */
   --model:#6FCF95; --model-2:#A6E9BE; --model-soft:#EEFAF2; --model-t:#0E3B21; --model-ink:#1E8549;
   --hw:#383838; --hw-2:#4C4C4C;
@@ -64,6 +68,8 @@
   --node-idle:#262D37; --node-idle-lip:#161A21; --node-idle-ink:#5E6979; --ground:rgba(0,0,0,.5);
   --cta:#E9EEF4; --cta-ink:#0B0E12; --cta-shadow:#8E99A8;
   --pear:#D8E82E; --pear-deep:#9EAD00; --pear-ink:#000000; --pear-soft:#1E2205;
+  --fire:#FF9600; --fire-deep:#C25F00; --fire-soft:#2C1A07; --fire-ink:#FFD9A8;
+  --fl-x1:#56606D; --fl-x2:#434C57; --fl-x3:#39414B; --fl-y1:#6E7885; --fl-y2:#5A636F;
   --model:#62C68A; --model-2:#93DDAE; --model-soft:#10241A; --model-t:#0B2416; --model-ink:#93DDAE;
   --hw:#2B323C; --hw-2:#434D5A;
   --serve:#456DFF; --serve-soft:#0D1630;
@@ -89,6 +95,8 @@
   --node-idle:#262D37; --node-idle-lip:#161A21; --node-idle-ink:#5E6979; --ground:rgba(0,0,0,.5);
   --cta:#E9EEF4; --cta-ink:#0B0E12; --cta-shadow:#8E99A8;
   --pear:#D8E82E; --pear-deep:#9EAD00; --pear-ink:#000000; --pear-soft:#1E2205;
+  --fire:#FF9600; --fire-deep:#C25F00; --fire-soft:#2C1A07; --fire-ink:#FFD9A8;
+  --fl-x1:#56606D; --fl-x2:#434C57; --fl-x3:#39414B; --fl-y1:#6E7885; --fl-y2:#5A636F;
   --model:#62C68A; --model-2:#93DDAE; --model-soft:#10241A; --model-t:#0B2416; --model-ink:#93DDAE;
   --hw:#2B323C; --hw-2:#434D5A;
   --serve:#456DFF; --serve-soft:#0D1630;
@@ -296,7 +304,6 @@ footer.site a{color:var(--ink);font-weight:700}
 @keyframes pop{0%{opacity:0;transform:scale(.55) translateY(10px)}100%{opacity:1;transform:none}}
 .bp .glow{opacity:0;fill:none;stroke:var(--accent-ink);stroke-width:2.5;stroke-dasharray:7 6;transition:opacity .2s}
 .bp-n.hl .blk{stroke:var(--accent-ink)!important;stroke-width:3!important}
-.bp-n.hl .glow{opacity:1;animation:flow 1.4s linear infinite}
 .bp-n{transition:opacity .35s ease, filter .35s ease, transform .24s cubic-bezier(.34,1.56,.64,1)}
 .bp .clickable:not(.frame):hover{transform:translateY(-3px)}
 .bp .clickable:not(.frame):active{transform:translateY(2px);transition-duration:.07s}
@@ -307,7 +314,6 @@ footer.site a{color:var(--ink);font-weight:700}
 .bp .packet{fill:var(--accent-ink);stroke:var(--paper);stroke-width:3;pointer-events:none}
 .bp .clickable{cursor:pointer}
 .bp .clickable:hover .blk,.bp .clickable:focus-visible .blk{stroke:var(--accent-ink)!important;stroke-width:2.5!important}
-.bp .clickable:focus{outline:none}
 .bp .clickable:focus-visible .glow{opacity:1;stroke:var(--sel);stroke-width:4;stroke-dasharray:none;animation:none}
 .bp .clickable:focus{outline:none}
 .bp .wire-line{stroke:var(--faint);stroke-width:3;stroke-dasharray:6 7;animation:flow 1.2s linear infinite}
@@ -668,26 +674,26 @@ footer.site a{color:var(--ink);font-weight:700}
 @keyframes beep{50%{transform:scale(1.35)}}
 
 /* ---------- streaks ---------- */
-.stat-pill.streak .fl,.streak-chip .fl{display:inline-flex;width:20px;color:var(--pear-deep)}
+.flame{display:block;width:100%;height:100%;overflow:visible}
+.stat-pill.streak .fl,.streak-chip .fl{display:inline-flex;width:20px;height:20px}
+.stat-pill.streak.off{color:var(--muted)}
 .streak-card{border:2px solid var(--line);border-radius:var(--r-l);padding:14px 16px;background:var(--surface);box-shadow:0 4px 0 0 var(--line);display:grid;gap:12px}
 .sc-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
-.sc-flame{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--sunk);color:var(--faint)}
-.sc-flame svg{width:26px;height:26px}
-.streak-card.on .sc-flame{background:var(--pear-soft);color:var(--pear-deep);animation:flicker 2.4s ease-in-out infinite}
-@keyframes flicker{50%{transform:scale(1.06) rotate(-3deg)}}
+.sc-flame{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--sunk);padding:8px}
+.streak-card.on .sc-flame{background:var(--fire-soft)}
+.streak-card.on .sc-flame .flame{transform-origin:50% 92%;animation:flicker 2.6s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.05,.97) rotate(-2.5deg)}60%{transform:scale(.97,1.05) rotate(2deg)}}
 .sc-txt b{display:block;font-size:17px;font-weight:900}
 .sc-txt span{display:block;font-size:13.5px;color:var(--muted);line-height:1.35}
 .sc-best{font-weight:800;font-size:12.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
 .sc-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .sc-day{display:grid;justify-items:center;gap:4px}
-.sc-day .dot{width:32px;height:32px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;color:var(--pear-ink)}
-.sc-day .dot svg{width:16px;height:16px}
-.sc-day.on .dot{background:var(--pear);border-color:var(--pear-deep);box-shadow:0 3px 0 0 var(--pear-deep)}
-.sc-day.today .dot{outline:2px dashed var(--accent-ink);outline-offset:2px}
+.sc-day .dot{width:34px;height:34px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;padding:6px}
+.sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:0 3px 0 0 var(--fire-deep)}
+.sc-day.today .dot{outline:2px dashed var(--fire-deep);outline-offset:2px}
 .sc-day small{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted)}
 .sc-day.today small{color:var(--ink)}
-.streak-chip.up{background:var(--pear);color:var(--pear-ink);border-color:var(--pear-deep);animation:pop .6s cubic-bezier(.2,1.4,.4,1) both}
-.streak-chip.up .fl{color:var(--pear-ink)}
+.streak-chip.up{background:var(--fire-soft);color:var(--ink);border-color:var(--fire);box-shadow:0 3px 0 0 var(--fire-deep);animation:pop .6s cubic-bezier(.2,1.4,.4,1) both}
 
 /* ---------- board tools, legend, tour ---------- */
 .board-tools{position:absolute;left:14px;top:14px;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 28px)}
@@ -725,6 +731,77 @@ footer.site a{color:var(--ink);font-weight:700}
   .board-tools .seg button{padding:6px 11px;font-size:13px;min-height:32px}
   .legend{top:62px}
 }
+
+/* ---------- maths (native MathML) ---------- */
+math{font-family:"Noto Sans Math","STIX Two Math","Cambria Math","Latin Modern Math",math;font-size:1.08em}
+math[display="block"]{font-size:1.14em}
+.math-block{overflow-x:auto;overflow-y:hidden;margin:14px 0;padding:14px 12px;background:var(--sunk);border:1px solid var(--line-soft);border-radius:12px;-webkit-overflow-scrolling:touch}
+.math-block:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+.math-block math{margin:0 auto}
+mi.tt{font-family:var(--f-mono)}
+/* ---------- go deeper drawer ---------- */
+.deep{margin-top:18px;border:2px solid var(--line);border-radius:var(--r-l);background:var(--surface);box-shadow:0 4px 0 0 var(--line);overflow:hidden}
+.deep > summary{list-style:none;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;cursor:pointer;min-height:44px;user-select:none;-webkit-user-select:none}
+.deep > summary::-webkit-details-marker{display:none}
+.deep > summary:hover{background:var(--sunk)}
+.deep-ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-ink);box-shadow:0 3px 0 0 var(--accent-shadow)}
+.deep-t b{display:block;font-family:var(--f-display);font-weight:800;font-size:16px}
+.deep-t small{display:block;font-size:12.5px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.02em}
+.deep-chev{width:12px;height:12px;border-right:3px solid var(--muted);border-bottom:3px solid var(--muted);transform:rotate(45deg) translate(-3px,-3px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);margin-right:6px}
+.deep[open] .deep-chev{transform:rotate(225deg) translate(-3px,-3px)}
+.deep[open] > summary{border-bottom:2px solid var(--line)}
+.deep-in{padding:14px;display:grid;gap:14px;min-width:0}
+.deep-in > .seg{justify-self:start;max-width:100%}
+.deep-body{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0;animation:beatIn .3s ease both}
+.deep-body > *{min-width:0}
+.deep-in{grid-template-columns:minmax(0,1fr)}
+.deep-prose math:not([display]){max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}
+.deep-prose{font-size:15.5px}
+.deep-prose h4{font-family:var(--f-display);font-size:15px;font-weight:800;margin:6px 0 2px}
+.deep-prose p{margin:8px 0}
+.deep-prose ul{margin:8px 0;padding-left:20px}
+.deep-prose li{margin:4px 0}
+.deep-note{font-size:14.5px;color:var(--muted);margin:0}
+.tbl-wrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px}
+.deep-prose table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
+.deep-prose th,.deep-prose td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.deep-prose th{font-family:var(--f-mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--sunk)}
+.deep-prose tr:last-child td{border-bottom:0}
+/* code */
+.code-card{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--sunk);min-width:0}
+.code-card figcaption{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 12px;border-bottom:1px solid var(--line);background:var(--surface);min-width:0}
+.code-card .lang{font-family:var(--f-mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:2px 7px;flex:none}
+.code-card .cap{font-size:13.5px;font-weight:700;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.copy-btn{flex:none;appearance:none;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:700 12.5px var(--f-body);border-radius:10px;padding:4px 12px;min-height:32px;min-width:56px;cursor:pointer;box-shadow:0 2px 0 0 var(--line)}
+.copy-btn:active{transform:translateY(2px);box-shadow:none}
+.code-src{margin:0;padding:12px 14px;overflow-x:auto;font:13px/1.6 var(--f-mono);color:var(--ink);tab-size:4;-webkit-overflow-scrolling:touch}
+.code-src:focus-visible{outline:3px solid var(--sel);outline-offset:-3px}
+.hk{color:#A0306B;font-weight:600}.hf{color:#1F5FBF}.hs{color:#17703C}.hn{color:#B4540A}.hc{color:var(--muted);font-style:italic}.hd{color:#7A4DC0}.ht{color:#A0306B;font-weight:700}
+:root[data-theme="dark"] .hk{color:#F29BC7}:root[data-theme="dark"] .hf{color:#8DB8FF}:root[data-theme="dark"] .hs{color:#93DDAE}:root[data-theme="dark"] .hn{color:#FFB86B}:root[data-theme="dark"] .hd{color:#C6A6FF}:root[data-theme="dark"] .ht{color:#F29BC7}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hk{color:#F29BC7}:root:not([data-theme="light"]) .hf{color:#8DB8FF}:root:not([data-theme="light"]) .hs{color:#93DDAE}:root:not([data-theme="light"]) .hn{color:#FFB86B}:root:not([data-theme="light"]) .hd{color:#C6A6FF}:root:not([data-theme="light"]) .ht{color:#F29BC7} }
+/* tools and sources */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tool{display:grid;gap:4px;align-content:start;padding:12px;border:2px solid var(--line);border-radius:var(--r-m);background:var(--paper);color:var(--ink);text-decoration:none;box-shadow:0 3px 0 0 var(--line);transition:transform .15s ease, box-shadow .15s ease, border-color .15s}
+.tool:hover{border-color:var(--accent-shadow);transform:translateY(-2px);box-shadow:0 5px 0 0 var(--accent-shadow)}
+.tool:active{transform:translateY(2px);box-shadow:0 1px 0 0 var(--line)}
+.tool .tn{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tool b{font-family:var(--f-display);font-size:15px;font-weight:800}
+.tool b::after{content:" ↗";font-weight:600;color:var(--muted)}
+.tool em{font-style:normal;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.tool .td{font-size:13.5px;color:var(--muted);line-height:1.4}
+.refs{margin:0;padding-left:22px;display:grid;gap:10px}
+.refs li{font-size:14.5px;line-height:1.45}
+.refs li::marker{font-family:var(--f-mono);color:var(--muted);font-size:12.5px}
+.refs a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--accent-shadow);text-decoration-thickness:2px;text-underline-offset:3px}
+.refs a:hover{text-decoration-color:var(--accent-ink)}
+.refs span{display:block;color:var(--muted);font-size:13px}
+/* lesson toolkit on the completion screen */
+.toolkit{margin-top:18px;text-align:left}
+.tk-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tk-chip{display:inline-flex;align-items:center;min-height:36px;padding:6px 12px;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 2px 0 0 var(--line)}
+.tk-chip::after{content:"↗";margin-left:6px;color:var(--muted)}
+.tk-chip:hover{border-color:var(--accent-shadow)}
+@media (max-width: 640px){ .deep-in{padding:12px} .tool-grid{grid-template-columns:minmax(0,1fr)} .code-src{font-size:12.5px} }
 </style>
 </head>
 <body>
@@ -822,10 +899,10 @@ const SFX = (() => {
 
 /* Delegated sounds for generic controls; specific moments call SFX directly. */
 document.addEventListener('click', e => {
-  const t = e.target.closest && e.target.closest('button, [role="button"], .bp-n');
+  const t = e.target.closest && e.target.closest('button, [role="button"], .bp-n, summary');
   if (!t || t.disabled) return;
   if (t.closest('#p-foot') || t.dataset.sfx === 'none' || t.classList.contains('opt')) return;
-  if (t.closest('.seg')) { SFX.toggle(); return; }
+  if (t.closest('.seg') || t.tagName === 'SUMMARY') { SFX.toggle(); return; }
   if (t.classList.contains('bp-n') || t.closest('.bp-n')) { SFX.block(); return; }
   if (t.classList.contains('cell')) { SFX.tick(0.6); return; }
   SFX.tap();
@@ -858,7 +935,7 @@ const COURSE = { units: [
         explain: 'Weights do not change between conversations. A memory feature is application code that stores facts and pastes them into the next request. Everything the model knows about you on a given call is text inside that call.' },
       { kind: 'learn', title: 'The model is a function',
         body: `<p>Write it down once and keep it in your head for the rest of the course:</p>
-<div class="mono-box" style="margin:14px 0">P( next token | context ) = model( context ; weights )</div>
+\\[ P(\\text{next token} \\mid \\text{context}) = \\operatorname{model}(\\text{context};\\; \\theta) \\]
 <p>Two consequences follow. First, the model keeps <span class="k">no state between calls</span>. Chat history, memory, documents and tool results only exist for the model if an application writes them into the context.</p>
 <p>Second, every improvement you will ever ship falls on one side of that equation. You either make the function better or cheaper to run (training, hardware, serving), or you make its input better (prompts, retrieval, tools, agents).</p>` },
       { kind: 'learn', title: 'A house and a garden',
@@ -875,7 +952,9 @@ const COURSE = { units: [
     steps: [
       { kind: 'learn', title: 'A score for every possible token',
         body: `<p>Feed the model <code>The capital of France is</code>. Its last layer emits one raw score, a <span class="k">logit</span>, for every entry in its vocabulary, which typically holds 100,000 to 200,000 tokens.</p>
-<p><span class="k">Softmax</span> turns scores into probabilities: each score is divided by a <span class="k">temperature</span> T, exponentiated, and normalised so everything sums to 1. Low T exaggerates the gaps between scores. High T flattens them. Move the slider, then sample.</p>`,
+<p><span class="k">Softmax</span> turns scores into probabilities: each score \\(z_i\\) is divided by a <span class="k">temperature</span> \\(T\\), exponentiated, and normalised so everything sums to 1:</p>
+\\[ p_i = \\frac{e^{z_i / T}}{\\sum_{j} e^{z_j / T}} \\]
+<p>Low \\(T\\) exaggerates the gaps between scores. High \\(T\\) flattens them. Move the slider, then sample. Open <em>Go deeper</em> below for a worked example and how to choose a value.</p>`,
         widget: { type: 'nextToken' } },
       { kind: 'quiz', title: 'Turn the temperature to zero',
         body: '<p>At temperature 0, APIs switch to <em>greedy decoding</em>. What does the model output for this prompt?</p>',
@@ -949,7 +1028,7 @@ const COURSE = { units: [
     steps: [
       { kind: 'learn', title: 'Each token asks a question',
         body: `<p>Inside each block, every token produces three vectors: a <span class="k">query</span> (what am I looking for?), a <span class="k">key</span> (what do I contain?) and a <span class="k">value</span> (what do I hand over if chosen?). A token compares its query with every earlier key, softmaxes the scores into weights, and takes a weighted average of the values.</p>
-<div class="mono-box" style="margin:12px 0">Attention(Q, K, V) = softmax( Q·Kᵀ / √d ) · V</div>
+\\[ \\operatorname{Attention}(Q,K,V) = \\operatorname{softmax}\\left( \\frac{QK^\\top}{\\sqrt{d}} \\right) V \\]
 <p>Click a word to see where it looks. Then change the last word and watch what <em>it</em> refers to.</p>`,
         widget: { type: 'attention' } },
       { kind: 'learn', title: 'No peeking at the future',
@@ -984,7 +1063,7 @@ const COURSE = { units: [
     recap: 'Pretraining teaches prediction from trillions of tokens. Supervised fine-tuning teaches the assistant format. Reinforcement learning sharpens helpfulness, safety and reasoning. Facts that change belong in context, not weights.',
     steps: [
       { kind: 'learn', title: 'Be the model for a minute',
-        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is <code>−ln p(correct token)</code>. Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
+        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is \\(-\\ln p(\\text{correct token})\\). Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
 <p>Play three rounds. Your choice is the model's sample; the loss shows what gradient descent would push against.</p>`,
         widget: { type: 'nextWordGame' }, gate: true, gateText: 'Play three rounds to continue' },
       { kind: 'learn', title: 'From autocomplete to assistant',
@@ -1063,7 +1142,7 @@ const COURSE = { units: [
         widget: { type: 'kvReuse' } },
       { kind: 'learn', title: 'How big is the cache?',
         body: `<p>Per token, every layer stores one key and one value vector for each KV head:</p>
-<div class="mono-box" style="margin:12px 0">bytes per token = 2 × layers × kv_heads × head_dim × bytes_per_value</div>
+\\[ \\text{bytes per token} = 2 \\times \\text{layers} \\times \\text{kv heads} \\times \\text{head dim} \\times \\text{bytes per value} \\]
 <p>The calculator uses the shape of a typical 70B model: 80 layers, 8 KV heads of dimension 128, stored in BF16. Push the context length and the number of concurrent users until the GPUs run out.</p>`,
         widget: { type: 'kvCalc' } },
       { kind: 'quiz', title: 'One long conversation',
@@ -1101,7 +1180,8 @@ const COURSE = { units: [
 <p>Static batching waits for the slowest sequence in a batch before admitting new work. <span class="k">Continuous batching</span> swaps finished sequences out and new ones in at every step. Compare the two schedules.</p>`,
         widget: { type: 'batching' } },
       { kind: 'learn', title: 'The numbers users feel',
-        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time ≈ TTFT + output tokens × TPOT.</p>`,
+        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time is approximately:</p>
+\\[ T_{\\text{total}} \\approx \\text{TTFT} + n_{\\text{out}} \\times \\text{TPOT} \\]`,
         widget: { type: 'latencyCalc' } },
       { kind: 'quiz', title: 'Diagnose the complaint',
         body: '<p>Users say: "It takes four seconds before anything appears, then the text flows quickly." Which number is bad, and where would you look?</p>',
@@ -1509,6 +1589,1701 @@ const COURSE = { units: [
   }]
 }
 ] };
+/* ================= "Go deeper" content, units 1 to 4 =================
+   Keyed by lesson id, then by step index. Every string is String.raw so TeX backslashes survive.
+   Fields: title, math (HTML with \( \) and \[ \]), code [{lang,title,src}], codeNote, tools [{n,d,u,tag}], refs [{t,s,u}]. */
+const R = String.raw;
+const CLAUDE_DOCS = 'https://platform.claude.com/docs/en';
+const DEEP = {};
+
+/* ---------- 1. Two boxes ---------- */
+DEEP['two-boxes'] = {
+  2: {
+    title: 'The model, written properly',
+    math: R`<p>A language model assigns a probability to any token sequence \(x_1, \dots, x_n\). The chain rule of probability splits that into one next-token prediction per position, which is exactly what the network computes:</p>
+\[ P(x_1,\dots,x_n) = \prod_{t=1}^{n} P_\theta(x_t \mid x_{<t}) \]
+<p>Here \(\theta\) is the set of weights (billions of numbers, frozen after training) and \(x_{<t}\) is everything before position \(t\): your context. Generation reads this equation from left to right: sample \(x_t\), append it, predict \(x_{t+1}\).</p>
+<h4>What "stateless" means formally</h4>
+<p>On request \(r\) the output depends only on \(\theta\) and the context \(c_r\) that request carries. Nothing from request \(r-1\) survives unless the application copies it into \(c_r\). That is why every product feature in this course is either a change to \(\theta\) (training) or a change to \(c\) (context).</p>`,
+    code: [
+      { lang: 'python', title: 'One call to a hosted model (Anthropic SDK)', src: R`
+# pip install anthropic   and set ANTHROPIC_API_KEY
+import anthropic
+
+client = anthropic.Anthropic()
+resp = client.messages.create(
+    model="claude-sonnet-5-5",          # any current model id from the provider's model list
+    max_tokens=200,
+    system="You are a concise assistant.",   # part of the context
+    messages=[{"role": "user", "content": "What is the capital of France?"}],
+)
+print(resp.content[0].text)
+print(resp.usage)   # input_tokens and output_tokens: the context in, the tokens out` },
+      { lang: 'python', title: 'The same idea with open weights on your own machine', src: R`
+# pip install transformers torch
+from transformers import pipeline
+
+chat = pipeline("text-generation", model="Qwen/Qwen2.5-0.5B-Instruct")
+messages = [{"role": "user", "content": "What is the capital of France?"}]
+out = chat(messages, max_new_tokens=50)
+print(out[0]["generated_text"][-1]["content"])` }
+    ],
+    tools: [
+      { n: 'Claude API', d: 'Hosted frontier models behind a stateless Messages API.', u: CLAUDE_DOCS + '/api/overview', tag: 'API' },
+      { n: 'OpenAI API', d: 'Hosted models through the Responses and Chat Completions APIs.', u: 'https://platform.openai.com/docs', tag: 'API' },
+      { n: 'Gemini API', d: "Google's hosted models and SDKs.", u: 'https://ai.google.dev/gemini-api/docs', tag: 'API' },
+      { n: 'Hugging Face Transformers', d: 'The standard Python library for loading and running open-weight models.', u: 'https://huggingface.co/docs/transformers', tag: 'Open source' },
+      { n: 'Ollama', d: 'Run open models locally with one command and an HTTP API.', u: 'https://ollama.com', tag: 'Open source' },
+      { n: 'llama.cpp', d: 'Fast CPU and GPU inference for quantized GGUF models.', u: 'https://github.com/ggml-org/llama.cpp', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Speech and Language Processing (3rd ed. draft), chapters on language models and LLMs', s: 'Jurafsky and Martin, Stanford. Free textbook.', u: 'https://web.stanford.edu/~jurafsky/slp3/' },
+      { t: 'But what is a GPT? Visual intro to transformers', s: '3Blue1Brown, video lesson', u: 'https://www.3blue1brown.com/lessons/gpt' },
+      { t: 'Intro to Large Language Models', s: 'Andrej Karpathy, 1-hour talk', u: 'https://www.youtube.com/watch?v=zjkBMFhNj_g' }
+    ]
+  }
+};
+
+/* ---------- 2. Next-token machine ---------- */
+DEEP['next-token'] = {
+  0: {
+    title: 'Softmax and temperature, exactly',
+    math: R`<p>The output head produces a vector of logits \(z \in \mathbb{R}^{|V|}\), one real number per vocabulary entry. Softmax with temperature \(T > 0\) turns them into probabilities:</p>
+\[ p_i = \frac{\exp(z_i / T)}{\sum_{j=1}^{|V|} \exp(z_j / T)} \]
+<p>Dividing by \(T\) rescales the gaps between logits before exponentiation. Since \(p_i / p_j = \exp((z_i - z_j)/T)\), a small \(T\) magnifies every gap and a large \(T\) shrinks it.</p>
+<h4>A worked example</h4>
+<p>Three candidate tokens with logits \(z = (2, 1, 0)\):</p>
+<div class="tbl-wrap"><table><thead><tr><th>T</th><th>p(first)</th><th>p(second)</th><th>p(third)</th><th>Effect</th></tr></thead><tbody>
+<tr><td>0.5</td><td>0.867</td><td>0.117</td><td>0.016</td><td>Sharper: the favourite dominates</td></tr>
+<tr><td>1.0</td><td>0.665</td><td>0.245</td><td>0.090</td><td>The model's own distribution</td></tr>
+<tr><td>2.0</td><td>0.506</td><td>0.307</td><td>0.186</td><td>Flatter: more surprising picks</td></tr>
+</tbody></table></div>
+<p>As \(T \to 0\) all probability mass moves to \(\arg\max_i z_i\), so APIs implement \(T = 0\) as <em>greedy decoding</em>. As \(T \to \infty\) the distribution tends to uniform over the whole vocabulary, which produces gibberish.</p>
+<h4>Why subtract the maximum?</h4>
+<p>Real implementations compute \(\exp((z_i - \max_j z_j)/T)\). The result is identical, because the common factor cancels, but it prevents overflow when logits are large.</p>`,
+    code: [{ lang: 'python', title: 'Softmax with temperature in NumPy', src: R`
+import numpy as np
+
+def softmax(logits, T=1.0):
+    z = np.asarray(logits, dtype=np.float64) / T
+    z -= z.max()                 # numerical stability, does not change the result
+    e = np.exp(z)
+    return e / e.sum()
+
+for T in (0.5, 1.0, 2.0):
+    print(T, softmax([2.0, 1.0, 0.0], T).round(3))
+# 0.5 [0.867 0.117 0.016]
+# 1.0 [0.665 0.245 0.09 ]
+# 2.0 [0.506 0.307 0.186]` }],
+    refs: [
+      { t: 'Generation strategies (greedy, sampling, beam search)', s: 'Hugging Face Transformers documentation', u: 'https://huggingface.co/docs/transformers/generation_strategies' },
+      { t: 'Deep Learning, section 6.2.2.3 on softmax units', s: 'Goodfellow, Bengio and Courville, MIT Press. Free online.', u: 'https://www.deeplearningbook.org/contents/mlp.html' }
+    ]
+  },
+  2: {
+    title: 'Top-k, top-p and min-p, defined',
+    math: R`<p>Sort the vocabulary so that \(p_{(1)} \ge p_{(2)} \ge \dots\). Each filter keeps a set \(S\), sets every other probability to zero, and renormalises:</p>
+\[ p'_i = \frac{p_i \, \mathbb{1}[i \in S]}{\sum_{j \in S} p_j} \]
+<ul>
+<li><b>Top-k:</b> \(S\) is the \(k\) most likely tokens. Fixed size, so it keeps too many when the model is sure and too few when it is not.</li>
+<li><b>Top-p (nucleus):</b> \(S\) is the smallest prefix of the sorted list with \(\sum_{i \in S} p_i \ge p\). The size adapts to the model's confidence.</li>
+<li><b>Min-p:</b> \(S = \{\, i : p_i \ge p_{\min} \cdot p_{(1)} \,\}\). The cut-off scales with the top token's probability, which stays coherent at higher temperatures.</li>
+</ul>
+<p>Order matters: most engines apply temperature first, then the filters, then sample. Changing temperature therefore changes which tokens survive top-p.</p>`,
+    code: [{ lang: 'python', title: 'A complete sampler: temperature, top-k, top-p', src: R`
+import numpy as np
+rng = np.random.default_rng(0)
+
+def sample(logits, T=0.8, top_k=None, top_p=None):
+    if T == 0:
+        return int(np.argmax(logits))                # greedy decoding
+    z = np.asarray(logits, float) / T
+    p = np.exp(z - z.max()); p /= p.sum()
+    order = np.argsort(-p)                           # most likely first
+    keep = np.ones_like(p, dtype=bool)
+    if top_k is not None:
+        keep[order[top_k:]] = False
+    if top_p is not None:
+        cum = np.cumsum(p[order])
+        cutoff = np.searchsorted(cum, top_p) + 1     # smallest prefix reaching top_p
+        keep[order[cutoff:]] = False
+    p = np.where(keep, p, 0.0); p /= p.sum()
+    return int(rng.choice(len(p), p=p))` }],
+    tools: [
+      { n: 'vLLM SamplingParams', d: 'temperature, top_p, top_k, min_p, repetition penalties and seeds for self-hosted models.', u: 'https://docs.vllm.ai/en/latest/api/vllm/sampling_params.html', tag: 'Open source' },
+      { n: 'Transformers GenerationConfig', d: 'The same knobs for model.generate() in Python.', u: 'https://huggingface.co/docs/transformers/main_classes/text_generation', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'The Curious Case of Neural Text Degeneration (introduces nucleus sampling)', s: 'Holtzman et al., ICLR 2020', u: 'https://arxiv.org/abs/1904.09751' },
+      { t: 'Turning Up the Heat: Min-p Sampling for Creative and Coherent LLM Outputs', s: 'Nguyen et al., 2024', u: 'https://arxiv.org/abs/2407.01082' }
+    ]
+  },
+  3: {
+    title: 'The decoding loop in ten lines',
+    codeNote: 'This is what <code>generate()</code> does under the hood, minus the KV cache you will meet in lesson 7. Each pass re-reads the whole sequence, which is why the cache matters.',
+    code: [{ lang: 'python', title: 'Autoregressive sampling by hand (PyTorch + Transformers)', src: R`
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+name = "Qwen/Qwen2.5-0.5B"
+tok = AutoTokenizer.from_pretrained(name)
+model = AutoModelForCausalLM.from_pretrained(name)
+
+ids = tok("The capital of France is", return_tensors="pt").input_ids
+with torch.no_grad():
+    for _ in range(20):
+        logits = model(ids).logits[:, -1, :]           # scores for the next position only
+        probs = torch.softmax(logits / 0.7, dim=-1)     # temperature 0.7
+        next_id = torch.multinomial(probs, 1)           # sample one token
+        ids = torch.cat([ids, next_id], dim=-1)         # append and run again
+        if next_id.item() == tok.eos_token_id:
+            break
+print(tok.decode(ids[0]))` }],
+    math: R`<p>Prefill and decode differ in shape. For a prompt of \(n\) tokens, prefill runs one forward pass over an \(n\)-row matrix: highly parallel. Decode runs one pass per generated token over a single new row. Generating \(m\) tokens therefore takes \(m\) sequential passes, and latency grows linearly with \(m\).</p>`
+  },
+  5: {
+    title: 'Choosing the values',
+    math: R`<p>Start from the task, not from a favourite number. These ranges are common defaults; confirm them with an eval on your own data (lesson 19).</p>
+<div class="tbl-wrap"><table><thead><tr><th>Task</th><th>temperature</th><th>top_p</th><th>Why</th></tr></thead><tbody>
+<tr><td>Extraction, classification, SQL, code edits</td><td>0 to 0.2</td><td>1.0</td><td>One right answer. Randomness only adds errors.</td></tr>
+<tr><td>Support chat, summaries, RAG answers</td><td>0.3 to 0.7</td><td>0.9 to 1.0</td><td>Natural wording while staying close to the sources.</td></tr>
+<tr><td>Brainstorming, fiction, marketing variants</td><td>0.8 to 1.2</td><td>0.9 to 0.95</td><td>You want diversity; top-p trims the incoherent tail.</td></tr>
+<tr><td>Several candidates to pick from (self-consistency, best-of-n)</td><td>0.7 to 1.0</td><td>0.95</td><td>Samples must differ for voting or reranking to help.</td></tr>
+</tbody></table></div>
+<ul>
+<li>Tune temperature <em>or</em> top-p, not both at once, so you can tell which change helped.</li>
+<li>Reasoning modes often fix or restrict sampling parameters. Check the provider's documentation before setting them.</li>
+<li><code>max_tokens</code> should cover the longest valid answer plus margin. If responses end with a stop reason of <code>max_tokens</code>, the answer was cut off.</li>
+<li>Temperature 0 is not perfectly deterministic in production: batching changes the order of floating-point additions. Use <code>seed</code> where offered, and never rely on bit-exact repeats.</li>
+</ul>`,
+    code: [{ lang: 'python', title: 'Setting the knobs on an API call', src: R`
+resp = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=300,                 # hard cap on the decode loop
+    temperature=0.2,                # extraction-style task
+    stop_sequences=["</answer>"],   # end early when the closing tag appears
+    messages=[{"role": "user", "content": "Extract the invoice total. Reply as <answer>...</answer>"}],
+)
+print(resp.stop_reason)   # "end_turn", "stop_sequence" or "max_tokens"` }],
+    refs: [
+      { t: 'Messages API reference: temperature, top_p, top_k, stop_sequences', s: 'Claude Developer Platform', u: CLAUDE_DOCS + '/api/messages' },
+      { t: 'Defeating Nondeterminism in LLM Inference', s: 'Thinking Machines Lab, 2025', u: 'https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/' }
+    ]
+  }
+};
+
+/* ---------- 3. Tokens and embeddings ---------- */
+DEEP['tokens'] = {
+  0: {
+    title: 'How tokenizers are trained',
+    math: R`<h4>Byte-pair encoding</h4>
+<p>Start with a vocabulary of the 256 byte values. Count every adjacent pair \((a, b)\) in the training corpus and merge the most frequent one into a new token:</p>
+\[ (a^*, b^*) = \arg\max_{(a,b)} \operatorname{count}(a, b) \]
+<p>Replace every occurrence, record the merge, and repeat until the vocabulary reaches its target size \(|V|\) (commonly 32k to 256k). Encoding new text replays the merges in the order they were learned.</p>
+<h4>Unigram language model (SentencePiece's default)</h4>
+<p>Start from a large candidate vocabulary and give each piece a probability. A sentence's segmentation \(\mathbf{x} = (x_1, \dots, x_m)\) scores \(P(\mathbf{x}) = \prod_i p(x_i)\). Training prunes the pieces whose removal hurts corpus likelihood least, until \(|V|\) remains.</p>
+<h4>Measuring fairness across languages</h4>
+<p><b>Fertility</b> is the average number of tokens per word:</p>
+\[ \text{fertility} = \frac{\#\text{tokens}}{\#\text{words}} \]
+<p>English often sits near 1.3 on large tokenizers. Under-represented languages can be 3 to 5 or more, which multiplies cost, latency and context use by the same factor. Measure it on a held-out sample before choosing a model for a language, and consider training a tokenizer on that language.</p>`,
+    code: [
+      { lang: 'python', title: 'Train a SentencePiece tokenizer (e.g. for Sorani Kurdish)', src: R`
+# pip install sentencepiece
+import sentencepiece as spm
+
+spm.SentencePieceTrainer.train(
+    input="ckb_corpus.txt",        # one sentence per line, raw UTF-8 text
+    model_prefix="ckb_bpe",
+    vocab_size=32000,
+    model_type="bpe",              # or "unigram" (the default)
+    character_coverage=1.0,        # keep every character of the script
+    byte_fallback=True,            # unknown characters become bytes, never <unk>
+    normalization_rule_name="nfkc",
+)
+
+sp = spm.SentencePieceProcessor(model_file="ckb_bpe.model")
+print(sp.encode("سڵاو، چۆنی؟", out_type=str))` },
+      { lang: 'python', title: 'Train a byte-level BPE with Hugging Face Tokenizers', src: R`
+# pip install tokenizers
+from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
+
+tok = Tokenizer(models.BPE())
+tok.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+tok.decoder = decoders.ByteLevel()
+trainer = trainers.BpeTrainer(
+    vocab_size=32000,
+    special_tokens=["<|endoftext|>", "<|im_start|>", "<|im_end|>"],
+    initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
+)
+tok.train(["corpus.txt"], trainer)
+tok.save("tokenizer.json")` },
+      { lang: 'python', title: 'Count tokens and fertility with tiktoken', src: R`
+# pip install tiktoken
+import tiktoken
+
+enc = tiktoken.get_encoding("o200k_base")
+for text in ["Good morning, how are you?", "بەیانیت باش، چۆنی؟"]:
+    n = len(enc.encode(text))
+    print(f"{n} tokens, fertility {n / len(text.split()):.2f}  {text}")` }
+    ],
+    tools: [
+      { n: 'SentencePiece', d: "Google's language-independent tokenizer trainer (BPE and unigram). Used by Llama 2, T5, Gemma and many multilingual models.", u: 'https://github.com/google/sentencepiece', tag: 'Open source' },
+      { n: 'Hugging Face Tokenizers', d: 'Fast Rust tokenizers with BPE, WordPiece and unigram trainers; the tokenizer.json format most open models ship.', u: 'https://huggingface.co/docs/tokenizers', tag: 'Open source' },
+      { n: 'tiktoken', d: "OpenAI's fast BPE encoder, handy for counting tokens.", u: 'https://github.com/openai/tiktoken', tag: 'Open source' },
+      { n: 'minbpe', d: 'Minimal, readable BPE implementation for learning.', u: 'https://github.com/karpathy/minbpe', tag: 'Teaching code' }
+    ],
+    refs: [
+      { t: 'Neural Machine Translation of Rare Words with Subword Units (BPE for NLP)', s: 'Sennrich, Haddow and Birch, ACL 2016', u: 'https://arxiv.org/abs/1508.07909' },
+      { t: 'SentencePiece: A simple and language independent subword tokenizer', s: 'Kudo and Richardson, EMNLP 2018', u: 'https://arxiv.org/abs/1808.06226' },
+      { t: 'Subword Regularization (the unigram language model tokenizer)', s: 'Kudo, ACL 2018', u: 'https://arxiv.org/abs/1804.10959' },
+      { t: "Let's build the GPT Tokenizer", s: 'Andrej Karpathy, video lecture', u: 'https://www.youtube.com/watch?v=zduSFxRajkE' }
+    ]
+  },
+  2: {
+    title: 'Embeddings and positions, in symbols',
+    math: R`<p>The embedding table is a learned matrix \(E \in \mathbb{R}^{|V| \times d}\), where \(d\) is the model width (for example 4096). Token id \(i\) simply selects row \(i\):</p>
+\[ \mathbf{h}^{(0)}_t = E[x_t] \in \mathbb{R}^{d} \]
+<p>Closeness between two vectors is usually measured with cosine similarity, which ignores length and compares direction:</p>
+\[ \cos(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{\lVert \mathbf{a} \rVert \, \lVert \mathbf{b} \rVert} \]
+<h4>Rotary position embeddings (RoPE)</h4>
+<p>RoPE splits query and key vectors into pairs of dimensions and rotates pair \(k\) at position \(m\) by the angle \(m\,\theta_k\), with \(\theta_k = b^{-2k/d}\) and base \(b\) typically \(10^4\) to \(10^6\). The dot product of a rotated query at position \(m\) and key at position \(n\) depends only on the offset \(m - n\), so attention becomes sensitive to relative position. Long-context extensions (NTK scaling, YaRN) work by adjusting these angles.</p>`,
+    code: [{ lang: 'python', title: 'Look at real token embeddings', src: R`
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+name = "Qwen/Qwen2.5-0.5B"
+tok = AutoTokenizer.from_pretrained(name)
+model = AutoModelForCausalLM.from_pretrained(name)
+E = model.get_input_embeddings().weight          # shape: (vocab_size, d)
+print(E.shape)
+
+def vec(word):
+    ids = tok(word, add_special_tokens=False).input_ids
+    return E[ids].mean(0)                         # average if the word splits
+
+cos = torch.nn.functional.cosine_similarity
+print(cos(vec(" king"), vec(" queen"), dim=0).item())
+print(cos(vec(" king"), vec(" banana"), dim=0).item())` }],
+    refs: [
+      { t: 'RoFormer: Enhanced Transformer with Rotary Position Embedding', s: 'Su et al., 2021', u: 'https://arxiv.org/abs/2104.09864' },
+      { t: 'Efficient Estimation of Word Representations in Vector Space (word2vec)', s: 'Mikolov et al., 2013', u: 'https://arxiv.org/abs/1301.3781' },
+      { t: 'YaRN: Efficient Context Window Extension of Large Language Models', s: 'Peng et al., 2023', u: 'https://arxiv.org/abs/2309.00071' }
+    ]
+  }
+};
+
+/* ---------- 4. Attention ---------- */
+DEEP['attention'] = {
+  0: {
+    title: 'Scaled dot-product attention, step by step',
+    math: R`<p>Stack the \(n\) token vectors of one layer into \(X \in \mathbb{R}^{n \times d}\). Three learned matrices project them:</p>
+\[ Q = X W_Q, \quad K = X W_K, \quad V = X W_V \]
+<p>Scores compare every query with every key, a causal mask removes the future, and softmax runs across each row:</p>
+\[ \operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{Q K^{\top}}{\sqrt{d_k}} + M\right) V \]
+\[ M_{ij} = \begin{cases} 0 & j \le i \\ -\infty & j > i \end{cases} \]
+<p><b>Why divide by \(\sqrt{d_k}\)?</b> If query and key entries have unit variance, their dot product over \(d_k\) dimensions has variance \(d_k\). Large scores push softmax into saturation, where gradients vanish. Dividing by \(\sqrt{d_k}\) restores unit variance.</p>
+<h4>Multi-head attention</h4>
+<p>The model runs \(h\) attentions in parallel on smaller projections (\(d_k = d/h\)), concatenates the results and mixes them with an output matrix:</p>
+\[ \operatorname{MHA}(X) = \operatorname{concat}(\text{head}_1, \dots, \text{head}_h)\, W_O \]
+<h4>Cost</h4>
+<p>The score matrix \(QK^{\top}\) is \(n \times n\), so prefill attention costs \(O(n^2 d)\) operations and, naively, \(O(n^2)\) memory. FlashAttention computes the same result in tiles without ever storing the full matrix, cutting memory to \(O(n)\) and running several times faster.</p>`,
+    code: [
+      { lang: 'python', title: 'Causal self-attention from scratch (PyTorch)', src: R`
+import math, torch
+import torch.nn.functional as F
+
+def causal_self_attention(x, Wq, Wk, Wv, Wo, n_heads):
+    B, T, d = x.shape
+    dk = d // n_heads
+    # project, then split into heads: (B, heads, T, dk)
+    q = (x @ Wq).view(B, T, n_heads, dk).transpose(1, 2)
+    k = (x @ Wk).view(B, T, n_heads, dk).transpose(1, 2)
+    v = (x @ Wv).view(B, T, n_heads, dk).transpose(1, 2)
+    scores = q @ k.transpose(-2, -1) / math.sqrt(dk)            # (B, heads, T, T)
+    mask = torch.triu(torch.ones(T, T, dtype=torch.bool), diagonal=1)
+    scores = scores.masked_fill(mask, float("-inf"))             # hide the future
+    out = F.softmax(scores, dim=-1) @ v                          # weighted sum of values
+    return out.transpose(1, 2).reshape(B, T, d) @ Wo` },
+      { lang: 'python', title: 'The production version: one fused call', src: R`
+# Same maths, dispatched to FlashAttention or memory-efficient kernels when available
+out = F.scaled_dot_product_attention(q, k, v, is_causal=True)` }
+    ],
+    tools: [
+      { n: 'PyTorch SDPA', d: 'scaled_dot_product_attention with fused Flash and memory-efficient kernels.', u: 'https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html', tag: 'Open source' },
+      { n: 'FlashAttention', d: 'IO-aware exact attention kernels used by most training and inference stacks.', u: 'https://github.com/Dao-AILab/flash-attention', tag: 'Open source' },
+      { n: 'Transformer Explainer', d: 'Interactive visualisation of GPT-2 running in the browser.', u: 'https://poloclub.github.io/transformer-explainer/', tag: 'Learning' },
+      { n: 'BertViz', d: 'Visualise attention heads of real models in a notebook.', u: 'https://github.com/jessevig/bertviz', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Attention Is All You Need', s: 'Vaswani et al., NeurIPS 2017', u: 'https://arxiv.org/abs/1706.03762' },
+      { t: 'The Illustrated Transformer', s: 'Jay Alammar, blog', u: 'https://jalammar.github.io/illustrated-transformer/' },
+      { t: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness', s: 'Dao et al., NeurIPS 2022', u: 'https://arxiv.org/abs/2205.14135' }
+    ]
+  },
+  3: {
+    title: 'One transformer block, as equations',
+    math: R`<p>Modern decoder blocks (Llama, Qwen, Mistral and most others) use pre-normalisation with RMSNorm and a gated MLP called SwiGLU. For the residual stream \(\mathbf{h}\) of one token:</p>
+\[ \mathbf{h}' = \mathbf{h} + \operatorname{MHA}(\operatorname{RMSNorm}(\mathbf{h})) \]
+\[ \mathbf{h}'' = \mathbf{h}' + \operatorname{MLP}(\operatorname{RMSNorm}(\mathbf{h}')) \]
+\[ \operatorname{MLP}(\mathbf{u}) = W_{\text{down}} \left( \operatorname{SiLU}(W_{\text{gate}} \mathbf{u}) \odot W_{\text{up}} \mathbf{u} \right) \]
+\[ \operatorname{RMSNorm}(\mathbf{u}) = \frac{\mathbf{u}}{\sqrt{\frac{1}{d}\sum_i u_i^2 + \epsilon}} \odot \mathbf{g} \]
+<h4>Where the parameters are</h4>
+<p>With width \(d\) and MLP hidden size \(d_{ff}\) (often about \(\tfrac{8}{3}d\) to \(3.5d\)), one block holds roughly \(4d^2\) attention weights (fewer with grouped-query attention) and \(3\, d\, d_{ff}\) MLP weights. For \(d_{ff} \approx 3.5d\) that is about \(10.5 d^2\) in the MLP versus \(4d^2\) in attention, which is why the MLP holds about two thirds of the parameters. Total parameters \(\approx L \times 14.5\, d^2\) plus the embedding table.</p>`,
+    tools: [
+      { n: 'nanoGPT', d: 'A full GPT in about 300 lines of PyTorch, trainable on one GPU.', u: 'https://github.com/karpathy/nanoGPT', tag: 'Teaching code' },
+      { n: 'Transformers model code', d: 'Read modeling_llama.py to see these exact equations in production code.', u: 'https://github.com/huggingface/transformers/tree/main/src/transformers/models/llama', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'GLU Variants Improve Transformer (SwiGLU)', s: 'Shazeer, 2020', u: 'https://arxiv.org/abs/2002.05202' },
+      { t: 'Root Mean Square Layer Normalization', s: 'Zhang and Sennrich, NeurIPS 2019', u: 'https://arxiv.org/abs/1910.07467' },
+      { t: 'A Mathematical Framework for Transformer Circuits (the residual stream view)', s: 'Elhage et al., Anthropic, 2021', u: 'https://transformer-circuits.pub/2021/framework/index.html' },
+      { t: "Let's build GPT: from scratch, in code, spelled out", s: 'Andrej Karpathy, video lecture', u: 'https://www.youtube.com/watch?v=kCc8FmEb1nY' }
+    ]
+  }
+};
+
+/* ---------- 5. Training ---------- */
+DEEP['training'] = {
+  0: {
+    title: 'The loss, perplexity and compute',
+    math: R`<p>Pretraining minimises the average negative log-likelihood (cross-entropy) of each true next token over a dataset \(\mathcal{D}\):</p>
+\[ \mathcal{L}(\theta) = -\frac{1}{N}\sum_{t=1}^{N} \log p_\theta(x_t \mid x_{<t}) \]
+<p><b>Perplexity</b> is the exponential of that loss, \(\operatorname{PPL} = e^{\mathcal{L}}\). A loss of 2.0 nats means a perplexity of about 7.4: on average the model is as uncertain as a fair choice among 7.4 tokens.</p>
+<h4>How much compute?</h4>
+<p>Training a dense model with \(N\) parameters on \(D\) tokens costs about</p>
+\[ C \approx 6 N D \ \text{FLOPs} \]
+<p>(2 for the forward pass and 4 for the backward pass, per parameter per token). An 8B model on 15 trillion tokens needs about \(7.2 \times 10^{23}\) FLOPs. The Chinchilla study found compute-optimal training at roughly \(D \approx 20N\); current models deliberately train far longer than that, because a smaller model that has seen more data is cheaper to serve.</p>`,
+    code: [{ lang: 'python', title: 'The pretraining objective in PyTorch', src: R`
+import torch.nn.functional as F
+
+logits = model(input_ids).logits                  # (batch, seq, vocab)
+# predict token t+1 from positions up to t: shift by one
+loss = F.cross_entropy(
+    logits[:, :-1].reshape(-1, logits.size(-1)),
+    input_ids[:, 1:].reshape(-1),
+)
+perplexity = loss.exp()
+loss.backward()                                    # gradients for every weight
+optimizer.step(); optimizer.zero_grad()` }],
+    refs: [
+      { t: 'Training Compute-Optimal Large Language Models (Chinchilla)', s: 'Hoffmann et al., 2022', u: 'https://arxiv.org/abs/2203.15556' },
+      { t: 'Scaling Laws for Neural Language Models', s: 'Kaplan et al., 2020', u: 'https://arxiv.org/abs/2001.08361' },
+      { t: 'How to Scale Your Model', s: 'Google DeepMind, free online book on training and inference at scale', u: 'https://jax-ml.github.io/scaling-book/' }
+    ]
+  },
+  1: {
+    title: 'SFT, preference tuning and RL, in equations',
+    math: R`<h4>Supervised fine-tuning</h4>
+<p>Same cross-entropy as pretraining, but only on the assistant's tokens. Prompt tokens are masked out of the loss so the model learns to answer, not to imitate users:</p>
+\[ \mathcal{L}_{\text{SFT}} = -\sum_{t \in \text{assistant}} \log p_\theta(y_t \mid x, y_{<t}) \]
+<p>The conversations are rendered with the model's <b>chat template</b>, the exact special tokens that mark system, user and assistant turns (lesson 9 shows one). Training and serving must use the same template.</p>
+<h4>Direct Preference Optimisation (DPO)</h4>
+<p>Given a prompt \(x\), a preferred answer \(y_w\) and a rejected one \(y_l\), DPO raises the likelihood ratio of \(y_w\) over \(y_l\) relative to a frozen reference model \(\pi_{\text{ref}}\):</p>
+\[ \mathcal{L}_{\text{DPO}} = -\log \sigma\left( \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} \right) \]
+<h4>Reinforcement learning with verifiable rewards</h4>
+<p>Sample several answers per prompt, score each with a checker (unit tests pass, maths answer matches), and push up the probability of answers that beat the group average. GRPO, used for DeepSeek-R1, computes each answer's advantage as \(A_i = (r_i - \bar{r}) / \operatorname{std}(r)\) within its group, avoiding a separate value model.</p>`,
+    tools: [
+      { n: 'TRL', d: "Hugging Face's library for SFT, DPO, GRPO and reward modelling.", u: 'https://huggingface.co/docs/trl', tag: 'Open source' },
+      { n: 'OpenRLHF', d: 'Scalable RLHF and RL with verifiable rewards on Ray and vLLM.', u: 'https://github.com/OpenRLHF/OpenRLHF', tag: 'Open source' },
+      { n: 'Hugging Face Datasets', d: 'Load, stream and preprocess training corpora and chat datasets.', u: 'https://huggingface.co/docs/datasets', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Training language models to follow instructions with human feedback (InstructGPT)', s: 'Ouyang et al., 2022', u: 'https://arxiv.org/abs/2203.02155' },
+      { t: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model', s: 'Rafailov et al., NeurIPS 2023', u: 'https://arxiv.org/abs/2305.18290' },
+      { t: 'DeepSeekMath (introduces GRPO)', s: 'Shao et al., 2024', u: 'https://arxiv.org/abs/2402.03300' },
+      { t: 'DeepSeek-R1: Incentivizing Reasoning Capability via Reinforcement Learning', s: 'DeepSeek-AI, 2025', u: 'https://arxiv.org/abs/2501.12948' }
+    ]
+  },
+  3: {
+    title: 'LoRA in numbers, and a fine-tune you can run',
+    math: R`<p>LoRA keeps a pretrained matrix \(W \in \mathbb{R}^{d \times k}\) frozen and learns a low-rank update:</p>
+\[ W' = W + \frac{\alpha}{r} B A, \qquad B \in \mathbb{R}^{d \times r},\ A \in \mathbb{R}^{r \times k},\ r \ll \min(d,k) \]
+<p>Trainable parameters per matrix drop from \(dk\) to \(r(d + k)\). For \(d = k = 4096\) and \(r = 16\): \(131{,}072\) instead of \(16{,}777{,}216\), about 0.8%. \(B\) starts at zero, so training begins exactly at the base model. After training, \(BA\) can be merged into \(W\) for zero serving overhead, or kept separate to hot-swap adapters.</p>
+<p><b>QLoRA</b> stores the frozen base in 4-bit NF4 and trains LoRA adapters in 16-bit, which lets a 70B model be fine-tuned on a single 48 to 80 GB GPU.</p>
+<h4>Memory for full fine-tuning</h4>
+<p>Mixed-precision training with Adam needs about 16 bytes per parameter: 2 (BF16 weights) + 2 (gradients) + 4 (FP32 master weights) + 8 (two Adam moments), plus activations. An 8B model therefore needs about 128 GB before activations, which is why LoRA is the default for most teams.</p>`,
+    code: [{ lang: 'python', title: 'LoRA supervised fine-tuning with TRL and PEFT', src: R`
+# pip install trl peft datasets
+from datasets import load_dataset
+from peft import LoraConfig
+from trl import SFTConfig, SFTTrainer
+
+dataset = load_dataset("trl-lib/Capybara", split="train")   # chat-format conversations
+
+trainer = SFTTrainer(
+    model="Qwen/Qwen2.5-0.5B",
+    train_dataset=dataset,
+    args=SFTConfig(output_dir="qwen-lora", num_train_epochs=1,
+                   per_device_train_batch_size=4, learning_rate=2e-4),
+    peft_config=LoraConfig(r=16, lora_alpha=32, lora_dropout=0.05,
+                           target_modules="all-linear", task_type="CAUSAL_LM"),
+)
+trainer.train()
+trainer.save_model("qwen-lora")      # saves only the small adapter weights` }],
+    tools: [
+      { n: 'PEFT', d: 'LoRA, QLoRA and other parameter-efficient methods for Transformers models.', u: 'https://huggingface.co/docs/peft', tag: 'Open source' },
+      { n: 'Unsloth', d: 'Fast, memory-efficient LoRA and full fine-tuning on a single GPU.', u: 'https://github.com/unslothai/unsloth', tag: 'Open source' },
+      { n: 'Axolotl', d: 'Config-driven fine-tuning (YAML) across many architectures and GPUs.', u: 'https://github.com/axolotl-ai-cloud/axolotl', tag: 'Open source' },
+      { n: 'LLaMA-Factory', d: 'Web UI and CLI for SFT, DPO and LoRA on 100+ models.', u: 'https://github.com/hiyouga/LLaMA-Factory', tag: 'Open source' },
+      { n: 'DeepSpeed', d: 'ZeRO sharding to fit full fine-tuning and pretraining across GPUs.', u: 'https://github.com/deepspeedai/DeepSpeed', tag: 'Open source' },
+      { n: 'Weights & Biases', d: 'Track losses, learning rates and evals for every run.', u: 'https://wandb.ai', tag: 'Managed' }
+    ],
+    refs: [
+      { t: 'LoRA: Low-Rank Adaptation of Large Language Models', s: 'Hu et al., ICLR 2022', u: 'https://arxiv.org/abs/2106.09685' },
+      { t: 'QLoRA: Efficient Finetuning of Quantized LLMs', s: 'Dettmers et al., NeurIPS 2023', u: 'https://arxiv.org/abs/2305.14314' },
+      { t: 'LoRA Learns Less and Forgets Less', s: 'Biderman et al., 2024', u: 'https://arxiv.org/abs/2405.09673' }
+    ]
+  }
+};
+
+/* ---------- 6. GPUs ---------- */
+DEEP['gpus'] = {
+  0: {
+    title: 'Sizing GPU memory',
+    math: R`<p>Weights alone need</p>
+\[ M_{\text{weights}} = N \times b \]
+<p>with \(N\) parameters and \(b\) bytes per parameter. Then add the KV cache (next lesson), activations and runtime overhead, typically 10 to 20% on top.</p>
+<div class="tbl-wrap"><table><thead><tr><th>Format</th><th>Bytes per parameter</th><th>8B model</th><th>70B model</th></tr></thead><tbody>
+<tr><td>FP32</td><td>4</td><td>32 GB</td><td>280 GB</td></tr>
+<tr><td>BF16 / FP16</td><td>2</td><td>16 GB</td><td>140 GB</td></tr>
+<tr><td>FP8 / INT8</td><td>1</td><td>8 GB</td><td>70 GB</td></tr>
+<tr><td>INT4 / FP4</td><td>0.5 (+ scales)</td><td>about 4.5 GB</td><td>about 38 GB</td></tr>
+</tbody></table></div>
+<p>Reference cards: NVIDIA H100 SXM has 80 GB of HBM3 at about 3.35 TB/s; H200 has 141 GB at about 4.8 TB/s; B200 has about 180 GB at about 8 TB/s. Always check the exact SKU, because PCIe and SXM variants differ.</p>`,
+    code: [{ lang: 'bash', title: 'See what is actually on the card', src: R`
+nvidia-smi --query-gpu=name,memory.total,memory.used,utilization.gpu --format=csv
+# inside Python
+python -c "import torch; print(torch.cuda.mem_get_info())"   # (free, total) bytes` }],
+    tools: [
+      { n: 'nvidia-smi', d: 'Inspect GPU memory, utilisation and processes.', u: 'https://developer.nvidia.com/system-management-interface', tag: 'Tool' },
+      { n: 'Hugging Face model memory estimator', d: 'Estimate memory for inference and training of any Hub model.', u: 'https://huggingface.co/docs/accelerate/usage_guides/model_size_estimator', tag: 'Tool' }
+    ],
+    refs: [
+      { t: 'NVIDIA H100 Tensor Core GPU', s: 'NVIDIA product page and datasheet', u: 'https://www.nvidia.com/en-us/data-center/h100/' },
+      { t: 'How to Scale Your Model: rooflines and memory', s: 'Google DeepMind, free online book', u: 'https://jax-ml.github.io/scaling-book/roofline/' }
+    ]
+  },
+  2: {
+    title: 'The bandwidth bound and quantization',
+    math: R`<p>At batch size 1, every decoded token must stream all active weights from HBM once, so</p>
+\[ \text{tokens/s} \lesssim \frac{\text{memory bandwidth}}{N_{\text{active}} \times b} \]
+<p>A 70B model in FP8 on one H100 (3.35 TB/s): \(3.35 \times 10^{12} / 70 \times 10^{9} \approx 48\) tokens per second at best. An 8B model in BF16: about 210. Batching reuses each weight read across many sequences, which is why servers batch (lesson 8).</p>
+<h4>Arithmetic intensity</h4>
+<p>A kernel is memory-bound when its FLOPs per byte moved fall below the hardware ratio (about 300 FLOPs/byte for BF16 on H100). Decode at small batch does about 2 FLOPs per weight per token, far below that line; prefill on long prompts is compute-bound.</p>
+<h4>Quantization</h4>
+<p>Uniform quantization maps a real weight \(w\) to a small integer with a scale \(s\) and zero point \(z\):</p>
+\[ q = \operatorname{round}\left(\frac{w}{s}\right) + z, \qquad \hat{w} = s\,(q - z) \]
+<p>Scales are stored per channel or per group of 32 to 128 weights. Methods differ in how they choose scales to protect important weights: GPTQ uses second-order error correction, AWQ protects channels with large activations, and FP8 or FP4 formats keep a floating-point shape with tiny exponents.</p>`,
+    code: [
+      { lang: 'python', title: 'Load a model in 4-bit with bitsandbytes', src: R`
+import torch
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+
+bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                         bnb_4bit_compute_dtype=torch.bfloat16)
+model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-7B-Instruct",
+                                             quantization_config=bnb, device_map="auto")
+print(model.get_memory_footprint() / 1e9, "GB")` },
+      { lang: 'bash', title: 'Serve a pre-quantized FP8 checkpoint with vLLM', src: R`
+vllm serve RedHatAI/Meta-Llama-3.1-8B-Instruct-FP8 --max-model-len 16384` }
+    ],
+    tools: [
+      { n: 'bitsandbytes', d: '8-bit and 4-bit (NF4) quantization, used by QLoRA.', u: 'https://github.com/bitsandbytes-foundation/bitsandbytes', tag: 'Open source' },
+      { n: 'LLM Compressor', d: 'Produce GPTQ, AWQ, FP8 and FP4 checkpoints that vLLM serves directly.', u: 'https://github.com/vllm-project/llm-compressor', tag: 'Open source' },
+      { n: 'llama.cpp GGUF', d: 'Quantize to GGUF (Q4_K_M and friends) for CPU, Apple Silicon and consumer GPUs.', u: 'https://github.com/ggml-org/llama.cpp', tag: 'Open source' },
+      { n: 'TensorRT Model Optimizer', d: "NVIDIA's quantization toolkit for FP8 and FP4 on Hopper and Blackwell.", u: 'https://github.com/NVIDIA/TensorRT-Model-Optimizer', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers', s: 'Frantar et al., ICLR 2023', u: 'https://arxiv.org/abs/2210.17323' },
+      { t: 'AWQ: Activation-aware Weight Quantization', s: 'Lin et al., MLSys 2024', u: 'https://arxiv.org/abs/2306.00978' },
+      { t: 'LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale', s: 'Dettmers et al., NeurIPS 2022', u: 'https://arxiv.org/abs/2208.07339' }
+    ]
+  },
+  3: {
+    title: 'Parallelism and mixture-of-experts',
+    math: R`<h4>Tensor parallelism</h4>
+<p>Split a weight matrix column-wise across \(g\) GPUs: \(W = [W_1, \dots, W_g]\). Each GPU computes \(X W_i\), and an all-reduce combines results after each block. Communication happens every layer, so tensor parallelism stays inside one server with NVLink.</p>
+<h4>Pipeline parallelism</h4>
+<p>Layers \(1..L\) are split into \(g\) stages. Activations flow between stages once per micro-batch, so it tolerates slower links and spans servers.</p>
+<h4>Mixture-of-experts routing</h4>
+<p>A router scores \(E\) expert MLPs for each token and keeps the top \(k\):</p>
+\[ \mathbf{y} = \sum_{e \in \operatorname{TopK}(\mathbf{g}(\mathbf{h}),\,k)} g_e(\mathbf{h})\, \operatorname{MLP}_e(\mathbf{h}) \]
+<p>Compute per token scales with \(k\), memory scales with \(E\). An auxiliary loss keeps experts evenly loaded.</p>`,
+    code: [{ lang: 'bash', title: 'Split a 70B model across 4 GPUs in vLLM', src: R`
+vllm serve meta-llama/Llama-3.1-70B-Instruct --tensor-parallel-size 4
+# two servers of 8 GPUs: tensor parallel inside each, pipeline parallel across them
+vllm serve <model> --tensor-parallel-size 8 --pipeline-parallel-size 2` }],
+    tools: [
+      { n: 'Megatron-LM', d: "NVIDIA's reference for tensor, pipeline and expert parallel training.", u: 'https://github.com/NVIDIA/Megatron-LM', tag: 'Open source' },
+      { n: 'PyTorch FSDP', d: 'Fully sharded data parallel training built into PyTorch.', u: 'https://docs.pytorch.org/docs/stable/fsdp.html', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer', s: 'Shazeer et al., ICLR 2017', u: 'https://arxiv.org/abs/1701.06538' },
+      { t: 'Switch Transformers', s: 'Fedus, Zoph and Shazeer, JMLR 2022', u: 'https://arxiv.org/abs/2101.03961' },
+      { t: 'Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism', s: 'Shoeybi et al., 2019', u: 'https://arxiv.org/abs/1909.08053' }
+    ]
+  }
+};
+
+/* ---------- 7. KV cache ---------- */
+DEEP['kv-cache'] = {
+  1: {
+    title: 'The cache formula, worked',
+    math: R`<p>For each token, every layer stores one key and one value vector per KV head:</p>
+\[ \text{bytes per token} = 2 \cdot L \cdot H_{kv} \cdot d_h \cdot b \]
+\[ M_{\text{KV}} = \text{bytes per token} \times \text{tokens per sequence} \times \text{concurrent sequences} \]
+<p>Llama 3.1 70B: \(L = 80\) layers, \(H_{kv} = 8\), \(d_h = 128\), BF16 (\(b = 2\)):</p>
+\[ 2 \cdot 80 \cdot 8 \cdot 128 \cdot 2 = 327{,}680 \text{ bytes} = 320 \text{ KiB per token} \]
+<p>A 128k-token conversation then needs \(131{,}072 \times 327{,}680 \approx 43\) GB.</p>
+<h4>Variants that shrink it</h4>
+<ul>
+<li><b>Multi-query attention (MQA):</b> \(H_{kv} = 1\).</li>
+<li><b>Grouped-query attention (GQA):</b> \(H_{kv}\) groups shared by many query heads (Llama 3 uses 8 for 64 query heads).</li>
+<li><b>Multi-head latent attention (MLA):</b> DeepSeek-V2 and V3 cache one compressed latent vector per token and reconstruct keys and values from it.</li>
+<li><b>FP8 cache:</b> \(b = 1\), half the footprint.</li>
+</ul>`,
+    code: [{ lang: 'python', title: 'Compute it for any Hugging Face model', src: R`
+from transformers import AutoConfig
+
+cfg = AutoConfig.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+head_dim = getattr(cfg, "head_dim", None) or cfg.hidden_size // cfg.num_attention_heads
+per_token = 2 * cfg.num_hidden_layers * cfg.num_key_value_heads * head_dim * 2   # BF16
+print(per_token / 1024, "KiB per token")
+print(per_token * 32_768 / 1e9, "GB for one 32k-token sequence")` }],
+    refs: [
+      { t: 'GQA: Training Generalized Multi-Query Transformer Models', s: 'Ainslie et al., EMNLP 2023', u: 'https://arxiv.org/abs/2305.13245' },
+      { t: 'Fast Transformer Decoding: One Write-Head is All You Need (MQA)', s: 'Shazeer, 2019', u: 'https://arxiv.org/abs/1911.02150' },
+      { t: 'DeepSeek-V2 (multi-head latent attention)', s: 'DeepSeek-AI, 2024', u: 'https://arxiv.org/abs/2405.04434' }
+    ]
+  },
+  3: {
+    title: 'Turning these tricks on',
+    code: [
+      { lang: 'python', title: 'vLLM: prefix caching and an FP8 cache', src: R`
+from vllm import LLM, SamplingParams
+
+llm = LLM(
+    model="Qwen/Qwen2.5-7B-Instruct",
+    enable_prefix_caching=True,      # reuse KV blocks of requests that share a prefix
+    kv_cache_dtype="fp8",            # half the cache memory
+    gpu_memory_utilization=0.90,     # fraction of HBM for weights plus cache
+    max_model_len=32768,
+)
+out = llm.generate(["...long shared system prompt... Question: ..."],
+                   SamplingParams(temperature=0.2, max_tokens=200))` },
+      { lang: 'python', title: 'Provider prompt caching (Claude): mark the stable prefix', src: R`
+resp = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=500,
+    system=[{
+        "type": "text",
+        "text": LONG_POLICY_AND_TOOL_GUIDE,          # thousands of stable tokens
+        "cache_control": {"type": "ephemeral"},      # cache everything up to here
+    }],
+    messages=[{"role": "user", "content": question}],   # changing part goes last
+)
+print(resp.usage.cache_read_input_tokens, resp.usage.cache_creation_input_tokens)` }
+    ],
+    tools: [
+      { n: 'vLLM PagedAttention', d: 'Block-based KV cache with automatic prefix caching.', u: 'https://docs.vllm.ai/en/latest/design/prefix_caching.html', tag: 'Open source' },
+      { n: 'SGLang RadixAttention', d: 'Caches shared prefixes in a radix tree across requests.', u: 'https://github.com/sgl-project/sglang', tag: 'Open source' },
+      { n: 'LMCache', d: 'Offload and share KV caches across GPUs, CPU memory and disk.', u: 'https://github.com/LMCache/LMCache', tag: 'Open source' },
+      { n: 'Claude prompt caching', d: 'Cache marked prefixes; cached reads are billed at a fraction of input price.', u: CLAUDE_DOCS + '/build-with-claude/prompt-caching', tag: 'API' },
+      { n: 'OpenAI prompt caching', d: 'Automatic caching of repeated prefixes over a length threshold.', u: 'https://platform.openai.com/docs/guides/prompt-caching', tag: 'API' }
+    ],
+    refs: [
+      { t: 'Efficient Memory Management for LLM Serving with PagedAttention', s: 'Kwon et al., SOSP 2023', u: 'https://arxiv.org/abs/2309.06180' },
+      { t: 'SGLang: Efficient Execution of Structured Language Model Programs', s: 'Zheng et al., 2023', u: 'https://arxiv.org/abs/2312.07104' }
+    ]
+  }
+};
+
+/* ---------- 8. Serving ---------- */
+DEEP['serving'] = {
+  1: {
+    title: 'Why batching is almost free',
+    math: R`<p>One decode step with batch size \(B\) reads the weights once and performs \(B\) times the arithmetic. While the step is memory-bound, its time barely changes with \(B\), so throughput rises almost linearly:</p>
+\[ \text{throughput} \approx \frac{B}{t_{\text{step}}(B)}, \qquad t_{\text{step}}(B) \approx \max\left( \frac{N b}{\text{BW}},\ \frac{2 N B}{\text{FLOPS}} \right) \]
+<p>The first term (reading weights) dominates until \(B\) reaches the hardware's FLOPs-per-byte ratio; after that the GPU becomes compute-bound and extra users add latency. In practice the KV cache usually runs out of memory first, which caps \(B\).</p>
+<p><b>Continuous batching</b> schedules at the granularity of one decode step: whenever a sequence finishes, a waiting request takes its slot on the next step, so the batch stays full.</p>`,
+    refs: [
+      { t: 'Orca: A Distributed Serving System for Transformer-Based Generative Models (iteration-level scheduling)', s: 'Yu et al., OSDI 2022', u: 'https://www.usenix.org/conference/osdi22/presentation/yu' },
+      { t: 'How continuous batching enables 23x throughput in LLM inference', s: 'Anyscale engineering blog', u: 'https://www.anyscale.com/blog/continuous-batching-llm-inference' }
+    ]
+  },
+  2: {
+    title: 'Latency maths and speculative decoding',
+    math: R`<p>For a response of \(m\) output tokens:</p>
+\[ T_{\text{total}} = \text{TTFT} + (m - 1)\cdot\text{TPOT} \]
+<p>Capacity planning uses Little's law: the average number of requests in the system equals arrival rate times time in system, \(L = \lambda W\). At 20 requests per second and 6 seconds each, about 120 requests are in flight; size the batch and KV cache for that.</p>
+<h4>Speculative decoding</h4>
+<p>A small draft model proposes \(\gamma\) tokens; the large model verifies all of them in one parallel pass and keeps the longest accepted prefix. With acceptance rate \(\alpha\) per token, the expected tokens per large-model pass is</p>
+\[ \mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{\gamma + 1}}{1 - \alpha} \]
+<p>With \(\alpha = 0.8\) and \(\gamma = 4\) that is about 3.4 tokens per pass. The output distribution is provably unchanged.</p>
+<h4>Disaggregated serving</h4>
+<p>Prefill is compute-bound and decode is memory-bound, so large deployments run them on separate GPU pools and ship the KV cache between them, tuning each pool for its own bottleneck.</p>`,
+    code: [{ lang: 'bash', title: 'Benchmark TTFT, TPOT and throughput against your server', src: R`
+vllm bench serve --model Qwen/Qwen2.5-7B-Instruct \
+  --dataset-name random --random-input-len 2000 --random-output-len 300 \
+  --num-prompts 200 --request-rate 8
+# reports mean and p99 TTFT, TPOT and output tokens per second` }],
+    tools: [
+      { n: 'GuideLLM', d: 'Load-test LLM servers and report latency percentiles across request rates.', u: 'https://github.com/vllm-project/guidellm', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Fast Inference from Transformers via Speculative Decoding', s: 'Leviathan, Kalman and Matias, ICML 2023', u: 'https://arxiv.org/abs/2211.17192' },
+      { t: 'DistServe: Disaggregating Prefill and Decoding for Goodput-optimized LLM Serving', s: 'Zhong et al., OSDI 2024', u: 'https://arxiv.org/abs/2401.09670' }
+    ]
+  },
+  4: {
+    title: 'Build the roof yourself',
+    codeNote: 'Most open engines expose an OpenAI-compatible API, so the same client code talks to vLLM, SGLang, Ollama or a gateway in front of several providers.',
+    code: [
+      { lang: 'bash', title: 'Start an OpenAI-compatible server', src: R`
+pip install vllm
+vllm serve Qwen/Qwen2.5-7B-Instruct --port 8000 --max-model-len 32768` },
+      { lang: 'python', title: 'Stream tokens from it', src: R`
+from openai import OpenAI
+
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="unused")
+stream = client.chat.completions.create(
+    model="Qwen/Qwen2.5-7B-Instruct",
+    messages=[{"role": "user", "content": "Explain the KV cache in two sentences."}],
+    temperature=0.3, max_tokens=200, stream=True,
+)
+for chunk in stream:                      # server-sent events, one delta per token batch
+    print(chunk.choices[0].delta.content or "", end="", flush=True)` }
+    ],
+    tools: [
+      { n: 'vLLM', d: 'High-throughput serving with PagedAttention and continuous batching.', u: 'https://docs.vllm.ai', tag: 'Open source' },
+      { n: 'SGLang', d: 'Fast serving with RadixAttention prefix caching and structured outputs.', u: 'https://github.com/sgl-project/sglang', tag: 'Open source' },
+      { n: 'TensorRT-LLM', d: "NVIDIA's optimised inference engine for its GPUs.", u: 'https://github.com/NVIDIA/TensorRT-LLM', tag: 'Open source' },
+      { n: 'NVIDIA Dynamo', d: 'Datacenter-scale distributed serving with disaggregated prefill and decode.', u: 'https://github.com/ai-dynamo/dynamo', tag: 'Open source' },
+      { n: 'Ollama', d: 'Local serving for laptops and workstations.', u: 'https://ollama.com', tag: 'Open source' },
+      { n: 'LiteLLM', d: 'One OpenAI-style gateway for 100+ providers, with routing, budgets and logging.', u: 'https://github.com/BerriAI/litellm', tag: 'Open source' },
+      { n: 'KServe', d: 'Kubernetes-native model serving and autoscaling.', u: 'https://kserve.github.io/website/', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'vLLM documentation: OpenAI-compatible server', s: 'vLLM project', u: 'https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html' },
+      { t: 'Server-sent events', s: 'MDN Web Docs', u: 'https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events' }
+    ]
+  }
+};
+
+/* ---------- 9. Context is the program ---------- */
+DEEP['context'] = {
+  0: {
+    title: 'Chat templates: what the model really reads',
+    math: R`<p>The API's list of messages is not what the network sees. A <b>chat template</b> renders it into one token sequence with special tokens marking each role. Qwen and many other models use the ChatML format:</p>
+<div class="mono-box">&lt;|im_start|&gt;system
+You are a part-of-speech tagger. Reply in JSON.&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+Paris&lt;|im_end|&gt;
+&lt;|im_start|&gt;assistant
+</div>
+<p>Llama 3 uses different markers (<code>&lt;|start_header_id|&gt;user&lt;|end_header_id|&gt;</code> … <code>&lt;|eot_id|&gt;</code>). The final open assistant header is the <em>generation prompt</em>: the model continues from there. Templates are stored as Jinja in the model's <code>tokenizer_config.json</code> or <code>chat_template.jinja</code>.</p>
+<h4>Rules when designing or changing a template</h4>
+<ul>
+<li>Serve with exactly the template used in fine-tuning. A missing newline or role marker measurably hurts quality.</li>
+<li>Role markers must be single special tokens that users cannot type, or prompt injection gets easier.</li>
+<li>Include tool definitions, tool calls and tool results in the template if the model will use tools.</li>
+<li>When fine-tuning, mask the loss on everything except assistant turns.</li>
+</ul>`,
+    code: [
+      { lang: 'python', title: 'Render a conversation with the model’s own template', src: R`
+from transformers import AutoTokenizer
+
+tok = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+messages = [
+    {"role": "system", "content": "You are a part-of-speech tagger. Reply in JSON."},
+    {"role": "user", "content": "Paris"},
+]
+text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+print(text)                       # the exact string the model receives
+ids = tok.apply_chat_template(messages, add_generation_prompt=True)
+print(len(ids), "tokens")` },
+      { lang: 'jinja', title: 'A minimal ChatML template (Jinja)', src: R`
+{% for m in messages %}<|im_start|>{{ m['role'] }}
+{{ m['content'] }}<|im_end|>
+{% endfor %}{% if add_generation_prompt %}<|im_start|>assistant
+{% endif %}` }
+    ],
+    tools: [
+      { n: 'Transformers chat templates', d: 'apply_chat_template, template authoring and tool-use templates.', u: 'https://huggingface.co/docs/transformers/chat_templating', tag: 'Open source' },
+      { n: 'Jinja', d: 'The template language chat templates are written in.', u: 'https://jinja.palletsprojects.com', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Chat templates', s: 'Hugging Face Transformers documentation', u: 'https://huggingface.co/docs/transformers/chat_templating' },
+      { t: 'Prompt engineering overview: system prompts and roles', s: 'Claude Developer Platform', u: CLAUDE_DOCS + '/build-with-claude/prompt-engineering/overview' }
+    ]
+  },
+  3: {
+    title: 'Budgeting the window',
+    math: R`<p>Every call must satisfy</p>
+\[ T_{\text{system}} + T_{\text{tools}} + T_{\text{history}} + T_{\text{retrieved}} + T_{\text{user}} + T_{\max\_\text{output}} \le W \]
+<p>where \(W\) is the context window. Cost per call is roughly \(\text{input tokens} \times p_{\text{in}} + \text{output tokens} \times p_{\text{out}}\), so a chat that re-sends history pays for turn 1 on every later turn: total input over \(n\) turns grows as \(O(n^2)\).</p>
+<h4>Strategies when history grows</h4>
+<ul>
+<li><b>Sliding window:</b> keep the system prompt and the last \(k\) turns. Simple, forgets early facts.</li>
+<li><b>Summarise and truncate:</b> replace old turns with a running summary written by a model.</li>
+<li><b>Retrieve from history:</b> embed past turns and fetch only relevant ones (RAG over the conversation).</li>
+<li><b>Count before you send:</b> measure tokens with the provider's counter rather than guessing from characters.</li>
+</ul>`,
+    code: [
+      { lang: 'python', title: 'Count tokens before sending (Claude)', src: R`
+count = client.messages.count_tokens(
+    model="claude-sonnet-5-5",
+    system=SYSTEM_PROMPT,
+    messages=history,
+)
+print(count.input_tokens)` },
+      { lang: 'python', title: 'A simple history trimmer', src: R`
+def trim(history, budget, count):
+    """Drop the oldest turns until the conversation fits the token budget."""
+    kept = list(history)
+    while kept and count(kept) > budget:
+        kept = kept[2:]          # remove one user and assistant pair
+    return kept` }
+    ],
+    tools: [
+      { n: 'Claude token counting', d: 'Exact input token counts for a prospective request.', u: CLAUDE_DOCS + '/build-with-claude/token-counting', tag: 'API' },
+      { n: 'tiktoken', d: 'Count tokens locally for OpenAI tokenizers.', u: 'https://github.com/openai/tiktoken', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Lost in the Middle: How Language Models Use Long Contexts', s: 'Liu et al., TACL 2024', u: 'https://arxiv.org/abs/2307.03172' },
+      { t: 'Context Rot: How Increasing Input Tokens Impacts LLM Performance', s: 'Chroma Research, 2025', u: 'https://research.trychroma.com/context-rot' }
+    ]
+  }
+};
+
+/* ---------- 10. Steering ---------- */
+DEEP['steering'] = {
+  0: {
+    title: 'Writing good few-shot examples',
+    math: R`<ul>
+<li>Use 3 to 5 examples that cover the hard cases: an empty field, an ambiguous input, the wrong language.</li>
+<li>Vary them. Models copy surface patterns, so five examples with the same length or the same answer bias the output.</li>
+<li>Wrap examples in clear tags (for example <code>&lt;example&gt;</code>) so they are not mistaken for the real input.</li>
+<li>Put examples in the stable part of the prompt so prompt caching covers them.</li>
+<li>When examples alone are not enough, combine them with a schema (next step) or fine-tune.</li>
+</ul>`,
+    refs: [
+      { t: 'Language Models are Few-Shot Learners (GPT-3)', s: 'Brown et al., NeurIPS 2020', u: 'https://arxiv.org/abs/2005.14165' },
+      { t: 'Prompting best practices, including using examples', s: 'Claude Developer Platform', u: CLAUDE_DOCS + '/build-with-claude/prompt-engineering/claude-prompting-best-practices' }
+    ]
+  },
+  1: {
+    title: 'Constrained decoding, formally and in code',
+    math: R`<p>A grammar or JSON schema is compiled into an automaton. At step \(t\) its state \(s_t\) defines the set of tokens \(A(s_t)\) that keep the output valid. The sampler sees masked logits:</p>
+\[ z'_i = \begin{cases} z_i & i \in A(s_t) \\ -\infty & \text{otherwise} \end{cases} \]
+<p>After softmax every invalid token has probability exactly zero, so the output parses by construction. Engines such as XGrammar precompute most masks so the overhead per token is microseconds.</p>
+<p>Caveat: constraints guarantee <em>syntax</em>, not <em>truth</em>. A field can be valid JSON and still wrong; validate values in code.</p>`,
+    code: [{ lang: 'python', title: 'JSON schema output from a Pydantic model', src: R`
+# Works with OpenAI and with OpenAI-compatible servers such as vLLM and SGLang
+from typing import Literal
+from pydantic import BaseModel
+from openai import OpenAI
+
+class Tag(BaseModel):
+    word: str
+    pos: Literal["NOUN", "VERB", "ADJ", "OTHER"]
+
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="unused")
+resp = client.chat.completions.create(
+    model="Qwen/Qwen2.5-7B-Instruct",
+    messages=[{"role": "user", "content": "Tag the word: Paris"}],
+    response_format={"type": "json_schema",
+                     "json_schema": {"name": "tag", "schema": Tag.model_json_schema(), "strict": True}},
+)
+tag = Tag.model_validate_json(resp.choices[0].message.content)   # always parses
+print(tag)` }],
+    tools: [
+      { n: 'XGrammar', d: 'Fast grammar-constrained decoding; default backend in vLLM and SGLang.', u: 'https://github.com/mlc-ai/xgrammar', tag: 'Open source' },
+      { n: 'llguidance', d: 'Low-latency constraint engine for JSON schema, regex and grammars.', u: 'https://github.com/guidance-ai/llguidance', tag: 'Open source' },
+      { n: 'Outlines', d: 'Structured generation with Pydantic, regex and grammars in Python.', u: 'https://github.com/dottxt-ai/outlines', tag: 'Open source' },
+      { n: 'Instructor', d: 'Typed, validated outputs from many providers using Pydantic.', u: 'https://github.com/567-labs/instructor', tag: 'Open source' },
+      { n: 'Claude structured outputs', d: 'Schema-guaranteed JSON and strict tool inputs on Claude.', u: CLAUDE_DOCS + '/build-with-claude/structured-outputs', tag: 'API' },
+      { n: 'OpenAI Structured Outputs', d: 'json_schema response format with strict mode.', u: 'https://platform.openai.com/docs/guides/structured-outputs', tag: 'API' }
+    ],
+    refs: [
+      { t: 'Efficient Guided Generation for Large Language Models (the Outlines method)', s: 'Willard and Louf, 2023', u: 'https://arxiv.org/abs/2307.09702' },
+      { t: 'XGrammar: Flexible and Efficient Structured Generation Engine', s: 'Dong et al., 2024', u: 'https://arxiv.org/abs/2411.15100' },
+      { t: 'Structured outputs in vLLM', s: 'vLLM documentation', u: 'https://docs.vllm.ai/en/latest/features/structured_outputs.html' }
+    ]
+  },
+  3: {
+    title: 'Reasoning budgets and sampling more than once',
+    math: R`<p>If one sampled answer is correct with probability \(p\), drawing \(k\) independent samples and checking them gives</p>
+\[ \text{pass@}k = 1 - (1 - p)^{k} \]
+<p>With \(p = 0.4\) and \(k = 5\), pass@5 is about 0.92. When no checker exists, <b>self-consistency</b> takes the majority answer across samples, which helps whenever correct reasoning paths agree more often than wrong ones.</p>
+<p>Reasoning models move this search inside one response: they spend output tokens exploring and checking before answering. Cost scales with thinking tokens, so set the effort level per task and measure the accuracy gain against latency.</p>`,
+    code: [{ lang: 'python', title: 'Turning on thinking for a hard task (Claude)', src: R`
+resp = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=16000,
+    thinking={"type": "adaptive"},          # the model decides how long to think
+    output_config={"effort": "high"},       # low, medium or high: trade cost for depth
+    messages=[{"role": "user", "content": TRIP_PLANNING_TASK}],
+)
+for block in resp.content:
+    if block.type == "text":
+        print(block.text)` }],
+    codeNote: 'Older models use <code>thinking={"type": "enabled", "budget_tokens": N}</code> instead. Check the provider’s documentation for the model you deploy.',
+    tools: [
+      { n: 'Claude extended thinking', d: 'Adaptive thinking and effort levels.', u: CLAUDE_DOCS + '/build-with-claude/extended-thinking', tag: 'API' },
+      { n: 'OpenAI reasoning models', d: 'reasoning.effort and reasoning summaries.', u: 'https://platform.openai.com/docs/guides/reasoning', tag: 'API' }
+    ],
+    refs: [
+      { t: 'Chain-of-Thought Prompting Elicits Reasoning in Large Language Models', s: 'Wei et al., NeurIPS 2022', u: 'https://arxiv.org/abs/2201.11903' },
+      { t: 'Self-Consistency Improves Chain of Thought Reasoning in Language Models', s: 'Wang et al., ICLR 2023', u: 'https://arxiv.org/abs/2203.11171' },
+      { t: 'Evaluating Large Language Models Trained on Code (defines pass@k)', s: 'Chen et al., 2021', u: 'https://arxiv.org/abs/2107.03374' }
+    ]
+  }
+};
+/* ================= "Go deeper" content, units 5 to 8 ================= */
+
+/* ---------- 11. Fine-tune or retrieve ---------- */
+DEEP['knowledge'] = {
+  2: {
+    title: 'RAG end to end, with real tools',
+    math: R`<p>Retrieval-augmented generation treats the retrieved passage \(z\) as a latent variable. The original formulation marginalises over the top-\(k\) passages from a retriever \(p_\eta(z \mid x)\):</p>
+\[ p(y \mid x) \approx \sum_{z \in \operatorname{top-}k} p_\eta(z \mid x)\; p_\theta(y \mid x, z) \]
+<p>Production systems simplify: retrieve \(k\) chunks, paste them into the context with their sources, and generate once.</p>
+<h4>Picking a vector store</h4>
+<div class="tbl-wrap"><table><thead><tr><th>If you…</th><th>Start with</th></tr></thead><tbody>
+<tr><td>Already run PostgreSQL and have up to tens of millions of chunks</td><td>pgvector: vectors next to your rows, SQL filters and joins, transactions, existing backups</td></tr>
+<tr><td>Need a dedicated, filter-heavy vector engine at scale</td><td>Qdrant, Weaviate or Milvus (self-hosted or managed)</td></tr>
+<tr><td>Want zero operations</td><td>Pinecone or a managed tier of the above</td></tr>
+<tr><td>Already run Elasticsearch or OpenSearch</td><td>Their kNN plus BM25 for hybrid search in one engine</td></tr>
+<tr><td>Prototype in a notebook or embed in an app</td><td>Chroma, LanceDB, or FAISS as an in-process library</td></tr>
+</tbody></table></div>
+<p>Choose the <b>embedding model</b> by measured retrieval quality on your language and domain (the MTEB leaderboard is a starting point, your own eval set decides). For Kurdish, Arabic-script or other lower-resource languages, test multilingual models such as BGE-M3 or multilingual E5 on a few hundred real queries before committing.</p>`,
+    code: [
+      { lang: 'sql', title: 'pgvector: table, index and a filtered search', src: R`
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE chunks (
+  id        bigserial PRIMARY KEY,
+  doc_id    text NOT NULL,
+  lang      text,
+  content   text NOT NULL,
+  embedding vector(1024)            -- must match the embedding model's dimension
+);
+
+-- approximate nearest neighbour index (HNSW) for cosine distance
+CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);
+
+-- top 5 chunks by cosine similarity, filtered by metadata
+SELECT id, doc_id, content, 1 - (embedding <=> $1) AS similarity
+FROM chunks
+WHERE lang = 'ckb'
+ORDER BY embedding <=> $1
+LIMIT 5;` },
+      { lang: 'python', title: 'Index and query from Python', src: R`
+# pip install sentence-transformers "psycopg[binary]" pgvector
+import psycopg
+from pgvector.psycopg import register_vector
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("BAAI/bge-m3")             # multilingual, 1024 dimensions
+conn = psycopg.connect("postgresql://localhost/rag", autocommit=True)
+register_vector(conn)
+
+chunks = [("faq-12", "ckb", "..."), ("faq-13", "en", "...")]
+vecs = model.encode([c[2] for c in chunks], normalize_embeddings=True)
+with conn.cursor() as cur:
+    for (doc, lang, text), v in zip(chunks, vecs):
+        cur.execute("INSERT INTO chunks (doc_id, lang, content, embedding) VALUES (%s, %s, %s, %s)",
+                    (doc, lang, text, v))
+
+q = model.encode("how do I cancel my plan?", normalize_embeddings=True)
+rows = conn.execute("SELECT content FROM chunks ORDER BY embedding <=> %s LIMIT 5", (q,)).fetchall()
+context = "\n\n".join(r[0] for r in rows)                # goes into the prompt with sources` }
+    ],
+    tools: [
+      { n: 'pgvector', d: 'Vector type, distance operators and HNSW/IVFFlat indexes inside PostgreSQL.', u: 'https://github.com/pgvector/pgvector', tag: 'Open source' },
+      { n: 'Qdrant', d: 'Rust vector database with rich payload filters and hybrid search.', u: 'https://qdrant.tech/documentation/', tag: 'Open source' },
+      { n: 'Weaviate', d: 'Vector database with built-in hybrid BM25 plus vector search.', u: 'https://weaviate.io', tag: 'Open source' },
+      { n: 'Milvus', d: 'Distributed vector database for billion-scale collections.', u: 'https://milvus.io/docs', tag: 'Open source' },
+      { n: 'Pinecone', d: 'Fully managed serverless vector database.', u: 'https://docs.pinecone.io', tag: 'Managed' },
+      { n: 'Elasticsearch / OpenSearch', d: 'Mature BM25 search engines with kNN vector fields.', u: 'https://docs.opensearch.org/latest/vector-search/', tag: 'Open source' },
+      { n: 'Chroma', d: 'Developer-friendly embedded or server vector store.', u: 'https://docs.trychroma.com', tag: 'Open source' },
+      { n: 'LanceDB', d: 'Embedded columnar vector database on the Lance format.', u: 'https://lancedb.com', tag: 'Open source' },
+      { n: 'FAISS', d: "Meta's library of exact and approximate nearest-neighbour indexes.", u: 'https://github.com/facebookresearch/faiss', tag: 'Open source' },
+      { n: 'Sentence Transformers', d: 'Embedding and reranker models in a few lines of Python.', u: 'https://sbert.net', tag: 'Open source' },
+      { n: 'LlamaIndex', d: 'Framework for ingestion, indexing and query pipelines over your data.', u: 'https://docs.llamaindex.ai', tag: 'Open source' },
+      { n: 'Haystack', d: 'Composable pipelines for search and RAG.', u: 'https://haystack.deepset.ai', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks', s: 'Lewis et al., NeurIPS 2020', u: 'https://arxiv.org/abs/2005.11401' },
+      { t: 'MTEB: Massive Text Embedding Benchmark leaderboard', s: 'Hugging Face Space', u: 'https://huggingface.co/spaces/mteb/leaderboard' },
+      { t: 'BGE M3-Embedding: multi-lingual, multi-functionality, multi-granularity', s: 'Chen et al., 2024', u: 'https://arxiv.org/abs/2402.03216' },
+      { t: 'Introducing Contextual Retrieval', s: 'Anthropic engineering, 2024', u: 'https://www.anthropic.com/news/contextual-retrieval' }
+    ]
+  }
+};
+
+/* ---------- 12. Retrieval, hands on ---------- */
+DEEP['retrieval'] = {
+  0: {
+    title: 'Chunking in practice',
+    math: R`<p>A chunk of \(c\) tokens with overlap \(o\) advances by a stride of \(c - o\), so a document of \(n\) tokens yields about</p>
+\[ \left\lceil \frac{n - o}{c - o} \right\rceil \text{ chunks} \]
+<p>Overlap of 10 to 20% of \(c\) costs that much extra storage and embedding compute.</p>
+<h4>Sensible starting points</h4>
+<ul>
+<li>Respect structure first: split on headings, sections, list items and table rows before falling back to sentence or token limits.</li>
+<li>200 to 500 tokens for FAQ-style and support content; 500 to 1,000 for dense technical or legal prose.</li>
+<li>Keep metadata on every chunk: document id, title, section path, language, date, access permissions.</li>
+<li>Parse PDFs and slides into clean text with layout awareness; most retrieval failures start with bad extraction.</li>
+<li>Tune chunk size on your eval set (recall@k), not by intuition.</li>
+</ul>`,
+    code: [{ lang: 'python', title: 'Structure-aware splitting', src: R`
+# pip install langchain-text-splitters
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1200, chunk_overlap=150,                  # characters, roughly 300 tokens
+    separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " "],   # headings first, words last
+)
+chunks = splitter.split_text(document_text)` }],
+    tools: [
+      { n: 'Docling', d: 'Converts PDF, DOCX, PPTX and HTML into structured Markdown with tables and layout.', u: 'https://github.com/docling-project/docling', tag: 'Open source' },
+      { n: 'Unstructured', d: 'Partition documents of many formats into typed elements.', u: 'https://github.com/Unstructured-IO/unstructured', tag: 'Open source' },
+      { n: 'LangChain text splitters', d: 'Recursive, Markdown-aware and token-based splitters.', u: 'https://github.com/langchain-ai/langchain/tree/master/libs/text-splitters', tag: 'Open source' },
+      { n: 'Chonkie', d: 'Lightweight chunking library: token, sentence, semantic and late chunking.', u: 'https://github.com/chonkie-inc/chonkie', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Introducing Contextual Retrieval (contextual chunk prefixes)', s: 'Anthropic engineering, 2024', u: 'https://www.anthropic.com/news/contextual-retrieval' }
+    ]
+  },
+  1: {
+    title: 'Scoring functions: cosine, BM25 and fusion',
+    math: R`<h4>Dense</h4>
+<p>Embed query and chunk with an encoder \(f\), then score \(s(q,d) = \cos(f(q), f(d))\). With normalised vectors this equals the dot product. Approximate nearest-neighbour indexes such as HNSW find the top results in roughly logarithmic time instead of scanning every vector.</p>
+<h4>Sparse: BM25</h4>
+\[ \operatorname{BM25}(q,d) = \sum_{t \in q} \operatorname{IDF}(t) \cdot \frac{f(t,d)\,(k_1 + 1)}{f(t,d) + k_1\left(1 - b + b\,\frac{|d|}{\operatorname{avgdl}}\right)} \]
+\[ \operatorname{IDF}(t) = \ln\left( \frac{N - n(t) + 0.5}{n(t) + 0.5} + 1 \right) \]
+<p>\(f(t,d)\) is the term's frequency in the chunk, \(n(t)\) the number of chunks containing it, \(N\) the corpus size. \(k_1 \approx 1.2\) saturates repeated terms and \(b \approx 0.75\) normalises for length. Rare terms like <code>E-402</code> get a large IDF, which is exactly why BM25 finds them.</p>
+<h4>Hybrid: Reciprocal Rank Fusion</h4>
+<p>Score scales differ between methods, so fuse by rank instead:</p>
+\[ \operatorname{RRF}(d) = \sum_{m \in \text{methods}} \frac{1}{k + \operatorname{rank}_m(d)}, \qquad k = 60 \]
+<p>A chunk ranked 1st by BM25 and 3rd by vectors scores \(1/61 + 1/63 \approx 0.0323\).</p>`,
+    code: [{ lang: 'python', title: 'Hybrid search with Reciprocal Rank Fusion', src: R`
+# pip install sentence-transformers rank-bm25 numpy
+import numpy as np
+from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("BAAI/bge-m3")
+doc_vecs = model.encode(chunks, normalize_embeddings=True)
+bm25 = BM25Okapi([c.lower().split() for c in chunks])
+
+def hybrid(query, k=5, rrf_k=60):
+    dense = np.argsort(-(doc_vecs @ model.encode(query, normalize_embeddings=True)))
+    sparse = np.argsort(-bm25.get_scores(query.lower().split()))
+    score = {}
+    for ranking in (dense, sparse):
+        for rank, i in enumerate(ranking[:50], start=1):
+            score[i] = score.get(i, 0) + 1 / (rrf_k + rank)
+    return [chunks[i] for i, _ in sorted(score.items(), key=lambda x: -x[1])[:k]]` }],
+    tools: [
+      { n: 'rank_bm25', d: 'Pure-Python BM25 variants for small corpora.', u: 'https://github.com/dorianbrown/rank_bm25', tag: 'Open source' },
+      { n: 'bm25s', d: 'Fast sparse BM25 in Python, hundreds of times quicker than naive versions.', u: 'https://github.com/xhluca/bm25s', tag: 'Open source' },
+      { n: 'Qdrant hybrid queries', d: 'Dense plus sparse vectors fused server-side with RRF.', u: 'https://qdrant.tech/documentation/concepts/hybrid-queries/', tag: 'Open source' },
+      { n: 'Vespa', d: 'Search engine combining BM25, vectors and learned ranking at scale.', u: 'https://vespa.ai', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'The Probabilistic Relevance Framework: BM25 and Beyond', s: 'Robertson and Zaragoza, 2009', u: 'https://www.staff.city.ac.uk/~sbrp622/papers/foundations_bm25_review.pdf' },
+      { t: 'Reciprocal Rank Fusion outperforms Condorcet and individual rank learning methods', s: 'Cormack, Clarke and Buettcher, SIGIR 2009', u: 'https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf' },
+      { t: 'Efficient and robust approximate nearest neighbor search using HNSW graphs', s: 'Malkov and Yashunin, 2016', u: 'https://arxiv.org/abs/1603.09320' },
+      { t: 'Dense Passage Retrieval for Open-Domain Question Answering', s: 'Karpukhin et al., EMNLP 2020', u: 'https://arxiv.org/abs/2004.04906' }
+    ]
+  }
+};
+
+/* ---------- 13. Advanced retrieval ---------- */
+DEEP['advanced-rag'] = {
+  0: {
+    title: 'Bi-encoders versus cross-encoders',
+    math: R`<p>A bi-encoder embeds separately, so document vectors are computed once at indexing time:</p>
+\[ s_{\text{bi}}(q,d) = \cos\big(f(q),\, f(d)\big) \]
+<p>A cross-encoder reads both texts in one forward pass, so every token of the query can attend to every token of the document:</p>
+\[ s_{\text{cross}}(q,d) = g\big([\,q \,;\, d\,]\big) \]
+<p>Accuracy rises, but nothing can be precomputed: reranking \(n\) candidates costs \(n\) forward passes per query. Hence the two-stage design: retrieve 50 to 200 with the bi-encoder (and BM25), rerank to the top 5 to 10. ColBERT sits in between, storing one vector per token and scoring with late interaction.</p>`,
+    code: [{ lang: 'python', title: 'Rerank candidates with a cross-encoder', src: R`
+from sentence_transformers import CrossEncoder
+
+reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")      # multilingual reranker
+candidates = hybrid(query, k=50)                        # stage 1: cheap and wide
+ranked = reranker.rank(query, candidates, top_k=5, return_documents=True)
+for r in ranked:                                        # stage 2: precise and narrow
+    print(round(r["score"], 3), r["text"][:80])` }],
+    tools: [
+      { n: 'BGE reranker v2 M3', d: 'Open multilingual cross-encoder reranker.', u: 'https://huggingface.co/BAAI/bge-reranker-v2-m3', tag: 'Open weights' },
+      { n: 'Cohere Rerank', d: 'Hosted multilingual reranking API.', u: 'https://cohere.com/rerank', tag: 'API' },
+      { n: 'Voyage rerankers', d: 'Hosted rerankers with long context windows.', u: 'https://docs.voyageai.com/docs/reranker', tag: 'API' },
+      { n: 'ColBERT', d: 'Late-interaction retrieval with per-token vectors.', u: 'https://github.com/stanford-futuredata/ColBERT', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT', s: 'Khattab and Zaharia, SIGIR 2020', u: 'https://arxiv.org/abs/2004.12832' },
+      { t: 'Passage Re-ranking with BERT', s: 'Nogueira and Cho, 2019', u: 'https://arxiv.org/abs/1901.04085' }
+    ]
+  },
+  1: {
+    title: 'Query rewriting prompts and HyDE',
+    code: [{ lang: 'python', title: 'Rewrite a follow-up into a standalone query', src: R`
+REWRITE = """Rewrite the user's last message as a standalone search query.
+Use the conversation for missing context. Reply with the query only.
+
+<conversation>
+{history}
+</conversation>
+<last_message>{message}</last_message>"""
+
+def standalone_query(history, message):
+    resp = client.messages.create(
+        model="claude-haiku-5-5",            # a small, fast model is enough
+        max_tokens=60, temperature=0,
+        messages=[{"role": "user", "content": REWRITE.format(history=history, message=message)}],
+    )
+    return resp.content[0].text.strip()
+
+# "and in Turkey?" after a question about roaming in Germany
+# becomes "mobile roaming charges in Turkey"` }],
+    math: R`<p><b>HyDE</b> (hypothetical document embeddings) asks a model to write a plausible answer \(\tilde{d}\) and retrieves with \(f(\tilde{d})\) instead of \(f(q)\). Answers look more like documents than questions do, so they land closer in embedding space. The fake answer is only a search key; it never reaches the user.</p>`,
+    refs: [
+      { t: 'Precise Zero-Shot Dense Retrieval without Relevance Labels (HyDE)', s: 'Gao et al., ACL 2023', u: 'https://arxiv.org/abs/2212.10496' },
+      { t: 'Query Rewriting for Retrieval-Augmented Large Language Models', s: 'Ma et al., EMNLP 2023', u: 'https://arxiv.org/abs/2305.14283' }
+    ]
+  },
+  3: {
+    title: 'Measuring retrieval and generation',
+    math: R`<p>Build a set of real questions, each labelled with the chunk(s) that answer it. Then measure the two stages separately.</p>
+<h4>Retrieval</h4>
+\[ \text{recall@}k = \frac{|\,\text{relevant} \cap \text{top-}k\,|}{|\,\text{relevant}\,|} \]
+\[ \operatorname{MRR} = \frac{1}{|Q|}\sum_{q \in Q} \frac{1}{\operatorname{rank}_q} \]
+\[ \operatorname{nDCG@}k = \frac{1}{\operatorname{IDCG@}k}\sum_{i=1}^{k} \frac{2^{\operatorname{rel}_i} - 1}{\log_2(i + 1)} \]
+<p>Recall@k asks whether the answer reached the model at all; MRR and nDCG reward putting it near the top.</p>
+<h4>Generation</h4>
+<ul>
+<li><b>Faithfulness:</b> every claim in the answer is supported by the retrieved text.</li>
+<li><b>Answer relevance:</b> the answer addresses the question that was asked.</li>
+<li><b>Citation accuracy:</b> cited sources actually contain the cited claim.</li>
+</ul>
+<p>These are usually scored by an LLM judge with a rubric, calibrated against a few hundred human labels.</p>`,
+    tools: [
+      { n: 'Ragas', d: 'Faithfulness, context precision and recall metrics for RAG.', u: 'https://docs.ragas.io', tag: 'Open source' },
+      { n: 'DeepEval', d: 'Pytest-style LLM and RAG evaluation with many metrics.', u: 'https://github.com/confident-ai/deepeval', tag: 'Open source' },
+      { n: 'Microsoft GraphRAG', d: 'Builds an entity graph and community summaries for global questions.', u: 'https://github.com/microsoft/graphrag', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Ragas: Automated Evaluation of Retrieval Augmented Generation', s: 'Es et al., 2023', u: 'https://arxiv.org/abs/2309.15217' },
+      { t: 'From Local to Global: A Graph RAG Approach to Query-Focused Summarization', s: 'Edge et al., 2024', u: 'https://arxiv.org/abs/2404.16130' },
+      { t: 'Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection', s: 'Asai et al., ICLR 2024', u: 'https://arxiv.org/abs/2310.11511' }
+    ]
+  }
+};
+
+/* ---------- 14. Tool calling ---------- */
+DEEP['tools'] = {
+  0: {
+    title: 'A complete tool round trip in code',
+    codeNote: 'The pattern is identical across providers: define tools with a JSON schema, detect a tool request in the response, run it yourself, send the result back.',
+    code: [{ lang: 'python', title: 'Tool calling with the Claude API', src: R`
+import json, anthropic
+client = anthropic.Anthropic()
+
+tools = [{
+    "name": "get_weather",
+    "description": "Current weather for a city. Use when the user asks about weather now. "
+                   "Returns temperature in Celsius and a short condition.",
+    "input_schema": {
+        "type": "object",
+        "properties": {"city": {"type": "string", "description": "City name, e.g. Lisbon"}},
+        "required": ["city"],
+    },
+}]
+
+def get_weather(city):                          # your code, your API keys, your rules
+    return {"city": city, "temp_c": 21, "condition": "sunny"}
+
+messages = [{"role": "user", "content": "Should I take a jacket in Lisbon today?"}]
+resp = client.messages.create(model="claude-sonnet-5-5", max_tokens=500, tools=tools, messages=messages)
+
+if resp.stop_reason == "tool_use":
+    call = next(b for b in resp.content if b.type == "tool_use")
+    result = get_weather(**call.input)          # the harness executes, not the model
+    messages += [
+        {"role": "assistant", "content": resp.content},
+        {"role": "user", "content": [{"type": "tool_result", "tool_use_id": call.id,
+                                      "content": json.dumps(result)}]},
+    ]
+    resp = client.messages.create(model="claude-sonnet-5-5", max_tokens=500, tools=tools, messages=messages)
+print(resp.content[0].text)` }],
+    tools: [
+      { n: 'Claude tool use', d: 'Client tools, server tools, parallel calls and strict schemas.', u: CLAUDE_DOCS + '/agents-and-tools/tool-use/overview', tag: 'API' },
+      { n: 'OpenAI function calling', d: 'Tools in the Responses and Chat Completions APIs.', u: 'https://platform.openai.com/docs/guides/function-calling', tag: 'API' },
+      { n: 'Berkeley Function Calling Leaderboard', d: 'Compares models on tool selection and argument accuracy.', u: 'https://gorilla.cs.berkeley.edu/leaderboard.html', tag: 'Benchmark' }
+    ],
+    refs: [
+      { t: 'Toolformer: Language Models Can Teach Themselves to Use Tools', s: 'Schick et al., NeurIPS 2023', u: 'https://arxiv.org/abs/2302.04761' },
+      { t: 'ReAct: Synergizing Reasoning and Acting in Language Models', s: 'Yao et al., ICLR 2023', u: 'https://arxiv.org/abs/2210.03629' }
+    ]
+  },
+  2: {
+    title: 'A tool definition that works',
+    code: [{ lang: 'json', title: 'Tight schema, clear description, explicit units', src: R`
+{
+  "name": "search_orders",
+  "description": "Search a customer's orders. Use for questions about order status, delivery or returns. Do not use for billing. Returns at most 'limit' orders, newest first, with id, status, eta_date and total_eur.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "customer_id": { "type": "string", "description": "Internal id, e.g. C-10293" },
+      "status":      { "type": "string", "enum": ["open", "shipped", "delivered", "returned"] },
+      "since_days":  { "type": "integer", "minimum": 1, "maximum": 365, "default": 30 },
+      "limit":       { "type": "integer", "minimum": 1, "maximum": 20, "default": 5 }
+    },
+    "required": ["customer_id"],
+    "additionalProperties": false
+  }
+}` }],
+    refs: [
+      { t: 'Writing effective tools for agents, with agents', s: 'Anthropic engineering, 2025', u: 'https://www.anthropic.com/engineering/writing-tools-for-agents' },
+      { t: 'JSON Schema reference', s: 'json-schema.org', u: 'https://json-schema.org/understanding-json-schema' }
+    ]
+  },
+  3: {
+    title: 'Sandboxes for code execution',
+    math: R`<p>Treat model-written code as untrusted. A sandbox should enforce, at minimum:</p>
+<ul>
+<li>An isolated filesystem, with only the files the task needs mounted in.</li>
+<li>No network, or an allow-list of hosts.</li>
+<li>CPU, memory, process-count and wall-clock limits.</li>
+<li>No credentials in the environment, unless a tool explicitly needs one scoped key.</li>
+<li>Output truncation, with large results written to files the model can page through.</li>
+</ul>
+<p>Containers alone share the host kernel; for hostile code, use a microVM (Firecracker) or a user-space kernel (gVisor).</p>`,
+    tools: [
+      { n: 'E2B', d: 'Cloud sandboxes for running AI-generated code.', u: 'https://e2b.dev', tag: 'Managed' },
+      { n: 'Modal Sandboxes', d: 'On-demand isolated containers with GPU access.', u: 'https://modal.com/docs/guide/sandbox', tag: 'Managed' },
+      { n: 'gVisor', d: 'User-space kernel that isolates containers from the host.', u: 'https://gvisor.dev', tag: 'Open source' },
+      { n: 'Firecracker', d: 'Lightweight microVMs behind AWS Lambda.', u: 'https://firecracker-microvm.github.io', tag: 'Open source' },
+      { n: 'Claude code execution tool', d: 'Server-side Python sandbox managed by the API.', u: CLAUDE_DOCS + '/agents-and-tools/tool-use/code-execution-tool', tag: 'API' }
+    ]
+  }
+};
+
+/* ---------- 15. MCP ---------- */
+DEEP['mcp'] = {
+  1: {
+    title: 'The protocol on the wire, and a server in 15 lines',
+    math: R`<p>MCP messages are JSON-RPC 2.0. In the current protocol version (2026-07-28) the protocol is stateless: every request carries the protocol version and client capabilities in its <code>_meta</code> field, and a client can call <code>server/discover</code> to learn what a server supports. Earlier versions opened with an <code>initialize</code> handshake, which you will still meet in older servers. Listing and calling tools looks like this (<code>_meta</code> omitted for brevity):</p>
+<div class="mono-box">→ {"jsonrpc":"2.0","id":2,"method":"tools/list"}
+← {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"add",
+     "description":"Add two numbers.",
+     "inputSchema":{"type":"object","properties":{"a":{"type":"integer"},"b":{"type":"integer"}},"required":["a","b"]}}]}}
+
+→ {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"add","arguments":{"a":1,"b":2}}}
+← {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"3"}]}}</div>
+<p>Transports: <b>stdio</b> for a local server launched as a subprocess, <b>Streamable HTTP</b> for remote servers, with OAuth for authorisation.</p>`,
+    code: [
+      { lang: 'python', title: 'An MCP server with the official Python SDK', src: R`
+# pip install "mcp[cli]"
+from mcp.server import MCPServer
+
+mcp = MCPServer("Demo")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers."""          # the docstring becomes the tool description
+    return a + b
+
+@mcp.resource("greeting://{name}")
+def greeting(name: str) -> str:
+    """Greet someone by name."""
+    return f"Hello, {name}!"` },
+      { lang: 'bash', title: 'Try it in the MCP Inspector, then serve it over HTTP', src: R`
+uv run mcp dev server.py                                   # opens the Inspector UI
+uv run mcp run server.py --transport streamable-http      # remote clients connect to /mcp` }
+    ],
+    tools: [
+      { n: 'MCP specification', d: 'The protocol: lifecycle, transports, authorisation, primitives.', u: 'https://modelcontextprotocol.io/specification/latest', tag: 'Standard' },
+      { n: 'MCP Python SDK', d: 'Official SDK for servers and clients in Python.', u: 'https://github.com/modelcontextprotocol/python-sdk', tag: 'Open source' },
+      { n: 'MCP TypeScript SDK', d: 'Official SDK for servers and clients in TypeScript.', u: 'https://github.com/modelcontextprotocol/typescript-sdk', tag: 'Open source' },
+      { n: 'MCP Inspector', d: 'Interactive debugger for any MCP server.', u: 'https://github.com/modelcontextprotocol/inspector', tag: 'Open source' },
+      { n: 'MCP Registry', d: 'Public registry of published MCP servers.', u: 'https://registry.modelcontextprotocol.io', tag: 'Directory' },
+      { n: 'Reference servers', d: 'Official example servers: filesystem, fetch, git, memory and more.', u: 'https://github.com/modelcontextprotocol/servers', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Model Context Protocol: introduction and architecture', s: 'modelcontextprotocol.io', u: 'https://modelcontextprotocol.io/docs/learn/architecture' },
+      { t: 'JSON-RPC 2.0 Specification', s: 'jsonrpc.org', u: 'https://www.jsonrpc.org/specification' }
+    ]
+  },
+  3: {
+    title: 'Prompt injection: the threat model',
+    math: R`<p>An agent is at serious risk when it combines three things, a pattern Simon Willison calls the <b>lethal trifecta</b>:</p>
+<ul>
+<li>Access to private data (mail, files, databases).</li>
+<li>Exposure to untrusted content (web pages, emails, tickets, third-party tool output).</li>
+<li>A way to communicate externally (send email, make HTTP requests, write to shared places).</li>
+</ul>
+<p>Remove any one leg for a given task and an injected instruction cannot exfiltrate data. Where all three are needed, use deterministic controls the model cannot talk its way around: allow-lists, approval gates, separate credentials per tool, and designs where untrusted text is processed by a component that has no tools.</p>`,
+    tools: [
+      { n: 'OWASP Top 10 for LLM Applications', d: 'Prompt injection, excessive agency, data leakage and the rest, with mitigations.', u: 'https://genai.owasp.org/llm-top-10/', tag: 'Standard' },
+      { n: 'MCP security best practices', d: 'Confused deputy, token passthrough, session hijacking and mitigations.', u: 'https://modelcontextprotocol.io/specification/latest/basic/security_best_practices', tag: 'Standard' }
+    ],
+    refs: [
+      { t: 'Not what you’ve signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection', s: 'Greshake et al., 2023', u: 'https://arxiv.org/abs/2302.12173' },
+      { t: 'The lethal trifecta for AI agents', s: 'Simon Willison, 2025', u: 'https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/' },
+      { t: 'Defeating Prompt Injections by Design (CaMeL)', s: 'Debenedetti et al., Google DeepMind, 2025', u: 'https://arxiv.org/abs/2503.18813' }
+    ]
+  }
+};
+
+/* ---------- 16. Agent loop ---------- */
+DEEP['agent-loop'] = {
+  0: {
+    title: 'The whole agent loop in code',
+    math: R`<p>Formally, at step \(t\) the model samples an action from the context, the environment returns an observation, and both are appended:</p>
+\[ a_t \sim \pi_\theta(\cdot \mid c_t), \qquad o_t = \operatorname{env}(a_t), \qquad c_{t+1} = c_t \oplus a_t \oplus o_t \]
+<p>The loop ends when \(a_t\) is a final answer or a budget is exhausted. Everything the agent "knows" at step \(t\) is in \(c_t\), which is why the next lesson is about managing it.</p>`,
+    code: [{ lang: 'python', title: 'A minimal agent harness', src: R`
+def run_agent(task, tools, registry, max_steps=20):
+    messages = [{"role": "user", "content": task}]
+    for step in range(max_steps):                         # hard limit: a confused model can loop forever
+        resp = client.messages.create(model="claude-sonnet-5-5", max_tokens=2000,
+                                      system=SYSTEM, tools=tools, messages=messages)
+        messages.append({"role": "assistant", "content": resp.content})
+        calls = [b for b in resp.content if b.type == "tool_use"]
+        if not calls:                                     # no tool requested: the model is done
+            return "".join(b.text for b in resp.content if b.type == "text")
+        results = []
+        for c in calls:                                   # permissions and logging live here
+            try:
+                out = registry[c.name](**c.input)
+                results.append({"type": "tool_result", "tool_use_id": c.id, "content": str(out)[:5000]})
+            except Exception as e:                        # errors go back as results, not crashes
+                results.append({"type": "tool_result", "tool_use_id": c.id,
+                                "content": f"Error: {e}", "is_error": True})
+        messages.append({"role": "user", "content": results})
+    return "Stopped: step limit reached."` }],
+    tools: [
+      { n: 'Claude Agent SDK', d: 'The harness behind Claude Code as a library: tools, permissions, subagents, compaction.', u: 'https://github.com/anthropics/claude-agent-sdk-python', tag: 'Open source' },
+      { n: 'OpenAI Agents SDK', d: 'Agents, tools, handoffs, guardrails and tracing.', u: 'https://github.com/openai/openai-agents-python', tag: 'Open source' },
+      { n: 'LangGraph', d: 'Stateful agent graphs with checkpoints and human-in-the-loop.', u: 'https://github.com/langchain-ai/langgraph', tag: 'Open source' },
+      { n: 'Pydantic AI', d: 'Type-safe agent framework in Python.', u: 'https://ai.pydantic.dev', tag: 'Open source' },
+      { n: 'smolagents', d: "Hugging Face's minimal agents that act by writing code.", u: 'https://github.com/huggingface/smolagents', tag: 'Open source' },
+      { n: 'Google ADK', d: 'Agent Development Kit for multi-agent apps.', u: 'https://github.com/google/adk-python', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Building effective agents', s: 'Anthropic engineering, 2024', u: 'https://www.anthropic.com/engineering/building-effective-agents' },
+      { t: 'ReAct: Synergizing Reasoning and Acting in Language Models', s: 'Yao et al., ICLR 2023', u: 'https://arxiv.org/abs/2210.03629' }
+    ]
+  },
+  3: {
+    title: 'How agents are evaluated',
+    math: R`<p>Agents are judged on whole tasks, not single replies. Public benchmarks give a feel for capability; your own task suite decides what ships.</p>
+<ul>
+<li><b>SWE-bench Verified:</b> fix real GitHub issues so that hidden tests pass.</li>
+<li><b>τ-bench:</b> customer-service tasks with tools and policies; reports pass^k, the chance of succeeding on all of \(k\) repeated trials, which measures reliability rather than luck.</li>
+<li><b>Terminal-Bench:</b> multi-step tasks in a real shell.</li>
+</ul>
+<p>Track success rate, steps, tokens, cost and wall-clock time per task. An agent that succeeds 90% of the time at five times the cost of a workflow that succeeds 85% may not be the better product.</p>`,
+    refs: [
+      { t: 'SWE-bench', s: 'Jimenez et al., ICLR 2024; leaderboard at swebench.com', u: 'https://www.swebench.com' },
+      { t: 'τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains', s: 'Yao et al., 2024', u: 'https://arxiv.org/abs/2406.12045' },
+      { t: 'Terminal-Bench', s: 'Stanford and Laude Institute', u: 'https://www.tbench.ai' }
+    ]
+  }
+};
+
+/* ---------- 17. Context engineering ---------- */
+DEEP['context-eng'] = {
+  0: {
+    title: 'Compaction and clearing, concretely',
+    math: R`<p>If each step adds \(\Delta\) tokens of tool output, the context after \(t\) steps is roughly \(c_0 + t\Delta\), and the cumulative input billed over a run of \(T\) steps is</p>
+\[ \sum_{t=1}^{T} (c_0 + t\Delta) = T c_0 + \Delta \frac{T(T+1)}{2} \]
+<p>Quadratic in \(T\). Clearing old results caps the per-step context near a constant and makes the total linear, which is usually the biggest single cost saving in a long-running agent.</p>
+<h4>Techniques, cheapest first</h4>
+<ul>
+<li><b>Tool-result clearing:</b> replace results older than \(k\) steps with a one-line placeholder.</li>
+<li><b>Compaction:</b> when the window passes a threshold, summarise the conversation into decisions, open questions and next steps, then continue from the summary.</li>
+<li><b>Structured notes:</b> the agent writes a running plan or todo file it can re-read after compaction.</li>
+<li><b>Sub-agents:</b> push heavy reading into a separate context that returns only a summary (lesson 18).</li>
+</ul>`,
+    code: [{ lang: 'python', title: 'Clear stale tool results', src: R`
+def clear_old_tool_results(messages, keep_last=3):
+    """Keep the newest tool results verbatim; stub the rest."""
+    seen = 0
+    for m in reversed(messages):
+        if m["role"] != "user" or not isinstance(m["content"], list):
+            continue
+        for block in m["content"]:
+            if block.get("type") == "tool_result":
+                seen += 1
+                if seen > keep_last:
+                    block["content"] = "[cleared: result already used]"
+    return messages` }],
+    tools: [
+      { n: 'Claude context editing', d: 'Server-side clearing of old tool results and thinking blocks.', u: CLAUDE_DOCS + '/build-with-claude/context-editing', tag: 'API' },
+      { n: 'Claude memory tool', d: 'A file-based memory directory the agent reads and writes across sessions.', u: CLAUDE_DOCS + '/agents-and-tools/tool-use/memory-tool', tag: 'API' }
+    ],
+    refs: [
+      { t: 'Effective context engineering for AI agents', s: 'Anthropic engineering, 2025', u: 'https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents' },
+      { t: 'Context Rot: How Increasing Input Tokens Impacts LLM Performance', s: 'Chroma Research, 2025', u: 'https://research.trychroma.com/context-rot' }
+    ]
+  },
+  2: {
+    title: 'What a skill looks like',
+    math: R`<p>A skill is a folder. Its <code>SKILL.md</code> starts with YAML front matter; only <code>name</code> and <code>description</code> are loaded up front. The body, and any scripts or reference files, are read when the model decides the skill applies.</p>`,
+    code: [{ lang: 'yaml', title: 'invoice-extraction/SKILL.md', src: R`
+---
+name: invoice-extraction
+description: Extract totals, dates and vendor details from invoice PDFs into our JSON schema. Use when the user uploads or mentions an invoice.
+---
+
+# Invoice extraction
+
+1. Convert the PDF to text with scripts/pdf_to_text.py.
+2. Find the vendor, invoice number, issue date, currency and total.
+3. Validate against schema.json; dates are ISO 8601, amounts are decimals.
+4. If a field is missing, return null and say which page you searched.
+
+See reference/edge-cases.md for credit notes and multi-currency invoices.` }],
+    tools: [
+      { n: 'Agent Skills', d: 'Skill format, progressive disclosure and examples.', u: 'https://github.com/anthropics/skills', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Equipping agents for the real world with Agent Skills', s: 'Anthropic engineering, 2025', u: 'https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills' }
+    ]
+  },
+  3: {
+    title: 'Memory systems',
+    math: R`<p>Long-term memory is retrieval over the agent's own notes. A common scoring rule blends three signals for each stored memory \(m\) against the current situation \(q\):</p>
+\[ \operatorname{score}(m) = w_1 \cos(f(q), f(m)) + w_2 \operatorname{importance}(m) + w_3\, \gamma^{\,\Delta t(m)} \]
+<p>relevance, an importance rating assigned when it was written, and recency decaying with age \(\Delta t\). Whatever the scoring, apply the same hygiene as any user data: show users what is stored, let them delete it, and never store secrets.</p>`,
+    tools: [
+      { n: 'Mem0', d: 'Memory layer that extracts, stores and retrieves user facts.', u: 'https://github.com/mem0ai/mem0', tag: 'Open source' },
+      { n: 'Letta', d: 'Stateful agents with editable memory blocks (from the MemGPT team).', u: 'https://github.com/letta-ai/letta', tag: 'Open source' },
+      { n: 'LangGraph memory', d: 'Short-term checkpoints and long-term stores for agents.', u: 'https://docs.langchain.com/oss/python/langgraph/memory', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'MemGPT: Towards LLMs as Operating Systems', s: 'Packer et al., 2023', u: 'https://arxiv.org/abs/2310.08560' },
+      { t: 'Generative Agents: Interactive Simulacra of Human Behavior (memory scoring)', s: 'Park et al., UIST 2023', u: 'https://arxiv.org/abs/2304.03442' }
+    ]
+  }
+};
+
+/* ---------- 18. Multi-agent ---------- */
+DEEP['multi-agent'] = {
+  1: {
+    title: 'The token arithmetic of fan-out',
+    math: R`<p>Suppose a task needs reading \(n\) sources of \(s\) tokens each and producing summaries of \(u\) tokens.</p>
+<p><b>Single agent:</b> the orchestrator's context ends near \(c_0 + n s\), and if it reads one source per step it pays roughly \(\sum_{i=1}^{n}(c_0 + i s) \approx n c_0 + s\,n^2/2\) input tokens.</p>
+<p><b>Fan-out:</b> each of \(n\) workers pays about \(c_w + s\), and the orchestrator sees only \(c_0 + n u\). Total tokens can still be higher because every worker repeats its own instructions, but no single context exceeds \(c_w + s\), and workers run in parallel, so wall-clock time drops from about \(n\) reads to about one.</p>`,
+    refs: [
+      { t: 'How we built our multi-agent research system', s: 'Anthropic engineering, 2025', u: 'https://www.anthropic.com/engineering/multi-agent-research-system' },
+      { t: 'Mixture-of-Agents Enhances Large Language Model Capabilities', s: 'Wang et al., 2024', u: 'https://arxiv.org/abs/2406.04692' }
+    ]
+  },
+  3: {
+    title: 'Routing and cascades, quantified',
+    math: R`<p>A cascade sends every request to a small model first and escalates to the large one when a check fails. If the small model's answer is accepted with probability \(a\), expected cost per request is</p>
+\[ \mathbb{E}[C] = c_s + (1 - a)\, c_\ell \]
+<p>With \(c_s = 1\), \(c_\ell = 15\) and \(a = 0.7\): \(1 + 0.3 \times 15 = 5.5\), about a third of always using the large model. The saving depends entirely on a reliable acceptance check (schema validation, tests, a verifier model) and on measuring that quality does not drop.</p>`,
+    code: [{ lang: 'python', title: 'A two-tier cascade', src: R`
+def answer(question):
+    draft = call(model="claude-haiku-5-5", prompt=question)
+    if passes_checks(draft):            # schema valid, cites sources, verifier agrees, tests pass...
+        return draft
+    return call(model="claude-opus-5-5", prompt=question)` }],
+    tools: [
+      { n: 'LiteLLM Router', d: 'Load balancing, fallbacks and cost-based routing across models.', u: 'https://docs.litellm.ai/docs/routing', tag: 'Open source' },
+      { n: 'OpenRouter', d: 'One API for hundreds of models with provider routing.', u: 'https://openrouter.ai', tag: 'Managed' },
+      { n: 'RouteLLM', d: 'Open framework for training and evaluating model routers.', u: 'https://github.com/lm-sys/RouteLLM', tag: 'Open source' },
+      { n: 'CrewAI', d: 'Role-based multi-agent orchestration.', u: 'https://github.com/crewAIInc/crewAI', tag: 'Open source' },
+      { n: 'Microsoft Agent Framework', d: 'Successor to AutoGen and Semantic Kernel agents for multi-agent workflows.', u: 'https://github.com/microsoft/agent-framework', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance', s: 'Chen, Zaharia and Zou, 2023', u: 'https://arxiv.org/abs/2305.05176' },
+      { t: 'RouteLLM: Learning to Route LLMs with Preference Data', s: 'Ong et al., 2024', u: 'https://arxiv.org/abs/2406.18665' }
+    ]
+  }
+};
+
+/* ---------- 19. Production ---------- */
+DEEP['production'] = {
+  0: {
+    title: 'Evals with error bars',
+    math: R`<p>An eval score on \(n\) test cases is an estimate. For an accuracy \(\hat{p}\), the 95% confidence interval is approximately</p>
+\[ \hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}} \]
+<p>With 200 cases at 85% accuracy that is \(\pm 4.9\) points. A change from 85% to 88% on 200 cases is therefore not evidence of improvement. When comparing two prompts on the <em>same</em> cases, use a paired test on per-case differences, which is far more sensitive.</p>
+<h4>Building the set</h4>
+<ul>
+<li>Start with 50 to 100 real inputs, including past failures; grow it from production logs.</li>
+<li>Prefer code checks (exact match, schema validity, tests pass). Use an LLM judge with a written rubric for open-ended quality, and check the judge against human labels.</li>
+<li>Score each case 0 or 1 where possible; averages of fuzzy 1 to 10 scores hide regressions.</li>
+<li>Run the suite in CI on every prompt, model or retrieval change.</li>
+</ul>`,
+    code: [{ lang: 'python', title: 'A minimal eval harness', src: R`
+import json, math
+
+def run_eval(cases, predict):
+    results = []
+    for case in cases:                                   # {"input": ..., "expected": ...}
+        out = predict(case["input"])
+        results.append({"id": case["id"], "pass": grade(out, case["expected"]), "out": out})
+    p = sum(r["pass"] for r in results) / len(results)
+    ci = 1.96 * math.sqrt(p * (1 - p) / len(results))
+    print(f"accuracy {p:.1%} ± {ci:.1%} on {len(results)} cases")
+    return results
+
+def grade(out, expected):                                # code check first; a judge only when needed
+    try:
+        return json.loads(out)["total"] == expected["total"]
+    except (ValueError, KeyError):
+        return False` }],
+    tools: [
+      { n: 'promptfoo', d: 'Declarative prompt and model evals in YAML, with red-teaming, run in CI.', u: 'https://www.promptfoo.dev', tag: 'Open source' },
+      { n: 'Inspect', d: "UK AI Security Institute's framework for rigorous LLM and agent evals.", u: 'https://inspect.aisi.org.uk', tag: 'Open source' },
+      { n: 'OpenAI Evals', d: 'Framework and registry of evals.', u: 'https://github.com/openai/evals', tag: 'Open source' },
+      { n: 'Braintrust', d: 'Eval datasets, experiments and scoring in one platform.', u: 'https://www.braintrust.dev', tag: 'Managed' },
+      { n: 'DeepEval', d: 'Pytest-style unit tests for LLM outputs.', u: 'https://github.com/confident-ai/deepeval', tag: 'Open source' }
+    ],
+    refs: [
+      { t: 'Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations', s: 'Miller, Anthropic, 2024', u: 'https://arxiv.org/abs/2411.00640' },
+      { t: 'Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena', s: 'Zheng et al., NeurIPS 2023', u: 'https://arxiv.org/abs/2306.05685' },
+      { t: 'Your AI Product Needs Evals', s: 'Hamel Husain, blog', u: 'https://hamel.dev/blog/posts/evals/' }
+    ]
+  },
+  1: {
+    title: 'Tracing with open standards',
+    math: R`<p>OpenTelemetry defines <b>GenAI semantic conventions</b> so that any backend can read LLM spans: attributes such as <code>gen_ai.request.model</code>, <code>gen_ai.usage.input_tokens</code> and <code>gen_ai.usage.output_tokens</code>. Instrument once and send traces to whichever tool you prefer.</p>
+<p>Useful derived numbers per trace: total latency, TTFT of the user-facing call, tokens and cost per span, number of tool calls, and retries.</p>`,
+    code: [{ lang: 'python', title: 'A model call as an OpenTelemetry span', src: R`
+# pip install opentelemetry-sdk
+from opentelemetry import trace
+tracer = trace.get_tracer("support-bot")
+
+def traced_call(messages):
+    with tracer.start_as_current_span("chat claude-sonnet-5-5") as span:
+        span.set_attribute("gen_ai.operation.name", "chat")
+        span.set_attribute("gen_ai.request.model", "claude-sonnet-5-5")
+        resp = client.messages.create(model="claude-sonnet-5-5", max_tokens=800, messages=messages)
+        span.set_attribute("gen_ai.usage.input_tokens", resp.usage.input_tokens)
+        span.set_attribute("gen_ai.usage.output_tokens", resp.usage.output_tokens)
+        return resp` }],
+    tools: [
+      { n: 'OpenTelemetry GenAI conventions', d: 'Vendor-neutral attributes for LLM, agent and tool spans.', u: 'https://opentelemetry.io/docs/specs/semconv/gen-ai/', tag: 'Standard' },
+      { n: 'Langfuse', d: 'Open-source tracing, prompt management and evals.', u: 'https://langfuse.com', tag: 'Open source' },
+      { n: 'Arize Phoenix', d: 'Open-source tracing and evaluation on OpenTelemetry.', u: 'https://github.com/Arize-ai/phoenix', tag: 'Open source' },
+      { n: 'LangSmith', d: 'Tracing, datasets and evals from the LangChain team.', u: 'https://www.langchain.com/langsmith', tag: 'Managed' },
+      { n: 'OpenLLMetry', d: 'OpenTelemetry auto-instrumentation for LLM SDKs and vector DBs.', u: 'https://github.com/traceloop/openllmetry', tag: 'Open source' }
+    ]
+  },
+  3: {
+    title: 'Guardrail tools and the cost model',
+    math: R`<p>Cost per request, with prompt caching:</p>
+\[ C = \frac{T_{\text{in}}\, p_{\text{in}} + T_{\text{cache read}}\, p_{\text{read}} + T_{\text{cache write}}\, p_{\text{write}} + T_{\text{out}}\, p_{\text{out}}}{10^{6}} \]
+<p>with prices per million tokens. Output tokens typically cost several times input tokens, and cached reads a small fraction of input, so the levers in order of impact are usually: cache the stable prefix, cap and trim output, route easy traffic to smaller models, and move offline work to batch APIs, which are discounted.</p>`,
+    tools: [
+      { n: 'Llama Guard 4', d: 'Open safety classifier for prompts and responses.', u: 'https://huggingface.co/meta-llama/Llama-Guard-4-12B', tag: 'Open weights' },
+      { n: 'NeMo Guardrails', d: 'Programmable input, output and dialogue rails.', u: 'https://github.com/NVIDIA/NeMo-Guardrails', tag: 'Open source' },
+      { n: 'Guardrails AI', d: 'Validators for structure, PII, toxicity and more.', u: 'https://github.com/guardrails-ai/guardrails', tag: 'Open source' },
+      { n: 'Microsoft Presidio', d: 'Detect and anonymise personal data in text.', u: 'https://github.com/microsoft/presidio', tag: 'Open source' },
+      { n: 'Claude Message Batches', d: 'Discounted asynchronous processing for offline jobs.', u: CLAUDE_DOCS + '/build-with-claude/batch-processing', tag: 'API' },
+      { n: 'OpenAI Batch API', d: 'Discounted asynchronous jobs with a 24-hour window.', u: 'https://platform.openai.com/docs/guides/batch', tag: 'API' }
+    ],
+    refs: [
+      { t: 'OWASP Top 10 for LLM Applications', s: 'OWASP GenAI Security Project', u: 'https://genai.owasp.org/llm-top-10/' },
+      { t: 'NIST AI Risk Management Framework', s: 'NIST', u: 'https://www.nist.gov/itl/ai-risk-management-framework' }
+    ]
+  },
+  4: {
+    title: 'Where to go next',
+    math: R`<p>Each block of the blueprint has a deep literature. These are reliable next steps, roughly in course order.</p>`,
+    refs: [
+      { t: 'Neural Networks: Zero to Hero', s: 'Andrej Karpathy, free video course building GPT from scratch', u: 'https://karpathy.ai/zero-to-hero.html' },
+      { t: 'Hugging Face LLM Course', s: 'Free course on transformers, fine-tuning and tokenizers', u: 'https://huggingface.co/learn/llm-course' },
+      { t: 'How to Scale Your Model', s: 'Google DeepMind, free book on training and serving at scale', u: 'https://jax-ml.github.io/scaling-book/' },
+      { t: 'AI Engineering (O’Reilly, 2025)', s: 'Chip Huyen, book on building applications with foundation models', u: 'https://www.oreilly.com/library/view/ai-engineering/9781098166298/' },
+      { t: 'Building effective agents', s: 'Anthropic engineering', u: 'https://www.anthropic.com/engineering/building-effective-agents' },
+      { t: 'Prompt engineering overview', s: 'Claude Developer Platform', u: CLAUDE_DOCS + '/build-with-claude/prompt-engineering/overview' }
+    ]
+  }
+};
+
+/* attach to steps */
+COURSE.units.forEach(u => u.lessons.forEach(l => {
+  const d = DEEP[l.id]; if (!d) return;
+  Object.keys(d).forEach(k => { const st = l.steps[+k]; if (st) st.deep = d[k]; else console.warn('deep: no step', l.id, k); });
+}));
+/* ================= maths and code rendering =================
+   texify(html) turns \( inline \) and \[ display \] TeX into native MathML (no library, works offline).
+   Supported: ^ _ {} \frac \sqrt \text \mathrm \operatorname \mathbf \mathbb \mathcal \hat \bar \tilde
+   \left \right \begin{cases}, Greek letters, common operators and named functions. */
+const TEX_SYM = {
+  alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', varepsilon: 'ε', zeta: 'ζ', eta: 'η', theta: 'θ', iota: 'ι', kappa: 'κ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ', omega: 'ω',
+  Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Xi: 'Ξ', Pi: 'Π', Sigma: 'Σ', Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω', ell: 'ℓ', infty: '∞', partial: '∂', nabla: '∇', emptyset: '∅'
+};
+const TEX_OP = {
+  cdot: '⋅', times: '×', div: '÷', pm: '±', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', approx: '≈', ll: '≪', gg: '≫', lesssim: '≲', gtrsim: '≳', sim: '∼', equiv: '≡', propto: '∝', in: '∈', notin: '∉', subset: '⊂', cup: '∪', cap: '∩',
+  to: '→', rightarrow: '→', leftarrow: '←', Rightarrow: '⇒', mapsto: '↦', mid: '∣', vert: '|', lVert: '‖', rVert: '‖', '|': '‖', odot: '⊙', oplus: '⊕', otimes: '⊗', circ: '∘', top: '⊤', ast: '∗', star: '⋆',
+  ldots: '…', cdots: '⋯', dots: '…', forall: '∀', exists: '∃', neg: '¬', land: '∧', lor: '∨', langle: '⟨', rangle: '⟩', lfloor: '⌊', rfloor: '⌋', lceil: '⌈', rceil: '⌉', '{': '{', '}': '}', '%': '%', '#': '#', '&': '&', '_': '_'
+};
+const TEX_BIG = { sum: '∑', prod: '∏', int: '∫' };
+const TEX_FN = ['log', 'ln', 'exp', 'max', 'min', 'sin', 'cos', 'tan', 'arg', 'argmax', 'argmin', 'softmax', 'sigmoid', 'det', 'dim', 'lim', 'sup', 'inf', 'Pr', 'tr', 'diag', 'concat'];
+const TEX_SPACE = { quad: '1em', qquad: '2em', ',': '0.17em', ';': '0.28em', ':': '0.22em', '!': '-0.17em', ' ': '0.25em' };
+
+function texEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function texStyled(ch, font) {
+  const c = ch.codePointAt(0); const up = c >= 65 && c <= 90, lo = c >= 97 && c <= 122, dg = c >= 48 && c <= 57;
+  if (font === 'bb') { const sp = { R: 'ℝ', N: 'ℕ', Z: 'ℤ', Q: 'ℚ', C: 'ℂ' }; if (sp[ch]) return sp[ch]; if (up) return String.fromCodePoint(0x1D538 + c - 65); if (dg) return String.fromCodePoint(0x1D7D8 + c - 48); return ch; }
+  if (font === 'cal') { const sp = { B: 'ℬ', E: 'ℰ', F: 'ℱ', H: 'ℋ', I: 'ℐ', L: 'ℒ', M: 'ℳ', R: 'ℛ' }; if (sp[ch]) return sp[ch]; if (up) return String.fromCodePoint(0x1D49C + c - 65); return ch; }
+  if (font === 'bf') { if (up) return String.fromCodePoint(0x1D400 + c - 65); if (lo) return String.fromCodePoint(0x1D41A + c - 97); if (dg) return String.fromCodePoint(0x1D7CE + c - 48); return ch; }
+  return ch;
+}
+
+function texToMathML(src, display) {
+  let i = 0; const s = src;
+  const peek = () => s[i];
+  const skipWs = () => { while (i < s.length && /\s/.test(s[i])) i++; };
+  const readCmd = () => { i++; if (i < s.length && !/[A-Za-z]/.test(s[i])) return s[i++]; const st = i; while (i < s.length && /[A-Za-z]/.test(s[i])) i++; return s.slice(st, i); };
+  const readRaw = () => { skipWs(); if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const out = s.slice(st, i); i++; return out; };
+  const group = () => { skipWs(); if (s[i] === '{') { i++; const r = seq('}'); i++; return wrap(r); } return atom() || ''; };
+  const wrap = parts => parts.length === 1 ? parts[0] : `<mrow>${parts.join('')}</mrow>`;
+  const opDelim = (ch, stretch) => `<mo stretchy="${stretch ? 'true' : 'false'}" lspace="0" rspace="0">${texEsc(ch)}</mo>`;
+  function delimAfter(stretch) {
+    skipWs(); if (s[i] === '\\') { const c = readCmd(); if (c === '.') return ''; return opDelim(TEX_OP[c] || c, stretch); }
+    return opDelim(s[i++], stretch);
+  }
+  function cases() {
+    // body until \end{cases}
+    const end = s.indexOf('\\end{cases}', i); const body = s.slice(i, end < 0 ? s.length : end); i = end < 0 ? s.length : end + 11;
+    const rows = body.split(/\\\\/).map(r => r.trim()).filter(Boolean).map(r => `<mtr>${r.split('&').map(c => `<mtd style="text-align:left;padding:.2em 1em .2em 0">${texToMathML(c.trim(), false).replace(/^<math[^>]*>|<\/math>$/g, '')}</mtd>`).join('')}</mtr>`);
+    return `<mrow><mo stretchy="true">{</mo><mtable columnalign="left">${rows.join('')}</mtable></mrow>`;
+  }
+  function atom() {
+    skipWs(); if (i >= s.length) return null;
+    const ch = s[i];
+    if (ch === '{') { i++; const r = seq('}'); i++; return wrap(r); }
+    if (ch === '}') return null;
+    if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(s[i + 1] || ''))) { const m = /^[0-9]*\.?[0-9]+/.exec(s.slice(i)); i += m[0].length; return `<mn>${m[0]}</mn>`; }
+    if (/[A-Za-z]/.test(ch)) { i++; return `<mi>${ch}</mi>`; }
+    if (ch === '\\') {
+      const c = readCmd();
+      if (c === 'frac' || c === 'dfrac' || c === 'tfrac') { const a = group(), b = group(); return `<mfrac>${a}${b}</mfrac>`; }
+      if (c === 'sqrt') { skipWs(); if (s[i] === '[') { const e = s.indexOf(']', i); const n = texToMathML(s.slice(i + 1, e), false).replace(/^<math[^>]*>|<\/math>$/g, ''); i = e + 1; return `<mroot>${group()}<mrow>${n}</mrow></mroot>`; } return `<msqrt>${group()}</msqrt>`; }
+      if (c === 'text' || c === 'textrm' || c === 'mbox') return `<mtext>${texEsc(readRaw())}</mtext>`;
+      if (c === 'mathrm' || c === 'operatorname' || c === 'texttt') { const t = readRaw(); return `<mi mathvariant="normal"${c === 'texttt' ? ' class="tt"' : ''}>${texEsc(t)}</mi>`; }
+      if (c === 'mathbf' || c === 'boldsymbol' || c === 'bm') { const t = readRaw(); return `<mi mathvariant="normal">${[...t].map(x => texStyled(x, 'bf')).join('')}</mi>`; }
+      if (c === 'mathbb') return `<mi mathvariant="normal">${[...readRaw()].map(x => texStyled(x, 'bb')).join('')}</mi>`;
+      if (c === 'mathcal') return `<mi mathvariant="normal">${[...readRaw()].map(x => texStyled(x, 'cal')).join('')}</mi>`;
+      if (c === 'hat' || c === 'bar' || c === 'tilde' || c === 'vec' || c === 'overline') { const acc = { hat: '^', bar: '¯', overline: '¯', tilde: '~', vec: '→' }[c]; return `<mover accent="true">${group()}<mo>${acc}</mo></mover>`; }
+      if (c === 'left') return delimAfter(true);
+      if (c === 'right') return delimAfter(true);
+      if (c === 'big' || c === 'Big' || c === 'bigg' || c === 'Bigg') return delimAfter(true);
+      if (c === 'begin') { const env = readRaw(); if (env === 'cases') return cases(); return ''; }
+      if (TEX_SPACE[c]) return `<mspace width="${TEX_SPACE[c]}"></mspace>`;
+      if (TEX_SYM[c]) { const up = /^[A-Z]/.test(c); return `<mi${up ? ' mathvariant="normal"' : ''}>${TEX_SYM[c]}</mi>`; }
+      if (TEX_BIG[c]) return `<mo largeop="true" movablelimits="${display ? 'false' : 'true'}" data-big="1">${TEX_BIG[c]}</mo>`;
+      if (TEX_FN.includes(c)) return `<mi>${c === 'argmax' ? 'arg max' : c === 'argmin' ? 'arg min' : c}</mi><mo>&#x2061;</mo>`;
+      if (TEX_OP[c]) return `<mo>${texEsc(TEX_OP[c])}</mo>`;
+      return `<mtext>${texEsc('\\' + c)}</mtext>`;
+    }
+    i++;
+    if (ch === "'") return `<mo>′</mo>`;
+    if (ch === '-') return '<mo>−</mo>';
+    if (ch === '*') return '<mo>∗</mo>';
+    if (ch === '~') return `<mspace width="0.25em"></mspace>`;
+    if ('()[]|'.includes(ch)) return opDelim(ch, false);
+    return `<mo>${texEsc(ch)}</mo>`;
+  }
+  function seq(stop) {
+    const out = [];
+    while (i < s.length) {
+      skipWs(); if (i >= s.length || s[i] === stop) break;
+      if (s[i] === '^' || s[i] === '_') { // script with no base
+        out.push('<mrow></mrow>');
+      } else {
+        const a = atom(); if (a === null) break; if (a === '') continue; out.push(a);
+      }
+      let sub = null, sup = null;
+      for (;;) {
+        skipWs();
+        if (s[i] === '_') { i++; sub = group(); } else if (s[i] === '^') { i++; sup = group(); } else break;
+      }
+      if (sub || sup) {
+        let base = out.pop();
+        if (base.endsWith('<mo>&#x2061;</mo>')) { base = base.slice(0, -'<mo>&#x2061;</mo>'.length); }
+        const under = display && /data-big|<mi>(max|min|arg max|arg min|lim)<\/mi>/.test(base);
+        const b = base.replace(' data-big="1"', '');
+        if (under) out.push(sub && sup ? `<munderover>${b}${sub}${sup}</munderover>` : sub ? `<munder>${b}${sub}</munder>` : `<mover>${b}${sup}</mover>`);
+        else out.push(sub && sup ? `<msubsup>${b}${sub}${sup}</msubsup>` : sub ? `<msub>${b}${sub}</msub>` : `<msup>${b}${sup}</msup>`);
+      }
+    }
+    return out.map(x => x.replace(' data-big="1"', ''));
+  }
+  const body = seq(null).join('');
+  return `<math${display ? ' display="block"' : ''}><mrow>${body}</mrow></math>`;
+}
+
+function texSafe(t, display) { try { return texToMathML(t, display); } catch (e) { console.error('maths failed to render:', t); return `<code>${texEsc(t)}</code>`; } }
+/** Replace \( … \) and \[ … \] in an HTML string with MathML. */
+function texify(html) {
+  if (!html || html.indexOf('\\') < 0) return html;
+  return html
+    .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => `<div class="math-block" role="math" tabindex="0">${texSafe(t.trim(), true)}</div>`)
+    .replace(/\\\(([\s\S]+?)\\\)/g, (_, t) => texSafe(t.trim(), false));
+}
+
+/* ---- code blocks: tiny highlighter (Python, bash, SQL, JSON, Jinja, YAML) ---- */
+const CODE_KW = {
+  python: 'and as assert async await break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield',
+  sql: 'select from where order by limit create extension table index on using insert into values returning as with join left inner group having and or not null primary key references vector text bigserial int float update set delete',
+  bash: 'export if then else fi for do done in echo cd pip uv curl python vllm npx docker',
+  js: 'const let var function return if else for of in new await async import from export true false null',
+  json: 'true false null', yaml: 'true false null', jinja: 'for in endfor if elif else endif set not and or'
+};
+function hiCode(src, lang) {
+  const kw = new Set((CODE_KW[lang] || '').split(' ').map(w => lang === 'sql' ? w : w));
+  const cmt = lang === 'sql' ? /--[^\n]*/y : lang === 'js' || lang === 'json' ? /\/\/[^\n]*/y : lang === 'jinja' ? /\{#[\s\S]*?#\}/y : /#[^\n]*/y;
+  const rules = [
+    ['c', cmt],
+    ['s', /("""[\s\S]*?"""|'''[\s\S]*?'''|f?"(?:\\.|[^"\\\n])*"|f?'(?:\\.|[^'\\\n])*')/y],
+    ['t', lang === 'jinja' ? /(\{%-?|-?%\}|\{\{-?|-?\}\})/y : /(?!)/y],
+    ['d', lang === 'python' ? /@[\w.]+/y : /(?!)/y],
+    ['n', /\b\d[\d_]*(?:\.\d+)?(?:e[-+]?\d+)?\b/y],
+    ['w', /[A-Za-z_][\w]*/y],
+    ['o', /[\s\S]/y]
+  ];
+  let out = '', i = 0;
+  while (i < src.length) {
+    for (const [k, re] of rules) {
+      re.lastIndex = i; const m = re.exec(src); if (!m) continue;
+      const t = m[0]; i += t.length;
+      if (k === 'w') {
+        const isKw = lang === 'sql' ? kw.has(t.toLowerCase()) : kw.has(t);
+        const isFn = !isKw && src[i] === '(';
+        out += isKw ? `<span class="hk">${t}</span>` : isFn ? `<span class="hf">${t}</span>` : texEsc(t);
+      } else if (k === 'o') out += texEsc(t);
+      else out += `<span class="h${k}">${texEsc(t)}</span>`;
+      break;
+    }
+  }
+  return out;
+}
+function codeBlock(c) {
+  const pre = h('pre', { class: 'code-src', tabindex: '0', 'aria-label': (c.title || 'Code') + ' (' + c.lang + ')' }, h('code', { html: hiCode(c.src.replace(/^\n+|\s+$/g, ''), c.lang) }));
+  const btn = h('button', { class: 'copy-btn', 'aria-label': 'Copy code', onclick: () => {
+    const done = ok => { btn.textContent = ok ? 'Copied' : 'Select and copy'; setTimeout(() => { btn.textContent = 'Copy'; }, 1600); };
+    try { navigator.clipboard.writeText(c.src.trim()).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+  } }, 'Copy');
+  return h('figure', { class: 'code-card' },
+    h('figcaption', null, h('span', { class: 'lang' }, c.lang), h('span', { class: 'cap' }, c.title || ''), btn), pre);
+}
 /* ================= widget kit ================= */
 function whead(box, title, hint) { box.append(h('div', { class: 'w-head' }, h('span', { class: 'eyebrow' }, title), hint ? h('span', { class: 'w-hint' }, hint) : null)); }
 function seg(options, value, onChange, label) {
@@ -1934,7 +3709,7 @@ const FLOWS = {
     ['Augment', 'Paste the top-k chunks into the context with source labels and an instruction to answer from them and cite.', 'Query path, every request'],
     ['Generate', 'The model writes an answer grounded in the supplied text.', 'Query path, every request']] },
   mcp: { c: 'var(--tool)', nodes: [
-    ['initialize', 'The client opens the connection and both sides agree on a protocol version and capabilities.<div class="mono-box" style="margin-top:8px">→ {"jsonrpc":"2.0","id":1,"method":"initialize",\n   "params":{"protocolVersion":"2025-06-18",\n             "clientInfo":{"name":"my-app"}}}\n← {"result":{"capabilities":{"tools":{},"resources":{}}}}</div>'],
+    ['discover', 'The client learns what the server supports. Since protocol version 2026-07-28 MCP is stateless: every request carries its protocol version and client capabilities in <code>_meta</code>, and <code>server/discover</code> returns the server\'s versions and capabilities. Older versions used a one-time <code>initialize</code> handshake instead.<div class="mono-box" style="margin-top:8px">→ {"jsonrpc":"2.0","id":1,"method":"server/discover",\n   "params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28"}}}\n← {"result":{"supportedVersions":["2026-07-28"],\n   "capabilities":{"tools":{},"resources":{}}}}</div>'],
     ['tools/list', 'The client asks what the server offers. Each tool comes with a name, a description and a JSON schema.<div class="mono-box" style="margin-top:8px">← {"tools":[{"name":"search_issues",\n   "description":"Search the issue tracker by text",\n   "inputSchema":{"type":"object",\n     "properties":{"query":{"type":"string"}}}}]}</div>'],
     ['into context', 'The host places those tool definitions into the model\'s context, next to its own tools. The model now knows the tool exists.'],
     ['tools/call', 'The model emits a tool call. The host checks permissions, then the client forwards it.<div class="mono-box" style="margin-top:8px">→ {"method":"tools/call","params":{"name":"search_issues",\n   "arguments":{"query":"login timeout"}}}</div>'],
@@ -2812,10 +4587,23 @@ const app = $('#app');
 let scrubStage = null;
 const STEP_TOTAL = LESSONS.reduce((a, l) => a + l.steps.length, 0);
 
+/* streak flame: gradient ids must be unique per instance, or hidden copies break the paint */
+let FLAME_N = 0;
+function flameSVG(on) {
+  const id = 'fl' + (++FLAME_N);
+  const o = on ? ['--fl-o1', '--fl-o2', '--fl-o3'] : ['--fl-x1', '--fl-x2', '--fl-x3'];
+  const i = on ? ['--fl-i1', '--fl-i2'] : ['--fl-y1', '--fl-y2'];
+  return `<svg class="flame${on ? ' on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><defs>` +
+    `<linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(${o[0]})"/><stop offset=".55" style="stop-color:var(${o[1]})"/><stop offset="1" style="stop-color:var(${o[2]})"/></linearGradient>` +
+    `<linearGradient id="${id}i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(${i[0]})"/><stop offset="1" style="stop-color:var(${i[1]})"/></linearGradient></defs>` +
+    `<path class="fo" d="M12.1 1.6c.5 2.4 2.1 4 3.9 5.8 2 2 3.8 4.3 3.8 7.6 0 4.6-3.5 7.6-7.8 7.6S4.2 19.6 4.2 15c0-2.7 1.1-4.8 2.8-6.5.2 1.7 1 2.9 2.3 3.3-.4-4 1-7.5 2.8-10.2z" fill="url(#${id}o)"/>` +
+    `<path class="fi" d="M12.3 10.6c1.6 1.5 3.4 3.1 3.4 5.6 0 2.3-1.6 3.9-3.7 3.9s-3.6-1.5-3.6-3.6c0-1.5.8-2.6 1.8-3.5.1.9.5 1.5 1.1 1.8-.1-1.6.3-3 1-4.2z" fill="url(#${id}i)"/>` +
+    `<path d="M7.4 13.6c-.4 1.1-.5 2.1-.3 3.1" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round"/></svg>`;
+}
 function statPills() {
   const s = streak();
   return [
-    h('span', { class: 'stat-pill streak' + (s ? '' : ' off'), title: 'Days in a row', html: `<span style="color:${s ? 'var(--pear-deep)' : 'var(--faint)'};display:inline-flex">${ICON.flame}</span>${s}` })
+    h('span', { class: 'stat-pill streak' + (s ? '' : ' off'), title: 'Days in a row', html: `<span class="fl">${flameSVG(s > 0)}</span>${s}` })
   ];
 }
 
@@ -2832,13 +4620,13 @@ function streakCard() {
   const msg = learnedToday ? 'You learned today. Come back tomorrow to keep it going.' : s ? `Finish a lesson today to keep your ${s}-day streak.` : 'Finish a lesson to start a streak.';
   return h('div', { class: 'streak-card' + (s ? ' on' : '') },
     h('div', { class: 'sc-top' },
-      h('span', { class: 'sc-flame', html: ICON.flame }),
+      h('span', { class: 'sc-flame', html: flameSVG(s > 0) }),
       h('div', { class: 'sc-txt' }, h('b', { class: 'tnum' }, `${s}-day streak`), h('span', null, msg)),
       h('span', { class: 'sc-best tnum', title: 'Best streak' }, `Best ${Math.max(bestStreak(), s)}`)),
     h('div', { class: 'sc-week' }, days.map(d => {
       const k = dayKey(d); const on = set.has(k); const isT = k === today();
       return h('div', { class: 'sc-day' + (on ? ' on' : '') + (isT ? ' today' : '') },
-        h('span', { class: 'dot', html: on ? ICON.flame : '' }), h('small', null, 'SMTWTFS'[d.getDay()]));
+        h('span', { class: 'dot', html: on ? flameSVG(true) : '' }), h('small', null, 'SMTWTFS'[d.getDay()]));
     })));
 }
 function renderHome() {
@@ -3025,7 +4813,7 @@ function renderStep(revealAll) {
   const l = L.lesson; const st = l.steps[L.si];
   L.phase = 'step'; L.sel = null; L.tries = 0; L.widget = null; L.ready = !st.gate;
   const main = $('#p-main'); main.innerHTML = ''; main.scrollTop = 0;
-  const groups = st.kind === 'quiz' ? [splitBeats(st.body).flat()] : splitBeats(st.body);
+  const groups = st.kind === 'quiz' ? [splitBeats(texify(st.body)).flat()] : splitBeats(texify(st.body));
   const beats = groups.map(nodes => h('div', { class: 'beat' }, h('div', { class: 'prose' }, nodes)));
   const last = beats[beats.length - 1];
   if (st.widget) {
@@ -3033,12 +4821,13 @@ function renderStep(revealAll) {
     const api = { ready: () => { if (!L.ready) SFX.unlock(); L.ready = true; renderFoot(); }, xp: n => { L.xp += n; setProgress(); } };
     try { L.widget = WIDGETS[st.widget.type](wbox, st.widget, api) || null; } catch (err) { wbox.textContent = 'This interactive failed to load.'; console.error(err); L.ready = true; }
   }
-  if (st.after) last.append(h('div', { class: 'callout', html: st.after }));
+  if (st.after) last.append(h('div', { class: 'callout', html: texify(st.after) }));
+  if (st.deep && st.kind !== 'quiz') last.append(deepPanel(st.deep));
   if (st.kind === 'quiz') {
     const opts = h('div', { class: 'opts', role: 'radiogroup' }, st.options.map((o, i) => h('button', {
       class: 'opt', role: 'radio', 'aria-checked': 'false', 'data-i': i,
       onclick: () => { if (L.phase !== 'step') return; SFX.select(); L.sel = i; $$('.opt', opts).forEach(b => { b.classList.toggle('sel', +b.dataset.i === i); b.setAttribute('aria-checked', String(+b.dataset.i === i)); }); renderFoot(); }
-    }, h('span', { class: 'key' }, String.fromCharCode(65 + i)), h('span', { html: o }))));
+    }, h('span', { class: 'key' }, String.fromCharCode(65 + i)), h('span', { html: texify(o) }))));
     last.append(opts);
   }
   L.beats = beats; L.beat = revealAll ? beats.length : 1;
@@ -3066,7 +4855,7 @@ function renderFoot(state) {
   if (state && state.kind) {
     foot.classList.add(state.kind);
     inner.append(h('div', { class: 'fb' }, h('span', { class: 'ico', html: state.kind === 'good' ? ICON.check.replace('<svg', '<svg width="20" height="20"') : '!' }),
-      h('div', null, h('h4', null, state.title), h('p', { html: state.msg || '' }))));
+      h('div', null, h('h4', null, state.title), h('p', { html: texify(state.msg || '') }))));
     const acts = h('div', { class: 'actions' });
     if (state.kind === 'bad') {
       acts.append(h('button', { class: 'btn btn-ghost', onclick: revealAnswer }, 'Show answer'));
@@ -3123,6 +4912,37 @@ function advance() {
   if (L.si < L.lesson.steps.length - 1) { SFX.next(); L.si++; renderStep(false); }
   else finishLesson();
 }
+/* ---- "Go deeper" drawer: maths, code, tools and sources for one step ---- */
+const DEEP_TABS = [['math', 'Maths'], ['code', 'Code'], ['tools', 'Tools'], ['refs', 'Sources']];
+function extLink(u, cls, kids) { return h('a', { class: cls, href: u, target: '_blank', rel: 'noopener noreferrer' }, kids); }
+function deepSection(d, k) {
+  if (k === 'math') return [h('div', { class: 'prose deep-prose', html: texify(d.math) })];
+  if (k === 'code') return [...(d.codeNote ? [h('p', { class: 'deep-note', html: texify(d.codeNote) })] : []), ...d.code.map(codeBlock)];
+  if (k === 'tools') return [h('div', { class: 'tool-grid' }, d.tools.map(t => extLink(t.u, 'tool', [h('span', { class: 'tn' }, h('b', null, t.n), t.tag ? h('em', null, t.tag) : null), h('span', { class: 'td' }, t.d)])))];
+  return [h('ol', { class: 'refs' }, d.refs.map(r => h('li', null, extLink(r.u, 'ref', [r.t]), h('span', null, r.s))))];
+}
+function deepPanel(d) {
+  const tabs = DEEP_TABS.filter(([k]) => d[k] && (!Array.isArray(d[k]) || d[k].length))
+    .map(([k, l]) => [k, k === 'math' && !/\\[\[(]/.test(d.math) ? 'Guide' : l]);
+  const body = h('div', { class: 'deep-body' });
+  let cur = tabs[0][0];
+  const show = k => { cur = k; body.innerHTML = ''; body.append(...deepSection(d, k)); };
+  const bar = tabs.length > 1 ? seg(tabs, cur, show, 'Go deeper sections') : null;
+  show(cur);
+  return h('details', { class: 'deep' },
+    h('summary', null,
+      h('span', { class: 'deep-ico', 'aria-hidden': 'true', html: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h12v15H6a2 2 0 0 0-2 2zm0 0A2 2 0 0 0 6 21.5h12"/><path d="M9 8h5M9 11.5h3"/></svg>' }),
+      h('span', { class: 'deep-t' }, h('b', null, d.title || 'Go deeper'), h('small', null, tabs.map(t => t[1]).join(' · '))),
+      h('span', { class: 'deep-chev', 'aria-hidden': 'true' })),
+    h('div', { class: 'deep-in' }, bar, body));
+}
+function lessonToolkit(l) {
+  const seen = new Set(); const tools = [];
+  l.steps.forEach(s => ((s.deep && s.deep.tools) || []).forEach(t => { if (!seen.has(t.n)) { seen.add(t.n); tools.push(t); } }));
+  if (!tools.length) return null;
+  return h('div', { class: 'toolkit' }, h('div', { class: 'eyebrow' }, 'Your toolkit from this lesson'),
+    h('div', { class: 'tk-chips' }, tools.map(t => extLink(t.u, 'tk-chip', [t.n]))));
+}
 function finishLesson() {
   const l = L.lesson; const first = !P.done[l.id];
   const newDay = !P.days.includes(today());
@@ -3138,7 +4958,8 @@ function finishLesson() {
     h('span', { class: 'added' }, '+ ' + l.short),
     h('p', { class: 'lede', style: { marginTop: '14px' } }, l.recap),
     bp,
-    h('div', { class: 'xp-burst' }, h('span', { class: 'chip streak-chip tnum' + (newDay ? ' up' : ''), html: `<span class="fl">${ICON.flame}</span>${newDay ? 'Streak extended · ' : ''}${streak()}-day streak` }))));
+    lessonToolkit(l),
+    h('div', { class: 'xp-burst' }, h('span', { class: 'chip streak-chip tnum' + (newDay ? ' up' : ''), html: `<span class="fl">${flameSVG(true)}</span>${newDay ? 'Streak extended · ' : ''}${streak()}-day streak` }))));
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
   foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Next: ${nx.title}` : 'You finished the whole blueprint.')),
@@ -3156,7 +4977,7 @@ document.addEventListener('keydown', e => {
   if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
   const st = L.lesson.steps[L.si];
   if (st && st.kind === 'quiz' && L.phase === 'step' && L.beat >= L.beats.length && /^[1-9]$/.test(e.key)) { const b = $$('.opt')[+e.key - 1]; if (b) b.click(); }
-  if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
+  if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button,a,summary,.bp-n,.pin'))) { const b = $('#p-foot [data-primary]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } }
 });
 
 function boot() {
