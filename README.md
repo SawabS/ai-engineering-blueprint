@@ -19,7 +19,26 @@ The site is a single static page with no build dependencies. Edit the files in `
 ./build.sh
 ```
 
-This writes `index.html`, which GitHub Pages serves from the repository root. Progress, streaks and theme are stored in the visitor's browser only.
+This writes `index.html`, which GitHub Pages serves from the repository root. Progress, streaks and theme are stored in the visitor's browser only. The build pins the inline script with a SHA-256 hash in the page's Content-Security-Policy, so always rebuild after editing `src/`.
+
+## Testing
+
+The QA suite uses Playwright and axe-core:
+
+```sh
+npm install
+npx playwright install chromium   # once
+npm test                          # functional, adversarial, layout, accessibility and security checks
+npm run test:visual               # screenshot comparison against the committed baselines
+```
+
+What it covers:
+
+- **Functional:** every one of the 19 lessons is completed through the real UI on a desktop and a phone profile, plus the course map, theme switching, deep links and the whole blueprint board (pins, panel resize, bottom sheet, zoom, legend, build view, guided tour).
+- **Layout:** 12 screen sizes from 320 px phones to 2560 px monitors, in both themes, across eight app states. It fails on sideways scrolling, controls pushed off-screen, touch targets under 24 px, truncated labels and overlapping map elements.
+- **Accessibility:** axe-core WCAG 2.2 A/AA scans of eight states in both themes, keyboard-only navigation, visible focus, focus return, accessible names and reduced motion.
+- **Adversarial:** script-injection and right-to-left payloads in every text input, rapid and double clicks, corrupted or blocked storage, hostile URL hashes, reloads mid-lesson and resizing across breakpoints.
+- **Security:** no dynamic code execution, no third-party requests beyond Google Fonts, no inline handlers, `noopener` links, a Content-Security-Policy, a referrer policy and a fixed set of storage keys.
 
 ---
 

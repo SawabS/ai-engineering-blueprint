@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-yk1A60Ve106HdsLaNw0QNw5dJsNhnqx0H3MxHtCmXI8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Engineering Blueprint</title>
 <meta name="description" content="An interactive course on AI engineering, from the naked LLM to agent harnesses, built one block at a time.">
@@ -10,7 +12,7 @@
 <meta property="og:description" content="An interactive course on AI engineering, from the naked LLM to agent harnesses, built one block at a time.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#A6E9BE">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect x="2" y="6" width="36" height="32" rx="11" fill="%236FC68E"/><rect x="2" y="2" width="36" height="32" rx="11" fill="%23A6E9BE"/><path d="M20 11.2V8.4" stroke="%230E3B21" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="6.9" r="2.1" fill="%230E3B21"/><rect x="6.6" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/><rect x="30.4" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/><rect x="9.6" y="11.6" width="20.8" height="17.4" rx="6" fill="%230E3B21"/><rect x="13.6" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/><rect x="22" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/><path d="M16.4 25.2h7.2" stroke="%23A6E9BE" stroke-width="1.8" stroke-linecap="round"/></svg>">
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect x="2" y="6" width="36" height="32" rx="11" fill="%236FC68E"/%3E%3Crect x="2" y="2" width="36" height="32" rx="11" fill="%23A6E9BE"/%3E%3Cpath d="M20 11.2V8.4" stroke="%230E3B21" stroke-width="2.2" stroke-linecap="round"/%3E%3Ccircle cx="20" cy="6.9" r="2.1" fill="%230E3B21"/%3E%3Crect x="6.6" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/%3E%3Crect x="30.4" y="17" width="3" height="7" rx="1.5" fill="%230E3B21"/%3E%3Crect x="9.6" y="11.6" width="20.8" height="17.4" rx="6" fill="%230E3B21"/%3E%3Crect x="13.6" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/%3E%3Crect x="22" y="16.6" width="4.4" height="5.4" rx="2.2" fill="%23A6E9BE"/%3E%3Cpath d="M16.4 25.2h7.2" stroke="%23A6E9BE" stroke-width="1.8" stroke-linecap="round"/%3E%3C/svg%3E'>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Source+Code+Pro:wght@400;600;700&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}
@@ -21,11 +23,11 @@
   /* surfaces (bg-primary, bg-secondary, bg-elevated, oat) */
   --paper:#FFFFFF; --surface:#FFFFFF; --sunk:#F8F8F8; --oat:#F5F3F1; --hover:rgba(0,0,0,.05);
   /* text (text-primary, -secondary, -tertiary) */
-  --ink:#000000; --muted:rgba(0,0,0,.6); --faint:rgba(0,0,0,.4);
+  --ink:#000000; --muted:rgba(0,0,0,.64); --faint:rgba(0,0,0,.4);
   /* borders (border-solid, border-gray-primary, border-oat) */
   --line:#E5E5E5; --line-strong:#B3B3B3; --line-soft:rgba(0,0,0,.08); --grid:#DEDAD5;
   /* course accent: pastel green */
-  --accent:#A6E9BE; --accent-shadow:#6FC68E; --accent-ink:#1E8549; --accent-soft:#EAF9EF; --accent-fg:#0E3B21;
+  --accent:#A6E9BE; --accent-shadow:#6FC68E; --accent-ink:#17703C; --accent-soft:#EAF9EF; --accent-fg:#0E3B21;
   /* lesson node depth (idle = not started yet) */
   --node-idle:#E5E5E5; --node-idle-lip:#B9B9B9; --node-idle-ink:#9E9E9E; --ground:rgba(0,0,0,.12);
   /* primary CTA (bg-inverse-primary) */
@@ -56,7 +58,7 @@
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --paper:#101318; --surface:#181C23; --sunk:#141820; --oat:#0C0F13; --hover:rgba(190,210,235,.08);
-  --ink:#EEF2F7; --muted:rgba(222,230,242,.64); --faint:rgba(222,230,242,.42);
+  --ink:#EEF2F7; --muted:rgba(222,230,242,.7); --faint:rgba(222,230,242,.42);
   --line:#29303A; --line-strong:#4A5463; --line-soft:rgba(190,210,235,.09); --grid:#1F252E;
   --accent:#93DDAE; --accent-shadow:#4C9A69; --accent-ink:#93DDAE; --accent-soft:#132A1E; --accent-fg:#0B2416;
   --node-idle:#262D37; --node-idle-lip:#161A21; --node-idle-ink:#5E6979; --ground:rgba(0,0,0,.5);
@@ -81,7 +83,7 @@
 }}
 :root[data-theme="dark"]{
   --paper:#101318; --surface:#181C23; --sunk:#141820; --oat:#0C0F13; --hover:rgba(190,210,235,.08);
-  --ink:#EEF2F7; --muted:rgba(222,230,242,.64); --faint:rgba(222,230,242,.42);
+  --ink:#EEF2F7; --muted:rgba(222,230,242,.7); --faint:rgba(222,230,242,.42);
   --line:#29303A; --line-strong:#4A5463; --line-soft:rgba(190,210,235,.09); --grid:#1F252E;
   --accent:#93DDAE; --accent-shadow:#4C9A69; --accent-ink:#93DDAE; --accent-soft:#132A1E; --accent-fg:#0B2416;
   --node-idle:#262D37; --node-idle-lip:#161A21; --node-idle-ink:#5E6979; --ground:rgba(0,0,0,.5);
@@ -136,7 +138,7 @@ a{color:var(--sel)}
 .btn[disabled],.btn[disabled]:hover{--b-bg:var(--dis-bg);--b-fg:var(--dis-fg);--b-line:transparent;--b-sh:transparent;cursor:not-allowed;transform:none;filter:none}
 .btn-primary{--b-bg:var(--cta);--b-fg:var(--cta-ink);--b-line:var(--cta);--b-sh:var(--cta-shadow)}
 .btn-accent{--b-bg:var(--accent);--b-fg:var(--accent-fg);--b-line:var(--accent);--b-sh:var(--accent-shadow)}
-.btn-good{--b-bg:var(--good-btn);--b-fg:#fff;--b-line:var(--good-btn);--b-sh:var(--good-btn-shadow)}
+.btn-good{--b-bg:var(--good-btn);--b-fg:#06371A;--b-line:var(--good-btn);--b-sh:var(--good-btn-shadow)}
 .btn-ghost{--b-bg:transparent;--b-line:transparent;--b-sh:transparent}
 .btn-ghost:hover{background:var(--hover);filter:none}
 .btn-sm{min-height:36px;padding:6px 14px;font-size:14px;box-shadow:0 3px 0 0 var(--b-sh);margin-bottom:3px}
@@ -210,7 +212,7 @@ footer.site{align-items:center}
 .level-head{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r-l);background:var(--sunk);border:1px solid var(--line-soft);position:relative;z-index:1}
 .level-badge{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--accent);color:var(--accent-fg);font-weight:900;font-size:18px;box-shadow:0 4px 0 0 var(--accent-shadow)}
 .level-head .k{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.level-head h3{font-size:19px;font-weight:800;margin-top:1px}
+.level-head h2{font-size:19px;font-weight:800;margin-top:1px}
 .level-head p{font-size:14px;color:var(--muted);margin-top:2px}
 .level-head .count{margin-left:auto;font-weight:800;font-size:14px;color:var(--muted);white-space:nowrap}
 .path{position:relative;min-width:0}
@@ -273,7 +275,7 @@ footer.site{align-items:center}
 .stop .lab{font-weight:800;font-size:14px;text-align:center;line-height:1.25;max-width:170px}
 .stop .lab small{display:block;font-weight:600;color:var(--muted);font-size:12px;margin-top:2px}
 .pop .k{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
-.pop h4{font-size:19px;font-weight:800}
+.pop h3{font-size:19px;font-weight:800}
 .pop p{font-size:14.5px;color:var(--muted)}
 .pop .acts{display:flex;gap:8px;flex-wrap:wrap}
 .pop .acts .btn{flex:1 1 auto}
@@ -305,6 +307,8 @@ footer.site a{color:var(--ink);font-weight:700}
 .bp .packet{fill:var(--accent-ink);stroke:var(--paper);stroke-width:3;pointer-events:none}
 .bp .clickable{cursor:pointer}
 .bp .clickable:hover .blk,.bp .clickable:focus-visible .blk{stroke:var(--accent-ink)!important;stroke-width:2.5!important}
+.bp .clickable:focus{outline:none}
+.bp .clickable:focus-visible .glow{opacity:1;stroke:var(--sel);stroke-width:4;stroke-dasharray:none;animation:none}
 .bp .clickable:focus{outline:none}
 .bp .wire-line{stroke:var(--faint);stroke-width:3;stroke-dasharray:6 7;animation:flow 1.2s linear infinite}
 @keyframes flow{to{stroke-dashoffset:-26}}
@@ -497,7 +501,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .p-foot .actions{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
 .p-foot .actions .btn{min-width:150px}
 .p-foot .actions .btn-ghost{min-width:0}
-.kbd-hint{font-size:12.5px;color:var(--faint);font-family:var(--f-mono)}
+.kbd-hint{font-size:12.5px;color:var(--muted);font-family:var(--f-mono)}
 
 /* completion */
 .done-screen{max-width:640px;margin:0 auto;text-align:center;animation:stepIn .5s ease both}
@@ -533,9 +537,10 @@ footer.site a{color:var(--ink);font-weight:700}
 .pin.cur{outline:4px solid var(--pear);outline-offset:2px}
 .pin svg{width:14px;height:14px}
 .board-hint{position:absolute;left:14px;bottom:14px;z-index:2;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);font-weight:600;box-shadow:var(--shadow)}
-.panel{position:absolute;top:0;right:0;bottom:0;width:var(--pw, 440px);z-index:4;background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow);
+.board-main{--pwe:min(var(--pw, 440px), calc(100% - 340px))}
+.panel{position:absolute;top:0;right:0;bottom:0;width:var(--pwe);z-index:4;background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow);
   display:grid;grid-template-rows:auto minmax(0,1fr);transition:transform .32s cubic-bezier(.2,.9,.3,1)}
-.panel.hidden{transform:translateX(calc(100% + 24px))}
+.panel.hidden{transform:translateX(calc(100% + 24px));visibility:hidden;transition:transform .32s cubic-bezier(.2,.9,.3,1), visibility 0s .32s}
 .panel.resizing{transition:none}
 .panel-grip{position:absolute;left:-7px;top:0;bottom:0;width:14px;cursor:col-resize;z-index:5;touch-action:none;display:grid;place-items:center}
 .panel-grip::before{content:"";width:5px;height:44px;border-radius:999px;background:var(--line-strong);transition:background .15s, height .15s}
@@ -581,7 +586,7 @@ footer.site a{color:var(--ink);font-weight:700}
   .course-meta{font-size:14px;gap:12px}
   .level-head{padding:12px}
   .level-badge{width:40px;height:40px;font-size:16px}
-  .level-head h3{font-size:17px}
+  .level-head h2{font-size:17px}
   .level-head p{display:none}
   .stop{width:140px}
   .mnode{--w:78px;--hgt:70px;--lip:7px}
@@ -590,9 +595,11 @@ footer.site a{color:var(--ink);font-weight:700}
   .board-hint{display:none}
   .board-top h2{display:none}
   .icon-btn .t{display:none}
+}
+@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
   /* bottom sheet */
   .panel{top:auto;left:0;right:0;width:auto;height:var(--sh, 58%);border-left:0;border-top:1px solid var(--line);border-radius:22px 22px 0 0;transition:transform .32s cubic-bezier(.2,.9,.3,1), height .25s ease}
-  .panel.hidden{transform:translateY(calc(100% + 24px))}
+  .panel.hidden{transform:translateY(calc(100% + 24px));visibility:hidden;transition:transform .32s cubic-bezier(.2,.9,.3,1), height .25s ease, visibility 0s .32s}
   .panel.resizing{transition:none}
   .panel-grip{left:0;right:0;top:0;bottom:auto;width:auto;height:22px;cursor:row-resize}
   .panel-grip::before{width:44px;height:5px}
@@ -686,13 +693,14 @@ footer.site a{color:var(--ink);font-weight:700}
 .board-tools{position:absolute;left:14px;top:14px;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 28px)}
 .board-tools .seg{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 0 var(--line)}
 .legend{position:absolute;left:14px;bottom:14px;z-index:2;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 28px)}
+.board-main:not(.panel-off) > .board-tools,.board-main:not(.panel-off) > .legend{max-width:calc(100% - var(--pwe) - 28px)}
 .lg{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);
   font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 3px 0 0 var(--line);white-space:nowrap}
 .lg i{width:12px;height:12px;border-radius:4px;background:var(--c)}
 .lg:hover{background:var(--hover)}
 .lg:active{transform:translateY(3px);box-shadow:none}
 .lg.on{border-color:var(--accent-ink);box-shadow:0 3px 0 0 var(--accent-shadow);background:var(--accent-soft)}
-.tour{position:absolute;z-index:6;left:50%;bottom:18px;transform:translateX(-50%);width:min(440px, calc(100% - 28px));background:var(--surface);border:2px solid var(--line);
+.tour{position:absolute;z-index:6;left:0;right:0;margin:0 auto;bottom:18px;width:min(440px, calc(100% - 28px));background:var(--surface);border:2px solid var(--line);
   border-radius:var(--r-l);padding:16px;box-shadow:0 4px 0 0 var(--line), var(--shadow-md);display:grid;gap:10px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;transform-origin:50% 100%}
 .tour .k{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
 .tour h4{font-size:19px;font-weight:800}
@@ -702,16 +710,16 @@ footer.site a{color:var(--ink);font-weight:700}
 .tour .dots i.on{background:var(--accent-ink)}
 .tour .acts{display:flex;gap:8px;justify-content:flex-end;align-items:center}
 .tour .x{margin-right:auto}
-@media (max-width: 640px){
+@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
   .board-tools{top:10px;left:10px}
-  .legend{top:58px;bottom:auto;left:0;right:0;max-width:none;flex-wrap:nowrap;overflow-x:auto;padding:2px 10px 6px}
+  .legend{top:58px;bottom:auto;left:0;right:0;max-width:none!important;flex-wrap:nowrap;overflow-x:auto;padding:2px 10px 6px}
   .tour{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 }
 .board-tools .btn svg{width:16px;height:16px;flex:none}
 .board.touring .legend,.board.touring .board-tools{display:none}
 .board-tools .t-short{display:none}
-@media (max-width: 640px){
-  .board-tools{flex-wrap:nowrap;right:10px}
+@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+  .board-tools{flex-wrap:nowrap;right:10px;max-width:none!important}
   .board-tools .t-long{display:none}
   .board-tools .t-short{display:inline}
   .board-tools .seg button{padding:6px 11px;font-size:13px;min-height:32px}
@@ -721,8 +729,7 @@ footer.site a{color:var(--ink);font-weight:700}
 </head>
 <body>
 <div id="app"></div>
-<script>
-/* ================= sound (Web Audio, synthesized, no files) =================
+<script>/* ================= sound (Web Audio, synthesized, no files) =================
    Soft, low, rounded sounds: wooden "tocks", bubble pops and marimba notes, all through a
    gentle low-pass so nothing is sharp or high-pitched. Every sound follows a user action. */
 const SFX = (() => {
@@ -2531,7 +2538,12 @@ const store = {
   get() { try { return JSON.parse(localStorage.getItem(this.k)) || {}; } catch (e) { return {}; } },
   set(v) { try { localStorage.setItem(this.k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
 };
-const P = Object.assign({ done: {}, xp: 0, days: [] }, store.get());
+const P = (() => {
+  const v = store.get(); const ok = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+  const done = ok.done && typeof ok.done === 'object' && !Array.isArray(ok.done) ? ok.done : {};
+  const days = Array.isArray(ok.days) ? ok.days.filter(d => typeof d === 'string').slice(-60) : [];
+  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days };
+})();
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 function saveP() { store.set(P); }
 function markDay() { const t = today(); if (!P.days.includes(t)) { P.days.push(t); P.days = P.days.slice(-60); } }
@@ -2626,9 +2638,9 @@ function bpSVG(stage, hl = [], o = {}) {
     if (o.enter && BPN[id].s === o.enter) c.push('enter');
     if (o.click) c.push('clickable');
     if (o.built && !o.built(id)) c.push('sketch');
-    return `<g class="${c.join(' ')}" data-id="${id}"${o.click ? ' tabindex="0" role="button" aria-label="' + esc(BPN[id].t) + '"' : ''}>${inner}</g>`;
+    return `<g class="${c.join(' ')}" data-id="${id}"${o.click && !o.nofocus ? ' tabindex="0" role="button" aria-label="' + esc(BPN[id].t) + '"' : ''}>${inner}</g>`;
   };
-  let s = `<svg class="bp" viewBox="${o.vb || '0 0 1000 620'}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Blueprint of an AI system at stage ${stage}">
+  let s = `<svg class="bp" viewBox="${o.vb || '0 0 1000 620'}" preserveAspectRatio="xMidYMid meet" role="${o.click && !o.nofocus ? 'group' : 'img'}" aria-label="Blueprint of an AI system at stage ${stage}">
   <defs><pattern id="dots${o.uid || ''}" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.3" style="fill:var(--grid)"/></pattern>
   <marker id="ar${o.uid || ''}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--faint)"/></marker></defs>
   <rect x="0" y="0" width="1000" height="620" rx="16" style="fill:url(#dots${o.uid || ''})"/>`;
@@ -2839,13 +2851,13 @@ function renderHome() {
 
   // blueprint card with maximize
   scrubStage = stage;
-  const bpWrap = h('div', { class: 'bp-svg-wrap', html: bpSVG(stage, [], { click: 1, uid: 'h', ghost: 1 }) });
+  const bpWrap = h('div', { class: 'bp-svg-wrap', html: bpSVG(stage, [], { click: 1, nofocus: 1, uid: 'h', ghost: 1 }) });
   attachBlueprintTips(bpWrap, id => openBoard({ lesson: lessonForNode(id).idx }));
   const range = h('input', { type: 'range', min: 1, max: MAX_STAGE, value: stage, id: 'scrub', 'aria-label': 'Preview blueprint stage' });
   const lbl = h('div', { class: 'lbl' });
   const setScrub = (v, animate) => {
     const prev = scrubStage; scrubStage = v; const l = LESSONS[v - 1];
-    bpWrap.innerHTML = bpSVG(v, [], { click: 1, uid: 'h', ghost: 1, enter: animate && v > prev ? v : 0 });
+    bpWrap.innerHTML = bpSVG(v, [], { click: 1, nofocus: 1, uid: 'h', ghost: 1, enter: animate && v > prev ? v : 0 });
     lbl.innerHTML = `<b>Stage ${v}/${MAX_STAGE}</b> · ${esc(l.short)}${v > stage ? ' · preview' : ''}`;
   };
   range.addEventListener('input', () => setScrub(+range.value, true));
@@ -2866,7 +2878,7 @@ function renderHome() {
         h('span', { html: ICON.spark + `${STEP_TOTAL} exercises` }))),
     h('div', { class: 'progress-row' },
       h('div', { class: 'lbl' }, h('span', null, `${dc} of ${MAX_STAGE} complete`), h('span', null, `${Math.round(dc / MAX_STAGE * 100)}%`)),
-      h('div', { class: 'progress', role: 'progressbar', 'aria-valuenow': dc, 'aria-valuemax': MAX_STAGE }, h('i', { style: { width: (dc / MAX_STAGE * 100) + '%' } }))),
+      h('div', { class: 'progress', role: 'progressbar', 'aria-label': 'Course progress', 'aria-valuenow': dc, 'aria-valuemin': 0, 'aria-valuemax': MAX_STAGE }, h('i', { style: { width: (dc / MAX_STAGE * 100) + '%' } }))),
     streakCard(),
     h('button', { class: 'btn btn-accent btn-lg btn-block', 'data-sfx': 'none', onclick: () => openLesson(nx ? nx.idx : 0) }, nx ? (dc ? `Continue: ${nx.title}` : 'Start learning') : 'Review from the start'),
     bpCard);
@@ -2879,7 +2891,7 @@ function renderHome() {
 }
 
 /* ---- winding lesson map ---- */
-const ROW = 176, TOP = 64;
+const ROW = 200, TOP = 64;
 function stopX(gi) { return 50 + Math.sin(gi * 0.95 + 0.4) * 26; }
 function buildMap(nx) {
   const map = h('section', { class: 'map', 'aria-label': 'Course map' });
@@ -2895,7 +2907,7 @@ function buildMap(nx) {
     path.innerHTML = `<svg class="rail" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/>${dd ? `<path class="done" d="${dd}"/>` : ''}</svg>`;
     u.lessons.forEach((l, k) => {
       const st = P.done[l.id] ? 'done' : (nx && nx.id === l.id ? 'next' : '');
-      const node = h('button', { class: 'mnode ' + st, 'data-sfx': 'none', 'aria-label': `Lesson ${l.idx + 1}: ${l.title}${st === 'done' ? ', complete' : ''}`,
+      const node = h('button', { class: 'mnode ' + st, 'data-sfx': 'none', 'aria-label': `Lesson ${l.idx + 1}: ${l.title}${st === 'done' ? ', complete' : st === 'next' ? ', start here' : ''}`,
         onclick: e => { e.stopPropagation(); openPop(l, path, pts[k], node); },
         html: '<span class="selring"></span><span class="base"></span>' + `<span class="face">${ICON[l.id] || ''}<span class="shine"></span></span>` +
           (st === 'done' ? `<span class="tick">${ICON.check}</span>` : '') + (st === 'next' ? '<span class="start-bubble">Start</span>' : '') });
@@ -2905,7 +2917,7 @@ function buildMap(nx) {
     });
     map.append(h('div', { class: 'level', style: { '--u': u.color } },
       h('div', { class: 'level-head' }, h('span', { class: 'level-badge' }, String(ui + 1)),
-        h('div', { style: { minWidth: 0 } }, h('div', { class: 'k' }, `Level ${ui + 1} · ${u.side}`), h('h3', null, u.title), h('p', null, u.blurb)),
+        h('div', { style: { minWidth: 0 } }, h('div', { class: 'k' }, `Level ${ui + 1} · ${u.side}`), h('h2', null, u.title), h('p', null, u.blurb)),
         h('span', { class: 'count tnum' }, `${done}/${n}`)),
       path));
   });
@@ -2928,7 +2940,7 @@ function openPop(l, path, pt, node) {
   const ax = clamp(pt[0] / 100 * W - x, 24, pw - 24);
   popEl = h('div', { class: 'pop', 'data-id': l.id, role: 'dialog', 'aria-label': l.title, style: { left: x + 'px', top: (pt[1] + 106) + 'px', width: pw + 'px', '--ax': ax + 'px' } },
     h('div', { class: 'k' }, `Lesson ${l.idx + 1}${done ? ' · complete' : ''}`),
-    h('h4', null, l.title),
+    h('h3', null, l.title),
     h('p', null, l.sub),
     h('p', { style: { fontSize: '13.5px' } }, h('b', { style: { color: 'var(--ink)' } }, 'Adds: '), l.added),
     h('div', { class: 'acts' },
@@ -2958,18 +2970,23 @@ function openLesson(i) {
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
       null),
     h('div', { class: 'p-body' },
-      h('main', { class: 'p-main', id: 'p-main' }),
+      h('main', { class: 'p-main', id: 'p-main', tabindex: '0', 'aria-label': 'Lesson content' }),
       h('aside', { class: 'p-aside', id: 'p-aside' })),
     h('footer', { class: 'p-foot', id: 'p-foot' }));
   if (docked) boardDock(player, lesson);
   else { document.body.append(player); document.body.style.overflow = 'hidden'; renderAside(true); }
-  SFX.open();
+  SFX.open(); syncInert();
   renderStep(false);
+}
+function syncInert() {
+  const open = !!(BOARD || $('.player'));
+  if (app) { app.inert = open; if (open) app.setAttribute('aria-hidden', 'true'); else app.removeAttribute('aria-hidden'); }
 }
 function closeLesson() {
   const p = $('.player'); if (!p) return;
   SFX.close(); const wasDocked = p.classList.contains('docked'); p.remove(); L = null;
   if (wasDocked && BOARD) { boardShowIndex(); return; }
+  syncInert();
   document.body.style.overflow = BOARD ? 'hidden' : '';
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
   renderHome();
@@ -3132,7 +3149,7 @@ function finishLesson() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (popEl) { closePop(); return; } if (BOARD) { closeBoard(); return; } if (L) { closeLesson(); return; } }
+  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { closeBoard(); return; } if (L) { closeLesson(); return; } }
   if (!L) return;
   if (BOARD && BOARD.hidden) return;
   const tag = (e.target.tagName || '').toLowerCase();
@@ -3157,7 +3174,7 @@ const PANEL_KEY = 'ai-eng-blueprint.panel';
 // one pin per lesson, in blueprint coordinates
 const PINS = [[505, 322], [340, 146], [340, 372], [340, 204], [452, 146], [480, 466], [408, 526], [255, 46], [706, 146], [706, 186], [844, 146], [706, 266], [835, 196],
   [844, 226], [844, 294], [556, 134], [844, 354], [844, 480], [980, 584]];
-const isPhone = () => window.matchMedia('(max-width: 640px)').matches;
+const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
 
 function openBoard(opts = {}) {
   hideTip(); closePop();
@@ -3174,7 +3191,7 @@ function openBoard(opts = {}) {
   const ttl = h('div', { class: 'ttl' }, 'Lessons');
   const expandBtn = h('button', { class: 'icon-btn', 'aria-label': 'Open the lesson full screen', title: 'Full screen lesson', onclick: () => closeBoard(), html: ICON.max });
   const hideBtn = h('button', { class: 'icon-btn', 'aria-label': 'Hide the panel', title: 'Hide panel', onclick: () => setPanelHidden(true), html: ICON.close });
-  const grip = h('div', { class: 'panel-grip', role: 'separator', 'aria-label': 'Drag to resize the panel', tabindex: '0' });
+  const grip = h('div', { class: 'panel-grip', role: 'separator', 'aria-label': 'Drag to resize the panel', 'aria-orientation': 'vertical', 'aria-valuemin': 320, 'aria-valuemax': 760, 'aria-valuenow': 440, tabindex: '0' });
   const panel = h('aside', { class: 'panel', 'aria-label': 'Lesson panel' }, grip, h('div', { class: 'panel-head' }, ttl, expandBtn, hideBtn), panelBody);
   const tab = h('button', { class: 'panel-tab', hidden: true, onclick: () => setPanelHidden(false), html: ICON.panel + '<span>Lesson panel</span>' });
   const main = h('div', { class: 'board-main' }, canvas,
@@ -3186,7 +3203,7 @@ function openBoard(opts = {}) {
     panel, tab);
   const el = h('div', { class: 'board', role: 'dialog', 'aria-label': 'Blueprint board' },
     h('div', { class: 'board-top' },
-      h('button', { class: 'btn btn-sm', onclick: () => closeBoard(true), html: ICON.left.replace('<svg', '<svg width="16" height="16"') + '<span>Course</span>' }),
+      h('button', { class: 'btn btn-sm', 'aria-label': 'Back to course', onclick: () => closeBoard(true), html: ICON.left.replace('<svg', '<svg width="16" height="16"') + '<span>Course</span>' }),
       h('span', { class: 'board-mark', html: BRAND_SVG }),
       h('h2', null, 'Blueprint board'),
       h('span', { class: 'sp' }),
@@ -3198,9 +3215,9 @@ function openBoard(opts = {}) {
       themeBtn()),
     main);
   Object.assign(B, { el, canvas, pins, pct, panel, panelBody, ttl, expandBtn, tab, main, svg: $('svg', canvas) });
-  panel.style.setProperty('--pw', B.w + 'px');
+  main.style.setProperty('--pw', B.w + 'px'); grip.setAttribute('aria-valuenow', Math.round(B.w));
   panel.style.setProperty('--sh', B.sh + '%');
-  document.body.append(el); document.body.style.overflow = 'hidden';
+  document.body.append(el); document.body.style.overflow = 'hidden'; syncInert();
   try { history.replaceState(null, '', '#board'); } catch (e) { /* ignore */ }
   SFX.open();
 
@@ -3222,15 +3239,16 @@ function closeBoard(toCourse) {
   endTour(true);
   const B = BOARD; const p = $('.player');
   if (B.ro) B.ro.disconnect();
+  if (B.anim) cancelAnimationFrame(B.anim);
   if (p && L && !toCourse) {
     p.classList.remove('docked'); p.setAttribute('role', 'dialog'); document.body.append(p);
-    BOARD = null; B.el.remove(); hideTip();
+    BOARD = null; B.el.remove(); hideTip(); syncInert();
     document.body.style.overflow = 'hidden'; renderAside(false);
     try { history.replaceState(null, '', '#' + L.lesson.id); } catch (e) { /* ignore */ }
     renderHome(); SFX.close(); return;
   }
   if (p) { p.remove(); L = null; }
-  BOARD = null; B.el.remove(); hideTip(); SFX.close();
+  BOARD = null; B.el.remove(); hideTip(); SFX.close(); syncInert();
   document.body.style.overflow = '';
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
   renderHome();
@@ -3239,7 +3257,7 @@ function closeBoard(toCourse) {
 /* ---- panel ---- */
 function setPanelHidden(v) {
   const B = BOARD; if (!B) return;
-  B.hidden = v; B.panel.classList.toggle('hidden', v); B.tab.hidden = !v;
+  B.hidden = v; B.panel.classList.toggle('hidden', v); B.main.classList.toggle('panel-off', v); B.tab.hidden = !v;
   SFX.toggle();
   setTimeout(() => { if (L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); }, 60);
 }
@@ -3255,7 +3273,7 @@ function wireGrip(B) {
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
     if (isPhone()) { const hh = clamp(drag.h - dy, 90, drag.H * 0.94); B.panel.style.setProperty('--sh', hh + 'px'); drag.cur = hh; }
-    else { const w = clamp(drag.w - dx, 320, Math.min(760, drag.W * 0.72)); B.w = w; B.panel.style.setProperty('--pw', w + 'px'); }
+    else { const w = clamp(drag.w - dx, 320, Math.min(760, drag.W * 0.72)); B.w = w; B.main.style.setProperty('--pw', w + 'px'); e.currentTarget.setAttribute('aria-valuenow', Math.round(w)); }
   });
   const end = () => {
     if (!drag) return; B.panel.classList.remove('resizing');
@@ -3271,7 +3289,7 @@ function wireGrip(B) {
   g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
   g.addEventListener('keydown', e => {
     if (isPhone()) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { B.w = clamp(B.w + (e.key === 'ArrowLeft' ? 24 : -24), 320, 760); B.panel.style.setProperty('--pw', B.w + 'px'); savePanel(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { B.w = clamp(B.w + (e.key === 'ArrowLeft' ? 24 : -24), 320, 760); B.main.style.setProperty('--pw', B.w + 'px'); e.currentTarget.setAttribute('aria-valuenow', Math.round(B.w)); savePanel(); }
   });
 }
 function boardDock(player, lesson) {
@@ -3291,7 +3309,7 @@ function boardShowIndex() {
         h('span', { style: { minWidth: 0 } }, h('b', null, l.title), h('span', null, l.sub)),
         h('span', { class: 'chip' }, `${l.steps.length}`)))]));
   B.panelBody.innerHTML = ''; B.panelBody.append(idx);
-  fitAll(true);
+  fitAll(!!B.camSet); // first open frames the board at once; later returns glide
 }
 function boardRefresh() { renderPins(); setBuildMode(BOARD.mode, true); }
 
@@ -3311,7 +3329,8 @@ function applyCam() {
   B.svg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
   B.canvas.style.backgroundSize = `${22 / B.s}px ${22 / B.s}px`;
   B.canvas.style.backgroundPosition = `${-B.x / B.s}px ${-B.y / B.s}px`;
-  const pinPx = clamp(Math.round(30 / B.s), 20, 34);
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
   $$('.pin', B.pins).forEach(p => {
     const [X, Y] = PINS[+p.dataset.i];
     p.style.transform = `translate(${(X - B.x) / B.s}px, ${(Y - B.y) / B.s}px)`;
@@ -3325,7 +3344,7 @@ function setCam(x, y, s, animate) {
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!animate || reduce) { B.x = x; B.y = y; B.s = s; applyCam(); return; }
   const from = [B.x, B.y, B.s], to = [x, y, s], t0 = performance.now(), ms = 650, ease = t => 1 - Math.pow(1 - t, 3);
-  const step = now => { const t = Math.min(1, (now - t0) / ms); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
+  const step = now => { const t = clamp((now - t0) / ms, 0, 1); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
   B.anim = requestAnimationFrame(step);
 }
 function fitBox(box, animate) {
@@ -3337,6 +3356,7 @@ function fitBox(box, animate) {
 function fitAll(animate) { fitBox([0, 30, 1000, 590], animate); }
 function zoomAt(px, py, f) {
   const B = BOARD; const base = baseScale();
+  if (B.anim) { cancelAnimationFrame(B.anim); B.anim = 0; } // a manual zoom wins over a running camera move
   const ns = clamp(B.s * f, base / 5, base * 2);
   B.x += px * (B.s - ns); B.y += py * (B.s - ns); B.s = ns; applyCam();
 }

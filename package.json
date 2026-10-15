@@ -1,0 +1,17 @@
+{
+  "name": "ai-engineering-blueprint",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An interactive course on AI engineering, from the naked LLM to agent harnesses.",
+  "scripts": {
+    "build": "sh build.sh",
+    "serve": "python3 -m http.server 4173",
+    "test": "playwright test",
+    "test:visual": "VISUAL=1 playwright test --project=visual",
+    "test:update-visual": "VISUAL=1 playwright test --project=visual --update-snapshots"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.0",
+    "@playwright/test": "1.56.0"
+  }
+}

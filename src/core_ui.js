@@ -121,13 +121,13 @@ function renderHome() {
 
   // blueprint card with maximize
   scrubStage = stage;
-  const bpWrap = h('div', { class: 'bp-svg-wrap', html: bpSVG(stage, [], { click: 1, uid: 'h', ghost: 1 }) });
+  const bpWrap = h('div', { class: 'bp-svg-wrap', html: bpSVG(stage, [], { click: 1, nofocus: 1, uid: 'h', ghost: 1 }) });
   attachBlueprintTips(bpWrap, id => openBoard({ lesson: lessonForNode(id).idx }));
   const range = h('input', { type: 'range', min: 1, max: MAX_STAGE, value: stage, id: 'scrub', 'aria-label': 'Preview blueprint stage' });
   const lbl = h('div', { class: 'lbl' });
   const setScrub = (v, animate) => {
     const prev = scrubStage; scrubStage = v; const l = LESSONS[v - 1];
-    bpWrap.innerHTML = bpSVG(v, [], { click: 1, uid: 'h', ghost: 1, enter: animate && v > prev ? v : 0 });
+    bpWrap.innerHTML = bpSVG(v, [], { click: 1, nofocus: 1, uid: 'h', ghost: 1, enter: animate && v > prev ? v : 0 });
     lbl.innerHTML = `<b>Stage ${v}/${MAX_STAGE}</b> · ${esc(l.short)}${v > stage ? ' · preview' : ''}`;
   };
   range.addEventListener('input', () => setScrub(+range.value, true));
@@ -148,7 +148,7 @@ function renderHome() {
         h('span', { html: ICON.spark + `${STEP_TOTAL} exercises` }))),
     h('div', { class: 'progress-row' },
       h('div', { class: 'lbl' }, h('span', null, `${dc} of ${MAX_STAGE} complete`), h('span', null, `${Math.round(dc / MAX_STAGE * 100)}%`)),
-      h('div', { class: 'progress', role: 'progressbar', 'aria-valuenow': dc, 'aria-valuemax': MAX_STAGE }, h('i', { style: { width: (dc / MAX_STAGE * 100) + '%' } }))),
+      h('div', { class: 'progress', role: 'progressbar', 'aria-label': 'Course progress', 'aria-valuenow': dc, 'aria-valuemin': 0, 'aria-valuemax': MAX_STAGE }, h('i', { style: { width: (dc / MAX_STAGE * 100) + '%' } }))),
     streakCard(),
     h('button', { class: 'btn btn-accent btn-lg btn-block', 'data-sfx': 'none', onclick: () => openLesson(nx ? nx.idx : 0) }, nx ? (dc ? `Continue: ${nx.title}` : 'Start learning') : 'Review from the start'),
     bpCard);
@@ -161,7 +161,7 @@ function renderHome() {
 }
 
 /* ---- winding lesson map ---- */
-const ROW = 176, TOP = 64;
+const ROW = 200, TOP = 64;
 function stopX(gi) { return 50 + Math.sin(gi * 0.95 + 0.4) * 26; }
 function buildMap(nx) {
   const map = h('section', { class: 'map', 'aria-label': 'Course map' });
@@ -177,7 +177,7 @@ function buildMap(nx) {
     path.innerHTML = `<svg class="rail" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/>${dd ? `<path class="done" d="${dd}"/>` : ''}</svg>`;
     u.lessons.forEach((l, k) => {
       const st = P.done[l.id] ? 'done' : (nx && nx.id === l.id ? 'next' : '');
-      const node = h('button', { class: 'mnode ' + st, 'data-sfx': 'none', 'aria-label': `Lesson ${l.idx + 1}: ${l.title}${st === 'done' ? ', complete' : ''}`,
+      const node = h('button', { class: 'mnode ' + st, 'data-sfx': 'none', 'aria-label': `Lesson ${l.idx + 1}: ${l.title}${st === 'done' ? ', complete' : st === 'next' ? ', start here' : ''}`,
         onclick: e => { e.stopPropagation(); openPop(l, path, pts[k], node); },
         html: '<span class="selring"></span><span class="base"></span>' + `<span class="face">${ICON[l.id] || ''}<span class="shine"></span></span>` +
           (st === 'done' ? `<span class="tick">${ICON.check}</span>` : '') + (st === 'next' ? '<span class="start-bubble">Start</span>' : '') });
@@ -187,7 +187,7 @@ function buildMap(nx) {
     });
     map.append(h('div', { class: 'level', style: { '--u': u.color } },
       h('div', { class: 'level-head' }, h('span', { class: 'level-badge' }, String(ui + 1)),
-        h('div', { style: { minWidth: 0 } }, h('div', { class: 'k' }, `Level ${ui + 1} · ${u.side}`), h('h3', null, u.title), h('p', null, u.blurb)),
+        h('div', { style: { minWidth: 0 } }, h('div', { class: 'k' }, `Level ${ui + 1} · ${u.side}`), h('h2', null, u.title), h('p', null, u.blurb)),
         h('span', { class: 'count tnum' }, `${done}/${n}`)),
       path));
   });
@@ -210,7 +210,7 @@ function openPop(l, path, pt, node) {
   const ax = clamp(pt[0] / 100 * W - x, 24, pw - 24);
   popEl = h('div', { class: 'pop', 'data-id': l.id, role: 'dialog', 'aria-label': l.title, style: { left: x + 'px', top: (pt[1] + 106) + 'px', width: pw + 'px', '--ax': ax + 'px' } },
     h('div', { class: 'k' }, `Lesson ${l.idx + 1}${done ? ' · complete' : ''}`),
-    h('h4', null, l.title),
+    h('h3', null, l.title),
     h('p', null, l.sub),
     h('p', { style: { fontSize: '13.5px' } }, h('b', { style: { color: 'var(--ink)' } }, 'Adds: '), l.added),
     h('div', { class: 'acts' },
@@ -240,18 +240,23 @@ function openLesson(i) {
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
       null),
     h('div', { class: 'p-body' },
-      h('main', { class: 'p-main', id: 'p-main' }),
+      h('main', { class: 'p-main', id: 'p-main', tabindex: '0', 'aria-label': 'Lesson content' }),
       h('aside', { class: 'p-aside', id: 'p-aside' })),
     h('footer', { class: 'p-foot', id: 'p-foot' }));
   if (docked) boardDock(player, lesson);
   else { document.body.append(player); document.body.style.overflow = 'hidden'; renderAside(true); }
-  SFX.open();
+  SFX.open(); syncInert();
   renderStep(false);
+}
+function syncInert() {
+  const open = !!(BOARD || $('.player'));
+  if (app) { app.inert = open; if (open) app.setAttribute('aria-hidden', 'true'); else app.removeAttribute('aria-hidden'); }
 }
 function closeLesson() {
   const p = $('.player'); if (!p) return;
   SFX.close(); const wasDocked = p.classList.contains('docked'); p.remove(); L = null;
   if (wasDocked && BOARD) { boardShowIndex(); return; }
+  syncInert();
   document.body.style.overflow = BOARD ? 'hidden' : '';
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
   renderHome();
@@ -414,7 +419,7 @@ function finishLesson() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (popEl) { closePop(); return; } if (BOARD) { closeBoard(); return; } if (L) { closeLesson(); return; } }
+  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { closeBoard(); return; } if (L) { closeLesson(); return; } }
   if (!L) return;
   if (BOARD && BOARD.hidden) return;
   const tag = (e.target.tagName || '').toLowerCase();

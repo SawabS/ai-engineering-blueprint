@@ -27,7 +27,12 @@ const store = {
   get() { try { return JSON.parse(localStorage.getItem(this.k)) || {}; } catch (e) { return {}; } },
   set(v) { try { localStorage.setItem(this.k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
 };
-const P = Object.assign({ done: {}, xp: 0, days: [] }, store.get());
+const P = (() => {
+  const v = store.get(); const ok = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+  const done = ok.done && typeof ok.done === 'object' && !Array.isArray(ok.done) ? ok.done : {};
+  const days = Array.isArray(ok.days) ? ok.days.filter(d => typeof d === 'string').slice(-60) : [];
+  return { done, xp: Number.isFinite(ok.xp) ? ok.xp : 0, days };
+})();
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 function saveP() { store.set(P); }
 function markDay() { const t = today(); if (!P.days.includes(t)) { P.days.push(t); P.days = P.days.slice(-60); } }
@@ -122,9 +127,9 @@ function bpSVG(stage, hl = [], o = {}) {
     if (o.enter && BPN[id].s === o.enter) c.push('enter');
     if (o.click) c.push('clickable');
     if (o.built && !o.built(id)) c.push('sketch');
-    return `<g class="${c.join(' ')}" data-id="${id}"${o.click ? ' tabindex="0" role="button" aria-label="' + esc(BPN[id].t) + '"' : ''}>${inner}</g>`;
+    return `<g class="${c.join(' ')}" data-id="${id}"${o.click && !o.nofocus ? ' tabindex="0" role="button" aria-label="' + esc(BPN[id].t) + '"' : ''}>${inner}</g>`;
   };
-  let s = `<svg class="bp" viewBox="${o.vb || '0 0 1000 620'}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Blueprint of an AI system at stage ${stage}">
+  let s = `<svg class="bp" viewBox="${o.vb || '0 0 1000 620'}" preserveAspectRatio="xMidYMid meet" role="${o.click && !o.nofocus ? 'group' : 'img'}" aria-label="Blueprint of an AI system at stage ${stage}">
   <defs><pattern id="dots${o.uid || ''}" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.3" style="fill:var(--grid)"/></pattern>
   <marker id="ar${o.uid || ''}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--faint)"/></marker></defs>
   <rect x="0" y="0" width="1000" height="620" rx="16" style="fill:url(#dots${o.uid || ''})"/>`;

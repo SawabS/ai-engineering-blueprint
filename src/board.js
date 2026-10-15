@@ -6,7 +6,7 @@ const PANEL_KEY = 'ai-eng-blueprint.panel';
 // one pin per lesson, in blueprint coordinates
 const PINS = [[505, 322], [340, 146], [340, 372], [340, 204], [452, 146], [480, 466], [408, 526], [255, 46], [706, 146], [706, 186], [844, 146], [706, 266], [835, 196],
   [844, 226], [844, 294], [556, 134], [844, 354], [844, 480], [980, 584]];
-const isPhone = () => window.matchMedia('(max-width: 640px)').matches;
+const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
 
 function openBoard(opts = {}) {
   hideTip(); closePop();
@@ -23,7 +23,7 @@ function openBoard(opts = {}) {
   const ttl = h('div', { class: 'ttl' }, 'Lessons');
   const expandBtn = h('button', { class: 'icon-btn', 'aria-label': 'Open the lesson full screen', title: 'Full screen lesson', onclick: () => closeBoard(), html: ICON.max });
   const hideBtn = h('button', { class: 'icon-btn', 'aria-label': 'Hide the panel', title: 'Hide panel', onclick: () => setPanelHidden(true), html: ICON.close });
-  const grip = h('div', { class: 'panel-grip', role: 'separator', 'aria-label': 'Drag to resize the panel', tabindex: '0' });
+  const grip = h('div', { class: 'panel-grip', role: 'separator', 'aria-label': 'Drag to resize the panel', 'aria-orientation': 'vertical', 'aria-valuemin': 320, 'aria-valuemax': 760, 'aria-valuenow': 440, tabindex: '0' });
   const panel = h('aside', { class: 'panel', 'aria-label': 'Lesson panel' }, grip, h('div', { class: 'panel-head' }, ttl, expandBtn, hideBtn), panelBody);
   const tab = h('button', { class: 'panel-tab', hidden: true, onclick: () => setPanelHidden(false), html: ICON.panel + '<span>Lesson panel</span>' });
   const main = h('div', { class: 'board-main' }, canvas,
@@ -35,7 +35,7 @@ function openBoard(opts = {}) {
     panel, tab);
   const el = h('div', { class: 'board', role: 'dialog', 'aria-label': 'Blueprint board' },
     h('div', { class: 'board-top' },
-      h('button', { class: 'btn btn-sm', onclick: () => closeBoard(true), html: ICON.left.replace('<svg', '<svg width="16" height="16"') + '<span>Course</span>' }),
+      h('button', { class: 'btn btn-sm', 'aria-label': 'Back to course', onclick: () => closeBoard(true), html: ICON.left.replace('<svg', '<svg width="16" height="16"') + '<span>Course</span>' }),
       h('span', { class: 'board-mark', html: BRAND_SVG }),
       h('h2', null, 'Blueprint board'),
       h('span', { class: 'sp' }),
@@ -47,9 +47,9 @@ function openBoard(opts = {}) {
       themeBtn()),
     main);
   Object.assign(B, { el, canvas, pins, pct, panel, panelBody, ttl, expandBtn, tab, main, svg: $('svg', canvas) });
-  panel.style.setProperty('--pw', B.w + 'px');
+  main.style.setProperty('--pw', B.w + 'px'); grip.setAttribute('aria-valuenow', Math.round(B.w));
   panel.style.setProperty('--sh', B.sh + '%');
-  document.body.append(el); document.body.style.overflow = 'hidden';
+  document.body.append(el); document.body.style.overflow = 'hidden'; syncInert();
   try { history.replaceState(null, '', '#board'); } catch (e) { /* ignore */ }
   SFX.open();
 
@@ -71,15 +71,16 @@ function closeBoard(toCourse) {
   endTour(true);
   const B = BOARD; const p = $('.player');
   if (B.ro) B.ro.disconnect();
+  if (B.anim) cancelAnimationFrame(B.anim);
   if (p && L && !toCourse) {
     p.classList.remove('docked'); p.setAttribute('role', 'dialog'); document.body.append(p);
-    BOARD = null; B.el.remove(); hideTip();
+    BOARD = null; B.el.remove(); hideTip(); syncInert();
     document.body.style.overflow = 'hidden'; renderAside(false);
     try { history.replaceState(null, '', '#' + L.lesson.id); } catch (e) { /* ignore */ }
     renderHome(); SFX.close(); return;
   }
   if (p) { p.remove(); L = null; }
-  BOARD = null; B.el.remove(); hideTip(); SFX.close();
+  BOARD = null; B.el.remove(); hideTip(); SFX.close(); syncInert();
   document.body.style.overflow = '';
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
   renderHome();
@@ -88,7 +89,7 @@ function closeBoard(toCourse) {
 /* ---- panel ---- */
 function setPanelHidden(v) {
   const B = BOARD; if (!B) return;
-  B.hidden = v; B.panel.classList.toggle('hidden', v); B.tab.hidden = !v;
+  B.hidden = v; B.panel.classList.toggle('hidden', v); B.main.classList.toggle('panel-off', v); B.tab.hidden = !v;
   SFX.toggle();
   setTimeout(() => { if (L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); }, 60);
 }
@@ -104,7 +105,7 @@ function wireGrip(B) {
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
     if (isPhone()) { const hh = clamp(drag.h - dy, 90, drag.H * 0.94); B.panel.style.setProperty('--sh', hh + 'px'); drag.cur = hh; }
-    else { const w = clamp(drag.w - dx, 320, Math.min(760, drag.W * 0.72)); B.w = w; B.panel.style.setProperty('--pw', w + 'px'); }
+    else { const w = clamp(drag.w - dx, 320, Math.min(760, drag.W * 0.72)); B.w = w; B.main.style.setProperty('--pw', w + 'px'); e.currentTarget.setAttribute('aria-valuenow', Math.round(w)); }
   });
   const end = () => {
     if (!drag) return; B.panel.classList.remove('resizing');
@@ -120,7 +121,7 @@ function wireGrip(B) {
   g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
   g.addEventListener('keydown', e => {
     if (isPhone()) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { B.w = clamp(B.w + (e.key === 'ArrowLeft' ? 24 : -24), 320, 760); B.panel.style.setProperty('--pw', B.w + 'px'); savePanel(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { B.w = clamp(B.w + (e.key === 'ArrowLeft' ? 24 : -24), 320, 760); B.main.style.setProperty('--pw', B.w + 'px'); e.currentTarget.setAttribute('aria-valuenow', Math.round(B.w)); savePanel(); }
   });
 }
 function boardDock(player, lesson) {
@@ -140,7 +141,7 @@ function boardShowIndex() {
         h('span', { style: { minWidth: 0 } }, h('b', null, l.title), h('span', null, l.sub)),
         h('span', { class: 'chip' }, `${l.steps.length}`)))]));
   B.panelBody.innerHTML = ''; B.panelBody.append(idx);
-  fitAll(true);
+  fitAll(!!B.camSet); // first open frames the board at once; later returns glide
 }
 function boardRefresh() { renderPins(); setBuildMode(BOARD.mode, true); }
 
@@ -160,7 +161,8 @@ function applyCam() {
   B.svg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
   B.canvas.style.backgroundSize = `${22 / B.s}px ${22 / B.s}px`;
   B.canvas.style.backgroundPosition = `${-B.x / B.s}px ${-B.y / B.s}px`;
-  const pinPx = clamp(Math.round(30 / B.s), 20, 34);
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
   $$('.pin', B.pins).forEach(p => {
     const [X, Y] = PINS[+p.dataset.i];
     p.style.transform = `translate(${(X - B.x) / B.s}px, ${(Y - B.y) / B.s}px)`;
@@ -174,7 +176,7 @@ function setCam(x, y, s, animate) {
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!animate || reduce) { B.x = x; B.y = y; B.s = s; applyCam(); return; }
   const from = [B.x, B.y, B.s], to = [x, y, s], t0 = performance.now(), ms = 650, ease = t => 1 - Math.pow(1 - t, 3);
-  const step = now => { const t = Math.min(1, (now - t0) / ms); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
+  const step = now => { const t = clamp((now - t0) / ms, 0, 1); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
   B.anim = requestAnimationFrame(step);
 }
 function fitBox(box, animate) {
@@ -186,6 +188,7 @@ function fitBox(box, animate) {
 function fitAll(animate) { fitBox([0, 30, 1000, 590], animate); }
 function zoomAt(px, py, f) {
   const B = BOARD; const base = baseScale();
+  if (B.anim) { cancelAnimationFrame(B.anim); B.anim = 0; } // a manual zoom wins over a running camera move
   const ns = clamp(B.s * f, base / 5, base * 2);
   B.x += px * (B.s - ns); B.y += py * (B.s - ns); B.s = ns; applyCam();
 }
