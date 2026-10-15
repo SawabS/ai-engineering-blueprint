@@ -791,3 +791,75 @@ mi.tt{font-family:var(--f-mono)}
 .tk-chip::after{content:"↗";margin-left:6px;color:var(--muted)}
 .tk-chip:hover{border-color:var(--accent-shadow)}
 @media (max-width: 640px){ .deep-in{padding:12px} .tool-grid{grid-template-columns:minmax(0,1fr)} .code-src{font-size:12.5px} }
+
+/* ---------- system explorer ---------- */
+.sysv .vt{font-family:var(--f-display);font-weight:900;font-size:24px;fill:var(--ink);letter-spacing:-.01em}
+.sysv .vs{font-size:13px;fill:var(--muted)}
+.sysv .lane rect{fill:color-mix(in srgb, var(--c) 5%, transparent);stroke:color-mix(in srgb, var(--c) 38%, transparent);stroke-width:1.5;stroke-dasharray:7 6}
+.sysv .lane text{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;fill:color-mix(in srgb, var(--c) 55%, var(--muted))}
+.sysv .sys-n .lip{fill:color-mix(in srgb, var(--c) 42%, var(--line))}
+.sysv .sys-n .blk{fill:color-mix(in srgb, var(--c) 13%, var(--surface));stroke:color-mix(in srgb, var(--c) 48%, var(--surface));stroke-width:1.5;--hc:var(--c)}
+.sysv .sys-n .db-arc{fill:none;stroke:color-mix(in srgb, var(--c) 48%, var(--surface));stroke-width:1.5}
+.sysv .sn-t{font-weight:800;fill:color-mix(in srgb, var(--c) 55%, var(--ink))}
+.sysv .sn-s{font-weight:500;fill:var(--muted)}
+.bp .dive circle{fill:var(--c, var(--accent-ink));stroke:var(--surface);stroke-width:2}
+.bp .dive path{stroke:#fff;stroke-width:2.2;stroke-linecap:round;fill:none}
+.bp .root-dive circle{fill:var(--ink);opacity:.72}
+.bp .drill:hover .dive circle{opacity:1}
+.sysv .ep{fill:none;stroke:color-mix(in srgb, var(--ink) 34%, transparent);stroke-width:2;marker-end:url(#sysArr);transition:opacity .25s, stroke .25s}
+.sysv .ah{fill:color-mix(in srgb, var(--ink) 40%, transparent)}
+.sysv .ah.hl{fill:var(--ink)}
+.sysv .sys-e.dash .ep{stroke-dasharray:6 6}
+.sysv .sys-e .el{font-family:var(--f-mono);font-size:10.5px;font-weight:600;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.sysv .sys-e.hl .ep{stroke:var(--ink);stroke-width:2.6;marker-end:url(#sysArrHl)}
+.sysv .sys-e.hl .el{fill:var(--ink)}
+.sysv .sys-e.dim{opacity:.22}
+.sysv .sys-e.flowing .ep{stroke-dasharray:9 7;animation:flow .9s linear infinite}
+.board-canvas > svg{transition:opacity .28s ease}
+.board-canvas.diving > svg{opacity:0}
+.crumbs{display:flex;align-items:center;gap:4px;min-width:0;max-width:min(560px, 100%);overflow-x:auto;scrollbar-width:none;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:3px 6px;box-shadow:0 3px 0 0 var(--line);white-space:nowrap}
+.crumbs::-webkit-scrollbar{display:none}
+.crumbs .crumb{appearance:none;border:0;background:none;font:700 13px var(--f-body);color:var(--muted);padding:6px 8px;border-radius:999px;cursor:pointer;min-height:32px;white-space:nowrap}
+.crumbs .crumb:hover{background:var(--sunk);color:var(--ink)}
+.crumbs .sep{color:var(--faint);font-weight:700}
+.crumbs .cur{font:800 13px var(--f-body);color:var(--ink);padding:6px 8px;white-space:nowrap}
+.board-tools .up-btn{padding:6px 10px;min-width:40px}
+.board-tools .btn svg{width:16px;height:16px;flex:none}
+/* inspector */
+.insp{display:grid;gap:12px;padding:4px 2px 18px}
+.insp-cat{display:flex;align-items:center;gap:8px;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.insp-cat i{width:12px;height:12px;border-radius:4px;background:var(--c, var(--accent));flex:none}
+.insp-cat .in-view{text-transform:none;letter-spacing:0;font-weight:600}
+.insp h3{font-size:24px;line-height:1.15}
+.insp-sub{margin:-6px 0 0;color:var(--muted);font-weight:600;font-size:14.5px}
+.insp-d{margin:0;font-size:16px;line-height:1.55}
+.insp-tip{margin:0;font-size:14px;color:var(--muted)}
+.insp-num{display:grid;gap:2px;border:2px solid color-mix(in srgb, var(--c) 40%, var(--line));background:color-mix(in srgb, var(--c) 9%, var(--surface));border-radius:var(--r-m);padding:10px 12px}
+.insp-num span{font:700 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.insp-num b{font-family:var(--f-mono);font-size:15px}
+.insp-sec h4{font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:2px 0 8px}
+.insp-sec ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:15px}
+.insp-links{display:flex;flex-wrap:wrap;gap:8px}
+.insp-link{appearance:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:2px solid color-mix(in srgb, var(--c, var(--line-strong)) 45%, var(--line));border-radius:999px;background:var(--surface);color:var(--ink);font:700 13.5px var(--f-body);cursor:pointer;box-shadow:0 2px 0 0 color-mix(in srgb, var(--c, var(--line-strong)) 45%, var(--line));text-align:left}
+.insp-link:hover{background:color-mix(in srgb, var(--c, var(--accent)) 10%, var(--surface))}
+.insp-link:active{transform:translateY(2px);box-shadow:none}
+.insp-link small{font-weight:600;color:var(--muted);font-size:12px}
+.insp-link .dir{color:var(--muted)}
+.insp-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.insp-acts .btn{flex:1 1 220px}
+/* search on the lessons panel */
+.ex-search{border:2px solid var(--line);border-radius:var(--r-l);padding:12px;background:var(--surface);display:grid;gap:10px;margin:4px 0 14px;box-shadow:0 3px 0 0 var(--line)}
+.ex-search h5{margin:0}
+.ex-q{width:100%;min-height:44px;border:2px solid var(--line);border-radius:12px;padding:8px 12px;font:600 15px var(--f-body);background:var(--paper);color:var(--ink)}
+.ex-q:focus-visible{outline:3px solid var(--sel);outline-offset:1px}
+.ex-res,.ex-views{display:flex;flex-wrap:wrap;gap:8px}
+.ex-none{margin:0;color:var(--muted);font-size:14px}
+.ex-all summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--muted);min-height:32px;display:flex;align-items:center}
+.ex-all[open] summary{margin-bottom:8px}
+@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+  .crumbs{max-width:calc(100vw - 150px)}
+  .crumbs .crumb,.crumbs .cur{font-size:12.5px;padding:5px 6px}
+  .insp h3{font-size:21px}
+}
+
+.insp .btn svg{width:18px;height:18px;flex:none}

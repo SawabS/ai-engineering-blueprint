@@ -26,10 +26,13 @@ test.describe('blueprint board', () => {
     await expect(page.locator('.pin.cur')).toHaveCount(1);
   });
 
-  test('clicking a block opens the lesson that teaches it', async ({ page }) => {
+  test('clicking a block inspects it, and the inspector opens its lesson', async ({ page }) => {
     await openApp(page);
     await openBoard(page);
     await page.locator('.board-canvas .bp-n[data-id="kv"]').click();
+    await expect(page.locator('.panel-head .ttl')).toHaveText('Explorer');
+    await expect(page.locator('.insp h3')).toHaveText('KV cache');
+    await page.locator('.insp').getByRole('button', { name: 'Lesson 7: The KV cache' }).click();
     await expect(page.locator('.panel-head .ttl')).toHaveText('7. The KV cache');
   });
 

@@ -108,11 +108,19 @@ function texToMathML(src, display) {
   return `<math${display ? ' display="block"' : ''}><mrow>${body}</mrow></math>`;
 }
 
-/* KaTeX (vendored, self-hosted) typesets every formula; the built-in MathML converter is only a fallback if KaTeX failed to load. */
+/* KaTeX (vendored, self-hosted, loaded with defer so it never blocks the first paint) typesets every formula;
+   the built-in MathML converter covers the moment before it arrives or a failed load. */
+document.addEventListener('DOMContentLoaded', () => {
+  // a lesson opened from a deep link may have rendered before KaTeX arrived: upgrade its fallback maths in place
+  if (!window.katex) return;
+  document.querySelectorAll('.math-block, .prose, .callout, .p-foot').forEach(el => {
+    el.querySelectorAll('math[data-tex]').forEach(m => { const t = m.getAttribute('data-tex'); const span = document.createElement('span'); span.innerHTML = texSafe(t, m.getAttribute('display') === 'block'); m.replaceWith(...span.childNodes); });
+  });
+});
 function texSafe(t, display) {
   try {
     if (window.katex) return katex.renderToString(t, { displayMode: display, throwOnError: false, output: 'htmlAndMathml', strict: 'ignore', trust: false });
-    return texToMathML(t, display);
+    return texToMathML(t, display).replace('<math', `<math data-tex="${texEsc(t).replace(/"/g, '&quot;')}"`);
   } catch (e) { console.error('maths failed to render:', t); return `<code>${texEsc(t)}</code>`; }
 }
 /** Replace \( … \) and \[ … \] in an HTML string with MathML. */

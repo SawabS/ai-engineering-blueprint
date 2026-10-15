@@ -10,6 +10,7 @@ An interactive, Brilliant-style course on AI engineering. It starts from the sma
 - **35 interactives**: a temperature and top-p sampler, a tokenizer (including Sorani Kurdish), an attention map, GPU memory and KV cache calculators, a batching simulator, a retrieval lab with BM25 and hybrid search, constrained decoding, an MCP message stepper, an agent loop and more.
 - **Go deeper drawers** on 47 steps across every lesson: the actual equations (typeset with KaTeX, self-hosted in `vendor/katex` under its MIT licence, with an accessible MathML copy for screen readers), runnable Python, SQL and shell examples, the industry tools used for that block (SentencePiece, vLLM, pgvector, Qdrant, TRL, MCP SDKs, OpenTelemetry and many more), practical guidance such as choosing a temperature, and primary sources. Each finished lesson ends with its toolkit.
 - **The blueprint board**: a pannable, zoomable map of the whole system. Lessons open in a resizable side panel (a bottom sheet on phones), a build view shows what you have learned so far, and a guided tour traces one request through every component.
+- **The system explorer**: every block on the board opens a detailed architecture view, and blocks inside those views open further views, 17 in all and about 200 components: inputs and outputs, the model's forward pass, the tokenizer, one transformer block, decoding, training, GPUs, the KV cache manager, the serving stack, context assembly, the RAG pipeline, tool calling, MCP, the agent harness, memory and skills, multi-agent systems and production operations. Select any component for an inspector with its role, key figures, connections, tools and lesson; play each view's request flow; search every component; climb back with the breadcrumb or Esc. Views have deep links such as `#board:serving`.
 - Light and dark themes, daily streaks, and soft synthesized interaction sounds.
 
 ## Development
@@ -35,7 +36,7 @@ npm run test:visual               # screenshot comparison against the committed 
 
 What it covers:
 
-- **Functional:** every one of the 19 lessons is completed through the real UI on a desktop and a phone profile, plus the course map, theme switching, deep links and the whole blueprint board (pins, panel resize, bottom sheet, zoom, legend, build view, guided tour).
+- **Functional:** every one of the 19 lessons is completed through the real UI on a desktop and a phone profile, plus the course map, theme switching, deep links, the whole blueprint board (pins, panel resize, bottom sheet, zoom, legend, build view, guided tour) and the system explorer (data integrity, layout of every view, drill-down and breadcrumb navigation, every flow, search, lesson parking).
 - **Layout:** 12 screen sizes from 320 px phones to 2560 px monitors, in both themes, across eight app states. It fails on sideways scrolling, controls pushed off-screen, touch targets under 24 px, truncated labels and overlapping map elements.
 - **Accessibility:** axe-core WCAG 2.2 A/AA scans of eight states in both themes, keyboard-only navigation, visible focus, focus return, accessible names and reduced motion.
 - **Adversarial:** script-injection and right-to-left payloads in every text input, rapid and double clicks, corrupted or blocked storage, hostile URL hashes, reloads mid-lesson and resizing across breakpoints.

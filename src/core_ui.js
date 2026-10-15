@@ -469,7 +469,7 @@ function finishLesson() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { closeBoard(); return; } if (L) { closeLesson(); return; } }
+  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { if (BOARD.tour) { endTour(); return; } if (BOARD.view !== 'root') { exGoUp(1); return; } closeBoard(); return; } if (L) { closeLesson(); return; } }
   if (!L) return;
   if (BOARD && BOARD.hidden) return;
   const tag = (e.target.tagName || '').toLowerCase();
@@ -483,6 +483,7 @@ function boot() {
   renderHome();
   const id = (location.hash || '').slice(1);
   if (id === 'board') { openBoard({}); return; }
+  if (id.startsWith('board:') && typeof SYSV !== 'undefined' && SYSV[id.slice(6)]) { openBoard({ view: id.slice(6) }); return; }
   const l = LESSONS.find(x => x.id === id);
   if (l) openLesson(l.idx);
 }

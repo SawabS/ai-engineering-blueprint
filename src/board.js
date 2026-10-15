@@ -12,9 +12,9 @@ function openBoard(opts = {}) {
   hideTip(); closePop();
   if (BOARD) { if (opts.lesson != null) openLesson(opts.lesson); return; }
   const saved = (() => { try { return JSON.parse(localStorage.getItem(PANEL_KEY)) || {}; } catch (e) { return {}; } })();
-  const B = BOARD = { x: 0, y: 0, s: 1, w: clamp(saved.w || 440, 320, 760), sh: clamp(saved.sh || 58, 30, 94), hidden: false, hl: [], mode: doneCount() ? 'build' : 'full' };
+  const B = BOARD = { x: 0, y: 0, s: 1, w: clamp(saved.w || 440, 320, 760), sh: clamp(saved.sh || 58, 30, 94), hidden: false, hl: [], mode: doneCount() ? 'build' : 'full', view: 'root', trail: [], parked: null, busy: false };
 
-  const canvas = h('div', { class: 'board-canvas', 'aria-label': 'Blueprint board. Drag to pan, pinch or scroll to zoom.' });
+  const canvas = h('div', { class: 'board-canvas', 'data-view': 'root', 'aria-label': 'Blueprint board. Drag to pan, pinch or scroll to zoom. Select a block to inspect it; blocks marked + open a detailed view.' });
   canvas.innerHTML = bpSVG(MAX_STAGE, [], { click: 1, uid: 'B' });
   const pins = h('div', { class: 'pins' });
   canvas.append(pins);
@@ -27,11 +27,8 @@ function openBoard(opts = {}) {
   const panel = h('aside', { class: 'panel', 'aria-label': 'Lesson panel' }, grip, h('div', { class: 'panel-head' }, ttl, expandBtn, hideBtn), panelBody);
   const tab = h('button', { class: 'panel-tab', hidden: true, onclick: () => setPanelHidden(false), html: ICON.panel + '<span>Lesson panel</span>' });
   const main = h('div', { class: 'board-main' }, canvas,
-    h('div', { class: 'board-tools' },
-      h('button', { class: 'btn btn-accent btn-sm', 'data-sfx': 'none', onclick: () => startTour(), html: ICON.play + '<span class="t-long">Trace a request</span><span class="t-short">Trace</span>' }),
-      seg([['build', 'My build'], ['full', 'Full building']], B.mode, v => setBuildMode(v), 'Board view')),
-    h('div', { class: 'legend', role: 'group', 'aria-label': 'Highlight a part of the system' },
-      CATS.map(c => h('button', { class: 'lg', 'data-cat': c[0], 'aria-pressed': 'false', style: { '--c': c[2] }, onclick: e => toggleCat(c[0], e.currentTarget) }, h('i'), c[1]))),
+    h('div', { class: 'board-tools' }),
+    h('div', { class: 'legend', role: 'group', 'aria-label': 'Highlight a part of the system' }),
     panel, tab);
   const el = h('div', { class: 'board', role: 'dialog', 'aria-label': 'Blueprint board' },
     h('div', { class: 'board-top' },
@@ -46,7 +43,8 @@ function openBoard(opts = {}) {
       h('button', { class: 'icon-btn', 'aria-label': 'Show or hide the lesson panel', title: 'Lesson panel', onclick: () => setPanelHidden(!B.hidden), html: ICON.panel }),
       themeBtn()),
     main);
-  Object.assign(B, { el, canvas, pins, pct, panel, panelBody, ttl, expandBtn, tab, main, svg: $('svg', canvas) });
+  Object.assign(B, { el, canvas, pins, pct, panel, panelBody, ttl, expandBtn, tab, main, svg: $('svg', canvas), tools: $('.board-tools', main), legend: $('.legend', main) });
+  renderToolsBar(); renderLegend(); addRootBadges();
   main.style.setProperty('--pw', B.w + 'px'); grip.setAttribute('aria-valuenow', Math.round(B.w));
   panel.style.setProperty('--sh', B.sh + '%');
   document.body.append(el); document.body.style.overflow = 'hidden'; syncInert();
@@ -64,12 +62,14 @@ function openBoard(opts = {}) {
   else if (opts.lesson != null) { fitAll(false); openLesson(opts.lesson); }
   else { boardShowIndex(); }
   if (!B.camSet) fitAll(false);
+  if (opts.view && SYSV[opts.view]) exJump(opts.view);
 }
 
 function closeBoard(toCourse) {
   if (!BOARD) return;
   endTour(true);
   const B = BOARD; const p = $('.player');
+  if (B.parked) { B.parked = null; if (!p) L = null; }
   if (B.ro) B.ro.disconnect();
   if (B.anim) cancelAnimationFrame(B.anim);
   if (p && L && !toCourse) {
@@ -132,9 +132,10 @@ function boardDock(player, lesson) {
 }
 function boardShowIndex() {
   const B = BOARD; if (!B) return;
-  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; highlight([]); renderPins();
+  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; exHighlight([]); if (B.view === 'root') renderPins();
   const idx = h('div', { class: 'idx' },
-    h('div', { class: 'idx-intro' }, h('p', null, 'Every block on the board is a lesson. Tap a block or a numbered pin to open it here, or pick one below.')),
+    h('div', { class: 'idx-intro' }, h('p', null, 'Numbered pins open lessons. Select any block to inspect it; blocks marked + open a detailed view you can keep drilling into.')),
+    exSearchBox(),
     COURSE.units.map((u, ui) => [h('h5', null, `Level ${ui + 1} · ${u.title}`),
       u.lessons.map(l => h('button', { class: 'idx-row' + (P.done[l.id] ? ' done' : ''), style: { '--u': u.color }, 'data-sfx': 'none', onclick: () => openLesson(l.idx) },
         h('span', { class: 'n', html: P.done[l.id] ? ICON.check.replace('<svg', '<svg width="16" height="16"') : String(l.idx + 1) }),
@@ -175,17 +176,18 @@ function setCam(x, y, s, animate) {
   if (B.anim) cancelAnimationFrame(B.anim);
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!animate || reduce) { B.x = x; B.y = y; B.s = s; applyCam(); return; }
-  const from = [B.x, B.y, B.s], to = [x, y, s], t0 = performance.now(), ms = 650, ease = t => 1 - Math.pow(1 - t, 3);
+  const from = [B.x, B.y, B.s], to = [x, y, s], t0 = performance.now(), ms = typeof animate === 'number' ? animate : 650, ease = t => 1 - Math.pow(1 - t, 3);
   const step = now => { const t = clamp((now - t0) / ms, 0, 1); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
   B.anim = requestAnimationFrame(step);
 }
 function fitBox(box, animate) {
   const vr = visibleRect(); const m = Math.min(36, vr.w * 0.06);
+  { const top = isPhone() ? 106 : 58, bottom = isPhone() ? 8 : 52; vr.t += top; vr.h = Math.max(120, vr.h - top - bottom); } // keep clear of the toolbar and legend
   const base = baseScale();
   const s = clamp(Math.max(box[2] / (vr.w - 2 * m), box[3] / (vr.h - 2 * m)), base / 1.5, base * 1.6);
   setCam(box[0] + box[2] / 2 - s * (vr.l + vr.w / 2), box[1] + box[3] / 2 - s * (vr.t + vr.h / 2), s, animate);
 }
-function fitAll(animate) { fitBox([0, 30, 1000, 590], animate); }
+function fitAll(animate) { fitBox(curBounds(), animate); }
 function zoomAt(px, py, f) {
   const B = BOARD; const base = baseScale();
   if (B.anim) { cancelAnimationFrame(B.anim); B.anim = 0; } // a manual zoom wins over a running camera move
@@ -195,8 +197,8 @@ function zoomAt(px, py, f) {
 function zoomCenter(f) { const vr = visibleRect(); zoomAt(vr.l + vr.w / 2, vr.t + vr.h / 2, f); }
 function rawBox(hl) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  hl.forEach(id => { const b = BOX[id]; if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
-  if (x0 > x1) return [0, 30, 1000, 590];
+  hl.forEach(id => { const b = BOX[id] || exBox(id); if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[0] + b[2]); y1 = Math.max(y1, b[1] + b[3]); });
+  if (x0 > x1) return curBounds();
   const pad = 70; let bw = x1 - x0 + 2 * pad, bh = y1 - y0 + 2 * pad; const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
   bw = Math.max(bw, 460); bh = Math.max(bh, 320); return [cx - bw / 2, cy - bh / 2, bw, bh];
 }
@@ -205,7 +207,7 @@ function highlight(hl) {
   $$('.bp-n', B.svg).forEach(g => { g.classList.remove('hl', 'dim'); if (hl.length) g.classList.add(hl.includes(g.dataset.id) ? 'hl' : 'dim'); });
 }
 function boardFocus(lesson) {
-  if (!BOARD) return;
+  if (!BOARD || BOARD.view !== 'root') return;
   highlight(lesson.hl); renderPins(lesson.idx);
   fitBox(rawBox(lesson.hl), true);
 }
@@ -254,10 +256,16 @@ function wireCanvas(B) {
   c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
   c.addEventListener('click', e => {
     if (suppress) { e.stopPropagation(); e.preventDefault(); return; }
-    const g = e.target.closest('.bp-n'); if (!g || g.classList.contains('frame')) return;
-    hideTip(); openLesson(lessonForNode(g.dataset.id).idx);
+    const g = e.target.closest('.bp-n'); if (!g) return;
+    hideTip();
+    if (e.target.closest('.dive')) { const n = exNode(g.dataset.id); if (n && n.go) { exGoInto(n.go, g.dataset.id); return; } }
+    exInspect(g.dataset.id);
   });
-  c.addEventListener('keydown', e => { if (e.key === 'Enter') { const g = e.target.closest('.bp-n'); if (g && !g.classList.contains('frame')) openLesson(lessonForNode(g.dataset.id).idx); } });
+  c.addEventListener('keydown', e => {
+    const g = e.target.closest('.bp-n'); if (!g) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); exInspect(g.dataset.id); }
+    if (e.key === '+' || (e.key === 'Enter' && e.shiftKey)) { const n = exNode(g.dataset.id); if (n && n.go) exGoInto(n.go, g.dataset.id); }
+  });
   c.addEventListener('wheel', e => {
     e.preventDefault(); const [px, py] = local(e);
     const lineMode = e.deltaMode === 1;
@@ -265,7 +273,12 @@ function wireCanvas(B) {
     if (e.ctrlKey || e.metaKey || mouseWheel) zoomAt(px, py, Math.exp(e.deltaY * (e.ctrlKey ? 0.01 : 0.0016) * (lineMode ? 30 : 1)));
     else { B.x += e.deltaX * B.s; B.y += e.deltaY * B.s; applyCam(); }
   }, { passive: false });
-  c.addEventListener('dblclick', e => { if (e.target.closest('.pin')) return; const [px, py] = local(e); zoomAt(px, py, 0.6); });
+  c.addEventListener('dblclick', e => {
+    if (e.target.closest('.pin')) return;
+    const g = e.target.closest('.bp-n'); const n = g && exNode(g.dataset.id);
+    if (n && n.go) { exGoInto(n.go, g.dataset.id); return; }
+    const [px, py] = local(e); zoomAt(px, py, 0.6);
+  });
 }
 
 /* ---- build view, legend, guided tour ---- */
@@ -280,16 +293,17 @@ const CATS = [
 ];
 function setBuildMode(mode, quiet) {
   const B = BOARD; if (!B) return; B.mode = mode;
+  if (B.view !== 'root') return;
   $$('.bp-n', B.svg).forEach(g => { const l = lessonForNode(g.dataset.id); g.classList.toggle('sketch', mode === 'build' && !P.done[l.id]); });
   if (!quiet) SFX.toggle();
 }
 function toggleCat(cat, btn) {
   const B = BOARD; const on = !btn.classList.contains('on');
   $$('.lg', B.el).forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
-  if (!on) { highlight(L && $('.player.docked') ? L.lesson.hl : []); if (L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); return; }
+  if (!on) { exHighlight(B.view === 'root' && L && $('.player.docked') ? L.lesson.hl : []); if (B.view === 'root' && L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); return; }
   btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true');
-  const ids = CATS.find(c => c[0] === cat)[3];
-  highlight(ids); fitBox(rawBox(ids), true);
+  const ids = B.view === 'root' ? CATS.find(c => c[0] === cat)[3] : SYSV[B.view].nodes.filter(n => n.cat === cat).map(n => n.key);
+  exHighlight(ids); fitBox(rawBox(ids), true);
 }
 const TOUR = [
   [['you'], 'You ask a question', 'You type into an app. You never talk to the weights directly; the app builds a context for you.'],
@@ -305,31 +319,51 @@ const TOUR = [
   [['you', 'wire'], 'Tokens stream back', 'The answer streams back to you one token at a time, and the loop starts again on your next message.']
 ];
 function blockCenter(ids) { const b = rawBox(ids); return [b[0] + b[2] / 2, b[1] + b[3] / 2]; }
+function tourSteps() {
+  const B = BOARD;
+  if (B.view === 'root') return TOUR.map(([ids, t, d]) => ({ ids, t, d }));
+  const v = SYSV[B.view];
+  return (v.flow || []).map(f => ({ ids: f.n.map(k => v.id + '.' + k), t: f.t, d: f.d, e: f.e ? f.e.split('>').map(k => v.id + '.' + k) : null }));
+}
 function startTour() {
   const B = BOARD; if (!B || B.tour) return;
-  B.tour = { i: 0, wasHidden: B.hidden }; B.el.classList.add('touring');
-  $$('.lg', B.el).forEach(b => b.classList.remove('on'));
+  if (B.busy) { setTimeout(startTour, 150); return; }
+  const steps = tourSteps(); if (!steps.length) return;
+  parkLesson();
+  B.tour = { i: 0, wasHidden: B.hidden, steps }; B.el.classList.add('touring');
+  $$('.lg', B.el).forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
   if (!B.hidden) { B.hidden = true; B.panel.classList.add('hidden'); B.tab.hidden = true; }
-  B.tour.card = h('div', { class: 'tour', role: 'dialog', 'aria-label': 'Trace a request' });
+  B.tour.card = h('div', { class: 'tour', role: 'dialog', 'aria-label': B.view === 'root' ? 'Trace a request' : 'Play the flow: ' + SYSV[B.view].title });
   B.main.append(B.tour.card);
   const pk = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); pk.setAttribute('class', 'packet'); pk.setAttribute('r', '7');
-  const c0 = blockCenter(TOUR[0][0]); pk.setAttribute('cx', c0[0]); pk.setAttribute('cy', c0[1]); B.svg.append(pk); B.tour.pk = pk;
+  const c0 = blockCenter(steps[0].ids); pk.setAttribute('cx', c0[0]); pk.setAttribute('cy', c0[1]); B.svg.append(pk); B.tour.pk = pk;
   SFX.open(); tourStep(0);
 }
 function tourStep(i) {
-  const B = BOARD; const T = B.tour; const prev = TOUR[T.i]; T.i = i; const [ids, title, text] = TOUR[i];
-  highlight(ids); fitBox(rawBox(ids), true);
-  // move the packet from the previous stop to this one
-  const a = blockCenter(prev[0]), b = blockCenter(ids), t0 = performance.now();
+  const B = BOARD; const T = B.tour; const steps = T.steps; const prev = steps[T.i]; T.i = i; const st = steps[i];
+  exHighlight(st.ids); fitBox(rawBox(st.e ? [...new Set([...st.e, ...st.ids])] : st.ids), true);
+  $$('.sys-e.flowing', B.svg).forEach(e => e.classList.remove('flowing'));
   if (T.raf) cancelAnimationFrame(T.raf);
-  const step = now => { const k = Math.min(1, (now - t0) / 650), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-    T.pk.setAttribute('cx', a[0] + (b[0] - a[0]) * e); T.pk.setAttribute('cy', a[1] + (b[1] - a[1]) * e - Math.sin(e * Math.PI) * 40); if (k < 1) T.raf = requestAnimationFrame(step); };
-  T.raf = requestAnimationFrame(step);
-  const last = i === TOUR.length - 1;
+  const edge = st.e && $(`.sys-e[data-a="${st.e[0]}"][data-b="${st.e[1]}"]`, B.svg);
+  const t0 = performance.now();
+  if (edge) {
+    // the packet rides along the drawn connection
+    edge.classList.add('flowing', 'hl'); edge.classList.remove('dim');
+    const p = $('.ep', edge); const len = p.getTotalLength();
+    const step = now => { const k = Math.min(1, (now - t0) / 750), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; const pt = p.getPointAtLength(len * e);
+      T.pk.setAttribute('cx', pt.x); T.pk.setAttribute('cy', pt.y); if (k < 1) T.raf = requestAnimationFrame(step); };
+    T.raf = requestAnimationFrame(step);
+  } else {
+    const a = blockCenter(prev.ids), b = blockCenter(st.ids);
+    const step = now => { const k = Math.min(1, (now - t0) / 650), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      T.pk.setAttribute('cx', a[0] + (b[0] - a[0]) * e); T.pk.setAttribute('cy', a[1] + (b[1] - a[1]) * e - Math.sin(e * Math.PI) * 40); if (k < 1) T.raf = requestAnimationFrame(step); };
+    T.raf = requestAnimationFrame(step);
+  }
+  const last = i === steps.length - 1;
   T.card.innerHTML = '';
   T.card.append(
-    h('div', { class: 'k' }, h('span', null, `Step ${i + 1} of ${TOUR.length}`), h('span', { class: 'dots' }, TOUR.map((_, k) => h('i', { class: k <= i ? 'on' : '' })))),
-    h('h4', null, title), h('p', null, text),
+    h('div', { class: 'k' }, h('span', null, `Step ${i + 1} of ${steps.length}`), h('span', { class: 'dots' }, steps.map((_, k) => h('i', { class: k <= i ? 'on' : '' })))),
+    h('h4', null, st.t), h('p', null, st.d),
     h('div', { class: 'acts' },
       h('button', { class: 'btn btn-ghost btn-sm x', onclick: () => endTour() }, 'Exit'),
       i > 0 ? h('button', { class: 'btn btn-sm', 'data-sfx': 'none', onclick: () => { SFX.back(); tourStep(i - 1); } }, 'Back') : null,
@@ -338,7 +372,8 @@ function tourStep(i) {
 function endTour(silent) {
   const B = BOARD; if (!B || !B.tour) return; const T = B.tour;
   if (T.raf) cancelAnimationFrame(T.raf); T.card.remove(); T.pk.remove(); B.tour = null; B.el.classList.remove('touring');
-  if (!T.wasHidden) { B.hidden = false; B.panel.classList.remove('hidden'); B.tab.hidden = true; } else B.tab.hidden = false;
+  $$('.sys-e.flowing', B.svg).forEach(e => e.classList.remove('flowing'));
+  if (!T.wasHidden) { B.hidden = false; B.panel.classList.remove('hidden'); B.main.classList.remove('panel-off'); B.tab.hidden = true; } else B.tab.hidden = false;
   if (silent) return;
-  if (L && $('.player.docked')) boardFocus(L.lesson); else { highlight([]); fitAll(true); }
+  if (B.view === 'root' && L && $('.player.docked')) boardFocus(L.lesson); else { exHighlight([]); fitAll(true); }
 }

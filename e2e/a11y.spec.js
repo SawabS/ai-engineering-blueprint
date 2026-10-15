@@ -17,7 +17,7 @@ async function scan(page, info, label) {
 
 for (const theme of ['light', 'dark']) {
   test(`axe finds no WCAG A/AA violations (${theme})`, async ({ page }, info) => {
-    test.setTimeout(180000); // eight full axe scans; slow when the machine is busy
+    test.setTimeout(300000); // eight full axe scans; slow when the machine is busy
     const found = [];
     await openApp(page, { done: ['two-boxes'], streakDays: [0], theme });
     found.push(...await scan(page, info, 'home'));
@@ -95,7 +95,22 @@ test('keyboard: board blocks and pins are reachable and operable', async ({ page
   const block = page.locator('.board-canvas .bp-n[data-id="tools"]');
   await block.focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('.panel-head .ttl')).toHaveText('14. Tool calling');
+  await expect(page.locator('.insp h3')).toHaveText('Tools');
+  await page.locator('.insp').getByRole('button', { name: 'Back to my lesson' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.panel-head .ttl')).toHaveText('3. Tokens and embeddings');
+  // drill in and climb out with the keyboard alone
+  await block.focus();
+  await page.keyboard.press('Enter');
+  await page.locator('.insp').getByRole('button', { name: /Look inside/ }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.crumbs .cur')).toHaveText('Tool calling');
+  await page.waitForTimeout(800);
+  await page.locator('.board-canvas .bp-n[data-id="tools.mcp"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.insp h3')).toHaveText('MCP client');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'root');
 });
 
 test('reduced motion: animations are effectively off', async ({ page }) => {

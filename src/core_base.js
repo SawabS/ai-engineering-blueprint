@@ -203,10 +203,17 @@ function attachBlueprintTips(container, onPick) {
   container.addEventListener('pointermove', e => {
     if (e.pointerType && e.pointerType !== 'mouse') return;
     const g = e.target.closest('.bp-n'); if (!g) { hideTip(); return; }
-    const n = BPN[g.dataset.id]; const l = lessonForNode(g.dataset.id);
     if (!tipEl) { tipEl = h('div', { class: 'bp-tip' }); document.body.append(tipEl); }
-    const built = typeof P !== 'undefined' && P.done[l.id];
-    tipEl.innerHTML = `<b>${esc(n.t)}</b>${esc(n.d)}<div class="st"><i class="${built ? 'ok' : ''}">${built ? 'Built' : 'Not built yet'}</i>Lesson ${l.idx + 1} · ${esc(l.title)}</div>`;
+    const key = g.dataset.id;
+    if (!BPN[key]) {
+      const n = typeof SYSN !== 'undefined' && SYSN[key]; if (!n) { hideTip(); return; }
+      const l = n.l && LESSONS.find(x => x.id === n.l);
+      tipEl.innerHTML = `<b>${esc(n.t)}</b>${esc(n.d)}<div class="st">${n.go ? '<i class="ok">+ detailed view</i>' : ''}${l ? `Lesson ${l.idx + 1} · ${esc(l.title)}` : ''}</div>`;
+    } else {
+      const n = BPN[key]; const l = lessonForNode(key);
+      const built = typeof P !== 'undefined' && P.done[l.id];
+      tipEl.innerHTML = `<b>${esc(n.t)}</b>${esc(n.d)}<div class="st"><i class="${built ? 'ok' : ''}">${built ? 'Built' : 'Not built yet'}</i>Lesson ${l.idx + 1} · ${esc(l.title)}</div>`;
+    }
     const x = Math.min(e.clientX + 14, window.innerWidth - 300), y = Math.min(e.clientY + 14, window.innerHeight - 140);
     tipEl.style.left = x + 'px'; tipEl.style.top = y + 'px'; tipEl.hidden = false;
   });

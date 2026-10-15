@@ -87,6 +87,14 @@ for (const [w, h, name] of VIEWPORTS) {
         await expect(page.locator('.panel')).toBeHidden(); // the tour slides the panel away
         await page.waitForTimeout(700);
         await check('board-tour', { scope: '.board' });
+        await page.locator('.tour').getByRole('button', { name: 'Exit' }).click();
+        await page.evaluate(() => exJump('serving', 'serving.kvm'));
+        await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'serving');
+        await expect(page.locator('.insp h3')).toHaveText('KV cache manager');
+        // the panel slides back in after the tour; wait until it has arrived
+        await expect.poll(() => page.locator('.panel').evaluate(e => { const r = e.getBoundingClientRect(); return r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1; })).toBe(true);
+        await page.waitForTimeout(600);
+        await check('explorer', { scope: '.board' });
         await info.attach('layout-problems', { body: problems.join('\n') || 'none', contentType: 'text/plain' });
         expect(problems, problems.join('\n')).toEqual([]);
       });
