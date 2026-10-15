@@ -117,7 +117,7 @@ function bpSVG(stage, hl = [], o = {}) {
     const lip = q.lip || (soft ? `color-mix(in srgb, ${q.stroke || 'var(--line-strong)'} 45%, var(--line))` : `color-mix(in srgb, ${fill} 68%, #000)`);
     return (q.noShadow ? '' : `<rect class="lip" x="${x}" y="${y + 5}" width="${w}" height="${hh}" rx="${rx}" style="fill:${lip}"/>`) +
       (q.noGlow ? '' : `<rect class="glow" x="${x - 5}" y="${y - 5}" width="${w + 10}" height="${hh + 10}" rx="${rx + 5}"/>`) +
-      `<rect class="${q.noGlow ? '' : 'blk'}" x="${x}" y="${y}" width="${w}" height="${hh}" rx="${rx}" style="fill:${fill};stroke:${stroke};stroke-width:${sw};${dash}"/>`;
+      `<rect class="${q.noGlow ? '' : 'blk'}" x="${x}" y="${y}" width="${w}" height="${hh}" rx="${rx}" style="fill:${fill};stroke:${stroke};stroke-width:${sw};${dash}--hc:${soft ? (q.stroke || 'var(--line-strong)') : `color-mix(in srgb, ${fill} 62%, #000)`}"/>`;
   };
   const T = (x, y, s, fill, cls = 't-title', anchor = 'middle', extra = '') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}" style="fill:${fill};${extra}">${s}</text>`;
   const G = (id, inner, frame) => {
@@ -168,7 +168,7 @@ function bpSVG(stage, hl = [], o = {}) {
   gp += R(46, 526, 418, 30, 'var(--sunk)', { noShadow: 1, noGlow: 1, rx: 7 }) + R(46, 526, 236, 30, 'var(--model)', { noShadow: 1, noGlow: 1, rx: 7 }) + T(164, 546, 'weights in HBM', 'var(--model-t)', 't-sub', 'middle', 'font-weight:700');
   s += G('gpu', gp);
   s += G('kv', R(288, 526, 120, 30, 'var(--serve)', { noShadow: 1, rx: 7 }) + T(348, 546, 'KV cache', '#fff', 't-sub', 'middle', 'font-weight:700'));
-  s += G('roof', `<polygon class="lip" points="24,131 255,49 486,131" style="fill:color-mix(in srgb, var(--serve) 66%, #000)"/><polygon class="glow" points="16,130 255,38 494,130"/><polygon class="blk" points="24,126 255,44 486,126" style="fill:var(--serve);stroke:var(--bp-edge);stroke-width:1.5"/>` +
+  s += G('roof', `<polygon class="lip" points="24,131 255,49 486,131" style="fill:color-mix(in srgb, var(--serve) 66%, #000)"/><polygon class="glow" points="16,130 255,38 494,130"/><polygon class="blk" points="24,126 255,44 486,126" style="fill:var(--serve);stroke:var(--bp-edge);stroke-width:1.5;--hc:color-mix(in srgb, var(--serve) 62%, #000)"/>` +
     T(255, 100, 'Serving layer', '#fff') + T(255, 117, 'router · batching · streaming', '#fff', 't-sub'));
   // context slots
   const slot = (id, i, label, fill, tc) => G(id, R(556, 146 + i * 40, 150, 34, fill, { rx: 8 }) + T(631, 146 + i * 40 + 22, label, tc, 't-title', 'middle', 'font-size:12.5px'));
@@ -185,7 +185,7 @@ function bpSVG(stage, hl = [], o = {}) {
   s += G('mcp', R(722, 294, 122, 50, 'var(--tool-soft)', { stroke: 'var(--tool)' }) + T(783, 315, 'MCP servers', 'var(--tool)', 't-title', 'middle', 'font-size:13px') +
     [763, 783, 803].map(x => `<circle cx="${x}" cy="331" r="4" style="fill:var(--tool)"/>`).join(''));
   s += G('mem', R(722, 354, 122, 72, 'var(--harness-soft)', { stroke: 'var(--harness)' }) + T(783, 383, 'Memory', 'var(--harness)', 't-title', 'middle', 'font-size:14px') + T(783, 401, '+ skills on demand', 'var(--harness)', 't-sub'));
-  s += G('harness', `<rect class="glow" x="544" y="134" width="312" height="304" rx="16"/><rect class="blk" x="549" y="139" width="302" height="294" rx="12" style="fill:none;stroke:var(--harness);stroke-width:2.5;stroke-dasharray:4 5"/>` +
+  s += G('harness', `<rect class="glow" x="544" y="134" width="312" height="304" rx="16"/><rect class="blk" x="549" y="139" width="302" height="294" rx="12" style="fill:none;stroke:var(--harness);stroke-width:2.5;stroke-dasharray:4 5;--hc:var(--harness)"/>` +
     R(690, 119, 154, 24, 'var(--harness)', { rx: 12, noGlow: 1 }) + T(767, 136, 'Harness · agent loop', '#fff', 't-sub', 'middle', 'font-weight:700'));
   let sb = '';
   [556, 657, 758].forEach(x => {

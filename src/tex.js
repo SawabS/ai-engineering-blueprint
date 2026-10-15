@@ -108,7 +108,13 @@ function texToMathML(src, display) {
   return `<math${display ? ' display="block"' : ''}><mrow>${body}</mrow></math>`;
 }
 
-function texSafe(t, display) { try { return texToMathML(t, display); } catch (e) { console.error('maths failed to render:', t); return `<code>${texEsc(t)}</code>`; } }
+/* KaTeX (vendored, self-hosted) typesets every formula; the built-in MathML converter is only a fallback if KaTeX failed to load. */
+function texSafe(t, display) {
+  try {
+    if (window.katex) return katex.renderToString(t, { displayMode: display, throwOnError: false, output: 'htmlAndMathml', strict: 'ignore', trust: false });
+    return texToMathML(t, display);
+  } catch (e) { console.error('maths failed to render:', t); return `<code>${texEsc(t)}</code>`; }
+}
 /** Replace \( … \) and \[ … \] in an HTML string with MathML. */
 function texify(html) {
   if (!html || html.indexOf('\\') < 0) return html;

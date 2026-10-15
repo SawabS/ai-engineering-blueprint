@@ -8,13 +8,13 @@ An interactive, Brilliant-style course on AI engineering. It starts from the sma
 
 - **19 lessons in 8 levels** on a winding course map, with 92 exercises revealed one idea at a time.
 - **35 interactives**: a temperature and top-p sampler, a tokenizer (including Sorani Kurdish), an attention map, GPU memory and KV cache calculators, a batching simulator, a retrieval lab with BM25 and hybrid search, constrained decoding, an MCP message stepper, an agent loop and more.
-- **Go deeper drawers** on 47 steps across every lesson: the actual equations (typeset as native MathML), runnable Python, SQL and shell examples, the industry tools used for that block (SentencePiece, vLLM, pgvector, Qdrant, TRL, MCP SDKs, OpenTelemetry and many more), practical guidance such as choosing a temperature, and primary sources. Each finished lesson ends with its toolkit.
+- **Go deeper drawers** on 47 steps across every lesson: the actual equations (typeset with KaTeX, self-hosted in `vendor/katex` under its MIT licence, with an accessible MathML copy for screen readers), runnable Python, SQL and shell examples, the industry tools used for that block (SentencePiece, vLLM, pgvector, Qdrant, TRL, MCP SDKs, OpenTelemetry and many more), practical guidance such as choosing a temperature, and primary sources. Each finished lesson ends with its toolkit.
 - **The blueprint board**: a pannable, zoomable map of the whole system. Lessons open in a resizable side panel (a bottom sheet on phones), a build view shows what you have learned so far, and a guided tour traces one request through every component.
 - Light and dark themes, daily streaks, and soft synthesized interaction sounds.
 
 ## Development
 
-The site is a single static page with no build dependencies. Edit the files in `src/`, then run:
+The site is a single static page plus the vendored KaTeX files, with no build dependencies. Edit the files in `src/`, then run:
 
 ```sh
 ./build.sh

@@ -92,7 +92,7 @@ for T in (0.5, 1.0, 2.0):
   2: {
     title: 'Top-k, top-p and min-p, defined',
     math: R`<p>Sort the vocabulary so that \(p_{(1)} \ge p_{(2)} \ge \dots\). Each filter keeps a set \(S\), sets every other probability to zero, and renormalises:</p>
-\[ p'_i = \frac{p_i \, \mathbb{1}[i \in S]}{\sum_{j \in S} p_j} \]
+\[ p'_i = \frac{p_i \, \mathbf{1}[i \in S]}{\sum_{j \in S} p_j} \]
 <ul>
 <li><b>Top-k:</b> \(S\) is the \(k\) most likely tokens. Fixed size, so it keeps too many when the model is sure and too few when it is not.</li>
 <li><b>Top-p (nucleus):</b> \(S\) is the smallest prefix of the sorted list with \(\sum_{i \in S} p_i \ge p\). The size adapts to the model's confidence.</li>
@@ -729,7 +729,7 @@ print(len(ids), "tokens")` },
   3: {
     title: 'Budgeting the window',
     math: R`<p>Every call must satisfy</p>
-\[ T_{\text{system}} + T_{\text{tools}} + T_{\text{history}} + T_{\text{retrieved}} + T_{\text{user}} + T_{\max\_\text{output}} \le W \]
+\[ T_{\text{system}} + T_{\text{tools}} + T_{\text{history}} + T_{\text{retrieved}} + T_{\text{user}} + T_{\text{max output}} \le W \]
 <p>where \(W\) is the context window. Cost per call is roughly \(\text{input tokens} \times p_{\text{in}} + \text{output tokens} \times p_{\text{out}}\), so a chat that re-sends history pays for turn 1 on every later turn: total input over \(n\) turns grows as \(O(n^2)\).</p>
 <h4>Strategies when history grows</h4>
 <ul>

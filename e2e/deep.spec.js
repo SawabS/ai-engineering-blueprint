@@ -2,7 +2,7 @@
 const { test, expect, openApp } = require('./fixtures');
 
 test('every Go deeper panel renders cleanly in every tab', async ({ page }) => {
-  test.setTimeout(180000);
+  test.setTimeout(420000); // 47 panels x up to 4 tabs; slow on the emulated phone
   await openApp(page);
   const list = await page.evaluate(() => LESSONS.flatMap(l => l.steps.map((s, si) => s.deep ? [l.idx, si, l.id] : null).filter(Boolean)));
   expect(list.length).toBeGreaterThanOrEqual(40);
@@ -20,7 +20,8 @@ test('every Go deeper panel renders cleanly in every tab', async ({ page }) => {
       if (tabs > 1) await det.locator('.seg button').nth(t).click();
       const found = await page.evaluate(() => {
         const d = document.querySelector('details.deep'); const out = [];
-        d.querySelectorAll('mtext').forEach(m => { if (m.textContent.startsWith('\\')) out.push('unknown TeX ' + m.textContent); });
+        d.querySelectorAll('.katex-error').forEach(m => out.push('KaTeX error: ' + m.title));
+        if (d.querySelector('.math-block') && !d.querySelector('.math-block .katex')) out.push('formula not typeset by KaTeX');
         const W = document.querySelector('#p-main').getBoundingClientRect().right;
         d.querySelectorAll('.deep-body > *, .tool, .refs li, .code-card').forEach(el => { const r = el.getBoundingClientRect(); if (r.right > W + 1) out.push('overflows by ' + Math.round(r.right - W)); });
         if (document.documentElement.scrollWidth > innerWidth + 1) out.push('page scrolls sideways');
@@ -37,7 +38,8 @@ test('every Go deeper panel renders cleanly in every tab', async ({ page }) => {
 test('lesson maths renders as MathML, and code copies to the clipboard', async ({ page, context, browserName }) => {
   await openApp(page, { hash: 'attention' });
   await page.evaluate(() => { L.si = 0; renderStep(true); });
-  await expect(page.locator('.step .beat > .prose .math-block math')).toHaveCount(1);
+  await expect(page.locator('.step .beat > .prose .math-block .katex-display')).toHaveCount(1);
+  await expect(page.locator('.step .beat > .prose .math-block .katex-mathml math')).toHaveCount(1); // accessible MathML copy for screen readers
   await page.locator('details.deep summary').click();
   await page.locator('details.deep .seg button', { hasText: 'Code' }).click();
   await context.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {});
@@ -66,6 +68,7 @@ test('completion screen lists the lesson toolkit', async ({ page }) => {
 const AxeBuilder = require('@axe-core/playwright').default;
 for (const theme of ['light', 'dark']) {
   test(`an open drawer passes axe in every tab (${theme})`, async ({ page }) => {
+    test.setTimeout(180000);
     await openApp(page, { hash: 'knowledge', theme });
     await page.evaluate(() => { L.si = 2; renderStep(true); });
     await page.locator('details.deep summary').click();

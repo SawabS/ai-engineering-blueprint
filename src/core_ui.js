@@ -411,7 +411,11 @@ function advance() {
 const DEEP_TABS = [['math', 'Maths'], ['code', 'Code'], ['tools', 'Tools'], ['refs', 'Sources']];
 function extLink(u, cls, kids) { return h('a', { class: cls, href: u, target: '_blank', rel: 'noopener noreferrer' }, kids); }
 function deepSection(d, k) {
-  if (k === 'math') return [h('div', { class: 'prose deep-prose', html: texify(d.math) })];
+  if (k === 'math') {
+    const el = h('div', { class: 'prose deep-prose', html: texify(d.math) });
+    $$('.tbl-wrap', el).forEach(t => { t.tabIndex = 0; t.setAttribute('role', 'region'); t.setAttribute('aria-label', 'Table, scroll sideways to see all columns'); });
+    return [el];
+  }
   if (k === 'code') return [...(d.codeNote ? [h('p', { class: 'deep-note', html: texify(d.codeNote) })] : []), ...d.code.map(codeBlock)];
   if (k === 'tools') return [h('div', { class: 'tool-grid' }, d.tools.map(t => extLink(t.u, 'tool', [h('span', { class: 'tn' }, h('b', null, t.n), t.tag ? h('em', null, t.tag) : null), h('span', { class: 'td' }, t.d)])))];
   return [h('ol', { class: 'refs' }, d.refs.map(r => h('li', null, extLink(r.u, 'ref', [r.t]), h('span', null, r.s))))];
