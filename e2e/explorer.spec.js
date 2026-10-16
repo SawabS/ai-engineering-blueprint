@@ -157,7 +157,8 @@ test('search finds any component and takes you to it', async ({ page }) => {
 
 test('inspecting a block keeps your lesson, and you can return to it', async ({ page }) => {
   await openBoardAt(page, null);
-  await page.locator('.pin[data-i="16"]').click();
+  await page.locator('.pin[data-u="6"]').click();
+  await page.locator('.lvl-card .idx-row').nth(1).click(); // level 7's second lesson
   await expect(page.locator('.panel-head .ttl')).toHaveText('17. The KV cache');
   await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
   const si = await page.evaluate(() => L.si);

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-mGCJ0DYhkCzftm6e/jJBNgRZ/K5d2wFzC+Y6LPz6TgU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-htbDqWIte0qOG66/6GSW3PgBkTKhcB0VId0pRW/56vg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Engineering Blueprint</title>
@@ -547,6 +547,21 @@ footer.site a{color:var(--ink);font-weight:700}
 .pin.done{background:var(--accent);color:var(--accent-fg);border-color:var(--accent-shadow)}
 .pin.cur{outline:4px solid var(--pear);outline-offset:2px}
 .pin svg{width:14px;height:14px}
+/* level markers: the level number plus the lessons it covers */
+.pin.lvl{width:auto;padding:0 9px 0 3px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin:0}
+.pin.lvl b{display:grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:900}
+.pin.lvl span{font-size:.86em;font-weight:800;color:var(--muted)}
+.pin.lvl.done{background:var(--accent)}
+.pin.lvl.done b{background:var(--surface);color:var(--ink)}
+.pin.lvl.done span{color:var(--accent-fg)}
+.pins.compact .pin.lvl{padding:0 3px}
+.pins.compact .pin.lvl span{display:none}
+.lvl-card h3{font-size:20px;font-weight:800;margin:4px 0 6px}
+.lvl-card .lvl-blurb{color:var(--muted);font-size:14px;margin:0 0 12px}
+.lvl-card .idx-row span span{white-space:normal}
+.insp-need p{font-size:14px;margin:0 0 8px}
+/* hovering a block previews the group its lesson added */
+.bp-n.peer .blk{stroke:var(--hc, var(--line-strong))!important;stroke-width:3!important}
 .board-hint{position:absolute;left:14px;bottom:14px;z-index:2;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);font-weight:600;box-shadow:var(--shadow)}
 .board-main{--pwe:min(var(--pw, 440px), calc(100% - 340px))}
 .panel{position:absolute;top:0;right:0;bottom:0;width:var(--pwe);z-index:4;background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow);
@@ -4582,6 +4597,10 @@ function animateViewBox(svg, from, to, ms) {
   requestAnimationFrame(tick);
 }
 function lessonForNode(id) { const s = BPN[id].s; return LESSONS[s - 1]; }
+// the blocks one lesson adds, and the blocks one level (unit) adds: selections act on these groups
+function lessonKeys(l) { return Object.keys(BPN).filter(k => BPN[k].s === l.stage); }
+function levelKeys(ui) { return Object.keys(BPN).filter(k => lessonForNode(k).ui === ui); }
+function peerKeys(key) { return BPN[key] ? lessonKeys(lessonForNode(key)) : [key]; }
 
 function bpSVG(stage, hl = [], o = {}) {
   const on = id => stage >= BPN[id].s;
@@ -4639,7 +4658,7 @@ function bpSVG(stage, hl = [], o = {}) {
   // context
   s += G('context', R(152, 192, 448, 166, 'var(--ctx-soft)', { stroke: 'var(--ctx)', sw: 2.5, rx: 14, dash: '9 7' }) +
     (stage < 4 ? T(SPINE, 282, 'CONTEXT', 'var(--ctx)', 't-big', 'middle', 'font-size:38px') + T(SPINE, 306, 'everything the model sees on this request', 'var(--ctx)', 't-sub', 'middle', 'font-size:13px')
-      : T(190, 211, 'THE CONTEXT · REBUILT FOR EVERY CALL', 'var(--ctx)', 't-frame', 'start')), true);
+      : T(190, 211, 'THE CONTEXT', 'var(--ctx)', 't-frame', 'start')), true);
   const slot = (id, x, y, label, fill, tc) => G(id, R(x, y, 200, 28, fill, { rx: 8 }) + T(x + 100, y + 19, label, tc, 't-title', 'middle', 'font-size:12.5px'));
   s += slot('s-sys', 168, 220, 'System prompt', 'var(--ctx)', 'var(--ctx-t)');
   s += slot('s-schema', 168, 254, 'Output schema', 'color-mix(in srgb, var(--ctx) 62%, var(--surface))', 'var(--ctx-t)');
@@ -5261,9 +5280,8 @@ function boot() {
    (a bottom sheet on phones) that can be resized by dragging its grip and hidden completely. */
 let BOARD = null;
 const PANEL_KEY = 'ai-eng-blueprint.panel';
-// one pin per lesson, in diagram coordinates, on the top-left corner of the block that lesson adds (the top-right holds the + badge)
-const PINS = [[291, 22], [626, 464], [168, 464], [168, 220], [168, 254], [616, 192], [384, 254], [628, 322], [776, 192], [776, 280],
-  [152, 96], [400, 96], [616, 96], [324, 464], [792, 464], [152, 552], [716, 556], [616, 378], [934, 12]];
+// one marker per level, sitting on the top border of a block that level builds (the top-right corner holds the + badge)
+const LEVEL_MARKS = [[291, 22], [290, 192], [616, 192], [776, 192], [152, 96], [330, 440], [616, 378], [934, 12]]; // left edge of each marker sits here
 const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
 
 function openBoard(opts = {}) {
@@ -5313,7 +5331,8 @@ function openBoard(opts = {}) {
   setBuildMode(B.mode, true);
   wireCanvas(B); wireGrip(B);
   B.ro = new ResizeObserver(() => applyCam()); B.ro.observe(canvas);
-  panel.addEventListener('transitionend', () => applyCam()); // pins re-check what the sheet covers once it settles
+  panel.addEventListener('transitionend', () => applyCam()); // markers re-check what the sheet covers once it settles
+  wirePeers(B);
   renderPins();
 
   const p = $('.player');
@@ -5391,9 +5410,9 @@ function boardDock(player, lesson) {
 }
 function boardShowIndex() {
   const B = BOARD; if (!B) return;
-  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; exHighlight([]); if (B.view === 'root') renderPins();
+  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; B.selLevel = null; exHighlight([]); if (B.view === 'root') renderPins();
   const idx = h('div', { class: 'idx' },
-    h('div', { class: 'idx-intro' }, h('p', null, 'Numbered pins open lessons. Select any block to inspect it; blocks marked + open a detailed view you can keep drilling into.')),
+    h('div', { class: 'idx-intro' }, h('p', null, 'Numbered markers show where each level builds the system; select one to see its lessons. Select any block to highlight everything its lesson added; blocks marked + open a detailed view you can keep drilling into.')),
     exSearchBox(),
     COURSE.units.map((u, ui) => [h('h5', null, `Level ${ui + 1} · ${u.title}`),
       u.lessons.map(l => h('button', { class: 'idx-row' + (P.done[l.id] ? ' done' : ''), style: { '--u': u.color }, 'data-sfx': 'none', onclick: () => openLesson(l.idx) },
@@ -5423,15 +5442,16 @@ function applyCam() {
   B.canvas.style.backgroundPosition = `${-B.x / B.s}px ${-B.y / B.s}px`;
   const coarse = matchMedia('(pointer: coarse)').matches;
   const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
-  // pins that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
+  // markers that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
   const vr = visibleRect(), tb = B.tools.getBoundingClientRect(), lg = B.legend.getBoundingClientRect(), cv = B.canvas.getBoundingClientRect();
-  const under = (px, py, r) => r.width && px > r.left - cv.left - 16 && px < r.right - cv.left + 16 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
+  const under = (px, py, r) => r.width && px > r.left - cv.left - 24 && px < r.right - cv.left + 24 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
+  B.pins.classList.toggle('compact', 146 / B.s < 72); // zoomed far out: the closest markers (levels 2 and 3) would touch, so show the number only
   $$('.pin', B.pins).forEach(p => {
-    const [X, Y] = PINS[+p.dataset.i];
+    const [X, Y] = LEVEL_MARKS[+p.dataset.u];
     const px = (X - B.x) / B.s, py = (Y - B.y) / B.s;
     p.style.visibility = px < 0 || py < 0 || px > vr.w || py > vr.h || under(px, py, tb) || under(px, py, lg) ? 'hidden' : '';
-    p.style.transform = `translate(${px}px, ${py}px)`;
-    p.style.width = p.style.height = pinPx + 'px'; p.style.margin = `${-pinPx / 2}px 0 0 ${-pinPx / 2}px`; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
+    p.style.transform = `translate(${px}px, ${py}px) translate(0, -50%)`;
+    p.style.height = p.style.minWidth = pinPx + 'px'; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
   });
   B.pct.textContent = Math.round(baseScale() / B.s * 100) + '%';
 }
@@ -5472,20 +5492,56 @@ function highlight(hl) {
 }
 function boardFocus(lesson) {
   if (!BOARD || BOARD.view !== 'root') return;
-  highlight(lesson.hl); renderPins(lesson.idx);
+  clearLevel(); highlight(lesson.hl); renderPins(lesson.idx);
   fitBox(rawBox(lesson.hl), true);
 }
+function clearLevel() { if (BOARD) BOARD.selLevel = null; }
 function renderPins(cur) {
   const B = BOARD; if (!B) return;
   if (cur == null && L && $('.player.docked')) cur = L.lesson.idx;
+  const curU = B.selLevel != null ? B.selLevel : cur != null ? LESSONS[cur].ui : -1;
   B.pins.innerHTML = '';
-  LESSONS.forEach((l, i) => {
-    const done = !!P.done[l.id];
-    B.pins.append(h('button', { class: 'pin' + (done ? ' done' : '') + (i === cur ? ' cur' : ''), 'data-i': i, 'data-sfx': 'none', style: { '--u': l.unit.color },
-      'aria-label': `Lesson ${i + 1}: ${l.title}${done ? ', complete' : ''}`, title: `${i + 1}. ${l.title}`,
-      onclick: e => { e.stopPropagation(); openLesson(i); }, html: done ? ICON.check : String(i + 1) }));
+  COURSE.units.forEach((u, ui) => {
+    const a = u.lessons[0].idx + 1, z = u.lessons[u.lessons.length - 1].idx + 1;
+    const done = u.lessons.every(l => P.done[l.id]);
+    const range = a === z ? `lesson ${a}` : `lessons ${a} to ${z}`;
+    B.pins.append(h('button', { class: 'pin lvl' + (done ? ' done' : '') + (ui === curU ? ' cur' : ''), 'data-u': ui, 'data-sfx': 'none',
+      'aria-label': `Level ${ui + 1}: ${u.title}, ${range}${done ? ', complete' : ''}`, title: `Level ${ui + 1} · ${u.title} · ${range}`,
+      onclick: e => { e.stopPropagation(); showLevel(ui); }, html: `<b>${ui + 1}</b><span>${a === z ? a : a + '–' + z}</span>` }));
   });
   applyCam();
+}
+// a level marker selects everything that level adds, and the panel lists its lessons with the need each one meets
+function showLevel(ui) {
+  const B = BOARD; if (!B) return; if (B.tour) endTour(true);
+  parkLesson(); B.selLevel = ui; SFX.select();
+  const u = COURSE.units[ui]; const keys = levelKeys(ui);
+  exHighlight(keys); fitBox(rawBox(keys), true); renderPins();
+  const card = h('div', { class: 'idx lvl-card' },
+    h('div', { class: 'eyebrow' }, `Level ${ui + 1} · ${u.side}`), h('h3', null, u.title), h('p', { class: 'lvl-blurb' }, u.blurb),
+    u.lessons.map(l => h('button', { class: 'idx-row' + (P.done[l.id] ? ' done' : ''), 'data-sfx': 'none', onclick: () => { B.parked = null; openLesson(l.idx); },
+      onmouseenter: () => exHighlight(lessonKeys(l)), onfocus: () => exHighlight(lessonKeys(l)), onmouseleave: () => exHighlight(keys), onblur: () => exHighlight(keys) },
+      h('span', { class: 'n', html: P.done[l.id] ? ICON.check.replace('<svg', '<svg width="16" height="16"') : String(l.idx + 1) }),
+      h('span', { style: { minWidth: 0 } }, h('b', null, l.title), h('span', null, l.need)),
+      h('span', { class: 'chip' }, `${l.steps.length}`))),
+    h('div', { class: 'insp-acts' },
+      B.parked && L ? h('button', { class: 'btn btn-ghost', onclick: () => unparkLesson() }, 'Back to my lesson') : null,
+      h('button', { class: 'btn btn-ghost', onclick: () => boardShowIndex() }, 'All levels')));
+  B.ttl.textContent = `Level ${ui + 1}`; B.expandBtn.hidden = true;
+  B.panelBody.innerHTML = ''; B.panelBody.append(card); B.panelBody.scrollTop = 0;
+  exPanelOpen();
+}
+// hovering a block on the top-level diagram previews the group its lesson added
+function wirePeers(B) {
+  let on = [];
+  const clear = () => { on.forEach(g => g.classList.remove('peer')); on = []; };
+  B.canvas.addEventListener('pointerover', e => {
+    if (B.view !== 'root' || B.tour || (e.pointerType && e.pointerType !== 'mouse')) return;
+    const g = e.target.closest('.bp-n'); clear(); if (!g || !BPN[g.dataset.id]) return;
+    on = peerKeys(g.dataset.id).map(k => $(`.bp-n[data-id="${k}"]`, B.svg)).filter(Boolean);
+    on.forEach(x => x.classList.add('peer'));
+  });
+  B.canvas.addEventListener('pointerleave', clear);
 }
 
 /* ---- gestures ---- */
@@ -6322,7 +6378,7 @@ function setViewContent(vid) {
   const B = BOARD;
   const html = vid === 'root' ? bpSVG(MAX_STAGE, [], { click: 1, uid: 'B' }) : sysViewSVG(SYSV[vid]);
   const tmp = h('div', { html }); const svg = tmp.firstElementChild;
-  B.svg.replaceWith(svg); B.svg = svg; B.view = vid; B.hl = []; B.sel = null;
+  B.svg.replaceWith(svg); B.svg = svg; B.view = vid; B.hl = []; B.sel = null; B.selLevel = null;
   B.canvas.dataset.view = vid;
   B.pins.hidden = vid !== 'root';
   if (vid === 'root') { addRootBadges(); setBuildMode(B.mode, true); renderPins(); }
@@ -6446,7 +6502,8 @@ function exInspect(key, quiet) {
   const B = BOARD; const n = exNode(key); if (!B || !n) return;
   if (B.tour) endTour(true);
   parkLesson();
-  B.sel = key; exHighlight([key]);
+  B.sel = key; B.selLevel = null; renderPins();
+  const peers = n.root ? peerKeys(key) : [key]; exHighlight(peers); // a block on the top-level diagram selects everything its lesson added
   if (!quiet) SFX.select();
   const l = n.l ? LESSONS.find(x => x.id === n.l) : null;
   const tools = (n.tl || (n.root && l ? l.steps.flatMap(s => (s.deep && s.deep.tools) || []).slice(0, 8) : [])).map(sysTool).filter(Boolean);
@@ -6461,6 +6518,10 @@ function exInspect(key, quiet) {
     n.how ? h('div', { class: 'insp-sec' }, h('h4', null, 'How it works'), h('ol', null, n.how.map(x => h('li', null, x)))) : null,
     nb.length ? h('div', { class: 'insp-sec' }, h('h4', null, 'Connected to'), h('div', { class: 'insp-links' }, nb.map(([m, dir, label]) =>
       h('button', { class: 'insp-link', style: { '--c': sysColor(m.cat) }, onclick: () => exInspect(m.key) }, h('span', { class: 'dir', 'aria-hidden': 'true' }, dir), m.t, label ? h('small', null, label) : null)))) : null,
+    n.root && l ? h('div', { class: 'insp-sec insp-need' }, h('h4', null, `Added in lesson ${l.idx + 1} · ${l.title}`), h('p', null, h('b', null, 'The need: '), l.need),
+      peers.length > 1 ? h('div', { class: 'insp-links' }, peers.filter(k => k !== key).map(k => {
+        const m = exNode(k); return h('button', { class: 'insp-link', style: { '--c': sysColor(m.cat) }, onclick: () => exInspect(k) }, h('span', { class: 'dir', 'aria-hidden': 'true' }, '+'), m.t, h('small', null, 'added together'));
+      })) : null) : null,
     tools.length ? h('div', { class: 'insp-sec' }, h('h4', null, 'Tools for this'), h('div', { class: 'tk-chips' }, tools.map(t => extLink(t.u, 'tk-chip', [t.n])))) : null,
     h('div', { class: 'insp-acts' },
       n.go ? h('button', { class: 'btn btn-accent', 'data-sfx': 'none', onclick: () => exGoInto(n.go, key), html: `<span>Look inside: ${esc(SYSV[n.go].title)}</span>` }) : null,

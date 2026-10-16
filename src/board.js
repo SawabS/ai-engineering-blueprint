@@ -3,9 +3,8 @@
    (a bottom sheet on phones) that can be resized by dragging its grip and hidden completely. */
 let BOARD = null;
 const PANEL_KEY = 'ai-eng-blueprint.panel';
-// one pin per lesson, in diagram coordinates, on the top-left corner of the block that lesson adds (the top-right holds the + badge)
-const PINS = [[291, 22], [626, 464], [168, 464], [168, 220], [168, 254], [616, 192], [384, 254], [628, 322], [776, 192], [776, 280],
-  [152, 96], [400, 96], [616, 96], [324, 464], [792, 464], [152, 552], [716, 556], [616, 378], [934, 12]];
+// one marker per level, sitting on the top border of a block that level builds (the top-right corner holds the + badge)
+const LEVEL_MARKS = [[291, 22], [290, 192], [616, 192], [776, 192], [152, 96], [330, 440], [616, 378], [934, 12]]; // left edge of each marker sits here
 const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
 
 function openBoard(opts = {}) {
@@ -55,7 +54,8 @@ function openBoard(opts = {}) {
   setBuildMode(B.mode, true);
   wireCanvas(B); wireGrip(B);
   B.ro = new ResizeObserver(() => applyCam()); B.ro.observe(canvas);
-  panel.addEventListener('transitionend', () => applyCam()); // pins re-check what the sheet covers once it settles
+  panel.addEventListener('transitionend', () => applyCam()); // markers re-check what the sheet covers once it settles
+  wirePeers(B);
   renderPins();
 
   const p = $('.player');
@@ -133,9 +133,9 @@ function boardDock(player, lesson) {
 }
 function boardShowIndex() {
   const B = BOARD; if (!B) return;
-  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; exHighlight([]); if (B.view === 'root') renderPins();
+  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; B.selLevel = null; exHighlight([]); if (B.view === 'root') renderPins();
   const idx = h('div', { class: 'idx' },
-    h('div', { class: 'idx-intro' }, h('p', null, 'Numbered pins open lessons. Select any block to inspect it; blocks marked + open a detailed view you can keep drilling into.')),
+    h('div', { class: 'idx-intro' }, h('p', null, 'Numbered markers show where each level builds the system; select one to see its lessons. Select any block to highlight everything its lesson added; blocks marked + open a detailed view you can keep drilling into.')),
     exSearchBox(),
     COURSE.units.map((u, ui) => [h('h5', null, `Level ${ui + 1} · ${u.title}`),
       u.lessons.map(l => h('button', { class: 'idx-row' + (P.done[l.id] ? ' done' : ''), style: { '--u': u.color }, 'data-sfx': 'none', onclick: () => openLesson(l.idx) },
@@ -165,15 +165,16 @@ function applyCam() {
   B.canvas.style.backgroundPosition = `${-B.x / B.s}px ${-B.y / B.s}px`;
   const coarse = matchMedia('(pointer: coarse)').matches;
   const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
-  // pins that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
+  // markers that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
   const vr = visibleRect(), tb = B.tools.getBoundingClientRect(), lg = B.legend.getBoundingClientRect(), cv = B.canvas.getBoundingClientRect();
-  const under = (px, py, r) => r.width && px > r.left - cv.left - 16 && px < r.right - cv.left + 16 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
+  const under = (px, py, r) => r.width && px > r.left - cv.left - 24 && px < r.right - cv.left + 24 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
+  B.pins.classList.toggle('compact', 146 / B.s < 72); // zoomed far out: the closest markers (levels 2 and 3) would touch, so show the number only
   $$('.pin', B.pins).forEach(p => {
-    const [X, Y] = PINS[+p.dataset.i];
+    const [X, Y] = LEVEL_MARKS[+p.dataset.u];
     const px = (X - B.x) / B.s, py = (Y - B.y) / B.s;
     p.style.visibility = px < 0 || py < 0 || px > vr.w || py > vr.h || under(px, py, tb) || under(px, py, lg) ? 'hidden' : '';
-    p.style.transform = `translate(${px}px, ${py}px)`;
-    p.style.width = p.style.height = pinPx + 'px'; p.style.margin = `${-pinPx / 2}px 0 0 ${-pinPx / 2}px`; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
+    p.style.transform = `translate(${px}px, ${py}px) translate(0, -50%)`;
+    p.style.height = p.style.minWidth = pinPx + 'px'; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
   });
   B.pct.textContent = Math.round(baseScale() / B.s * 100) + '%';
 }
@@ -214,20 +215,56 @@ function highlight(hl) {
 }
 function boardFocus(lesson) {
   if (!BOARD || BOARD.view !== 'root') return;
-  highlight(lesson.hl); renderPins(lesson.idx);
+  clearLevel(); highlight(lesson.hl); renderPins(lesson.idx);
   fitBox(rawBox(lesson.hl), true);
 }
+function clearLevel() { if (BOARD) BOARD.selLevel = null; }
 function renderPins(cur) {
   const B = BOARD; if (!B) return;
   if (cur == null && L && $('.player.docked')) cur = L.lesson.idx;
+  const curU = B.selLevel != null ? B.selLevel : cur != null ? LESSONS[cur].ui : -1;
   B.pins.innerHTML = '';
-  LESSONS.forEach((l, i) => {
-    const done = !!P.done[l.id];
-    B.pins.append(h('button', { class: 'pin' + (done ? ' done' : '') + (i === cur ? ' cur' : ''), 'data-i': i, 'data-sfx': 'none', style: { '--u': l.unit.color },
-      'aria-label': `Lesson ${i + 1}: ${l.title}${done ? ', complete' : ''}`, title: `${i + 1}. ${l.title}`,
-      onclick: e => { e.stopPropagation(); openLesson(i); }, html: done ? ICON.check : String(i + 1) }));
+  COURSE.units.forEach((u, ui) => {
+    const a = u.lessons[0].idx + 1, z = u.lessons[u.lessons.length - 1].idx + 1;
+    const done = u.lessons.every(l => P.done[l.id]);
+    const range = a === z ? `lesson ${a}` : `lessons ${a} to ${z}`;
+    B.pins.append(h('button', { class: 'pin lvl' + (done ? ' done' : '') + (ui === curU ? ' cur' : ''), 'data-u': ui, 'data-sfx': 'none',
+      'aria-label': `Level ${ui + 1}: ${u.title}, ${range}${done ? ', complete' : ''}`, title: `Level ${ui + 1} · ${u.title} · ${range}`,
+      onclick: e => { e.stopPropagation(); showLevel(ui); }, html: `<b>${ui + 1}</b><span>${a === z ? a : a + '–' + z}</span>` }));
   });
   applyCam();
+}
+// a level marker selects everything that level adds, and the panel lists its lessons with the need each one meets
+function showLevel(ui) {
+  const B = BOARD; if (!B) return; if (B.tour) endTour(true);
+  parkLesson(); B.selLevel = ui; SFX.select();
+  const u = COURSE.units[ui]; const keys = levelKeys(ui);
+  exHighlight(keys); fitBox(rawBox(keys), true); renderPins();
+  const card = h('div', { class: 'idx lvl-card' },
+    h('div', { class: 'eyebrow' }, `Level ${ui + 1} · ${u.side}`), h('h3', null, u.title), h('p', { class: 'lvl-blurb' }, u.blurb),
+    u.lessons.map(l => h('button', { class: 'idx-row' + (P.done[l.id] ? ' done' : ''), 'data-sfx': 'none', onclick: () => { B.parked = null; openLesson(l.idx); },
+      onmouseenter: () => exHighlight(lessonKeys(l)), onfocus: () => exHighlight(lessonKeys(l)), onmouseleave: () => exHighlight(keys), onblur: () => exHighlight(keys) },
+      h('span', { class: 'n', html: P.done[l.id] ? ICON.check.replace('<svg', '<svg width="16" height="16"') : String(l.idx + 1) }),
+      h('span', { style: { minWidth: 0 } }, h('b', null, l.title), h('span', null, l.need)),
+      h('span', { class: 'chip' }, `${l.steps.length}`))),
+    h('div', { class: 'insp-acts' },
+      B.parked && L ? h('button', { class: 'btn btn-ghost', onclick: () => unparkLesson() }, 'Back to my lesson') : null,
+      h('button', { class: 'btn btn-ghost', onclick: () => boardShowIndex() }, 'All levels')));
+  B.ttl.textContent = `Level ${ui + 1}`; B.expandBtn.hidden = true;
+  B.panelBody.innerHTML = ''; B.panelBody.append(card); B.panelBody.scrollTop = 0;
+  exPanelOpen();
+}
+// hovering a block on the top-level diagram previews the group its lesson added
+function wirePeers(B) {
+  let on = [];
+  const clear = () => { on.forEach(g => g.classList.remove('peer')); on = []; };
+  B.canvas.addEventListener('pointerover', e => {
+    if (B.view !== 'root' || B.tour || (e.pointerType && e.pointerType !== 'mouse')) return;
+    const g = e.target.closest('.bp-n'); clear(); if (!g || !BPN[g.dataset.id]) return;
+    on = peerKeys(g.dataset.id).map(k => $(`.bp-n[data-id="${k}"]`, B.svg)).filter(Boolean);
+    on.forEach(x => x.classList.add('peer'));
+  });
+  B.canvas.addEventListener('pointerleave', clear);
 }
 
 /* ---- gestures ---- */

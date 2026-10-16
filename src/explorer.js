@@ -92,7 +92,7 @@ function setViewContent(vid) {
   const B = BOARD;
   const html = vid === 'root' ? bpSVG(MAX_STAGE, [], { click: 1, uid: 'B' }) : sysViewSVG(SYSV[vid]);
   const tmp = h('div', { html }); const svg = tmp.firstElementChild;
-  B.svg.replaceWith(svg); B.svg = svg; B.view = vid; B.hl = []; B.sel = null;
+  B.svg.replaceWith(svg); B.svg = svg; B.view = vid; B.hl = []; B.sel = null; B.selLevel = null;
   B.canvas.dataset.view = vid;
   B.pins.hidden = vid !== 'root';
   if (vid === 'root') { addRootBadges(); setBuildMode(B.mode, true); renderPins(); }
@@ -216,7 +216,8 @@ function exInspect(key, quiet) {
   const B = BOARD; const n = exNode(key); if (!B || !n) return;
   if (B.tour) endTour(true);
   parkLesson();
-  B.sel = key; exHighlight([key]);
+  B.sel = key; B.selLevel = null; renderPins();
+  const peers = n.root ? peerKeys(key) : [key]; exHighlight(peers); // a block on the top-level diagram selects everything its lesson added
   if (!quiet) SFX.select();
   const l = n.l ? LESSONS.find(x => x.id === n.l) : null;
   const tools = (n.tl || (n.root && l ? l.steps.flatMap(s => (s.deep && s.deep.tools) || []).slice(0, 8) : [])).map(sysTool).filter(Boolean);
@@ -231,6 +232,10 @@ function exInspect(key, quiet) {
     n.how ? h('div', { class: 'insp-sec' }, h('h4', null, 'How it works'), h('ol', null, n.how.map(x => h('li', null, x)))) : null,
     nb.length ? h('div', { class: 'insp-sec' }, h('h4', null, 'Connected to'), h('div', { class: 'insp-links' }, nb.map(([m, dir, label]) =>
       h('button', { class: 'insp-link', style: { '--c': sysColor(m.cat) }, onclick: () => exInspect(m.key) }, h('span', { class: 'dir', 'aria-hidden': 'true' }, dir), m.t, label ? h('small', null, label) : null)))) : null,
+    n.root && l ? h('div', { class: 'insp-sec insp-need' }, h('h4', null, `Added in lesson ${l.idx + 1} · ${l.title}`), h('p', null, h('b', null, 'The need: '), l.need),
+      peers.length > 1 ? h('div', { class: 'insp-links' }, peers.filter(k => k !== key).map(k => {
+        const m = exNode(k); return h('button', { class: 'insp-link', style: { '--c': sysColor(m.cat) }, onclick: () => exInspect(k) }, h('span', { class: 'dir', 'aria-hidden': 'true' }, '+'), m.t, h('small', null, 'added together'));
+      })) : null) : null,
     tools.length ? h('div', { class: 'insp-sec' }, h('h4', null, 'Tools for this'), h('div', { class: 'tk-chips' }, tools.map(t => extLink(t.u, 'tk-chip', [t.n])))) : null,
     h('div', { class: 'insp-acts' },
       n.go ? h('button', { class: 'btn btn-accent', 'data-sfx': 'none', onclick: () => exGoInto(n.go, key), html: `<span>Look inside: ${esc(SYSV[n.go].title)}</span>` }) : null,

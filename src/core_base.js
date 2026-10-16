@@ -118,6 +118,10 @@ function animateViewBox(svg, from, to, ms) {
   requestAnimationFrame(tick);
 }
 function lessonForNode(id) { const s = BPN[id].s; return LESSONS[s - 1]; }
+// the blocks one lesson adds, and the blocks one level (unit) adds: selections act on these groups
+function lessonKeys(l) { return Object.keys(BPN).filter(k => BPN[k].s === l.stage); }
+function levelKeys(ui) { return Object.keys(BPN).filter(k => lessonForNode(k).ui === ui); }
+function peerKeys(key) { return BPN[key] ? lessonKeys(lessonForNode(key)) : [key]; }
 
 function bpSVG(stage, hl = [], o = {}) {
   const on = id => stage >= BPN[id].s;
@@ -175,7 +179,7 @@ function bpSVG(stage, hl = [], o = {}) {
   // context
   s += G('context', R(152, 192, 448, 166, 'var(--ctx-soft)', { stroke: 'var(--ctx)', sw: 2.5, rx: 14, dash: '9 7' }) +
     (stage < 4 ? T(SPINE, 282, 'CONTEXT', 'var(--ctx)', 't-big', 'middle', 'font-size:38px') + T(SPINE, 306, 'everything the model sees on this request', 'var(--ctx)', 't-sub', 'middle', 'font-size:13px')
-      : T(190, 211, 'THE CONTEXT · REBUILT FOR EVERY CALL', 'var(--ctx)', 't-frame', 'start')), true);
+      : T(190, 211, 'THE CONTEXT', 'var(--ctx)', 't-frame', 'start')), true);
   const slot = (id, x, y, label, fill, tc) => G(id, R(x, y, 200, 28, fill, { rx: 8 }) + T(x + 100, y + 19, label, tc, 't-title', 'middle', 'font-size:12.5px'));
   s += slot('s-sys', 168, 220, 'System prompt', 'var(--ctx)', 'var(--ctx-t)');
   s += slot('s-schema', 168, 254, 'Output schema', 'color-mix(in srgb, var(--ctx) 62%, var(--surface))', 'var(--ctx-t)');

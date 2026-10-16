@@ -80,7 +80,7 @@ for (const [w, h, name] of VIEWPORTS) {
         await expect(page.locator('.panel .idx')).toBeVisible();
         await page.waitForTimeout(700); // camera settles
         await check('board', { scope: '.board' });
-        await page.locator('.pin[data-i="6"]').click(); // retrieval: near the top, clear of the bottom sheet on small phones
+        await page.locator('.pin[data-u="2"]').click(); // level 3: near the top, clear of the bottom sheet on small phones
         await page.waitForTimeout(700);
         await check('board-lesson', { scope: '.board' });
         await page.getByRole('button', { name: /Trace/ }).click();
