@@ -85,17 +85,18 @@ for (const name of DEVICES) {
       expect(problems, problems.join('\n')).toEqual([]);
     });
 
-    test('system map journey: level marker, sheet, inspector, drill-down, tour', async ({ page }) => {
+    test('system map journey: level, sheet, inspector, drill-down, whole system, tour', async ({ page }) => {
       test.setTimeout(120000);
       const { problems, check } = make(page);
       await openApp(page, { done: ['two-boxes', 'next-token', 'tokens'] });
       await page.getByRole('button', { name: 'Open the system map' }).first().tap();
       await expect(page.locator('.board')).toBeVisible();
       await check('map', '.board');
-      // every visible level marker is a comfortable touch target and none covers another (audit), and one opens its card
-      const marker = page.locator('.pin[data-u="2"]');
-      await expect(marker).toBeVisible();
-      await marker.tap();
+      // a level heading in the lesson index opens its card and lights its blocks
+      const level = page.locator('.idx-level[data-u="2"]');
+      await level.scrollIntoViewIfNeeded();
+      await level.tap();
+      await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
       await expect(page.locator('.lvl-card h3')).toHaveText('Your own knowledge');
       await check('level-card', '.board');
       // open a lesson from the card: it docks in the panel or sheet and stays usable
@@ -120,6 +121,12 @@ for (const name of DEVICES) {
       await expect(page.locator('.insp .insp-link').last()).toBeInViewport();
       await page.locator('.crumbs button').first().tap();
       await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'root');
+      // Whole system resets any selection
+      await page.evaluate(() => exInspect('tools'));
+      await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+      await page.locator('.lg.all').tap();
+      await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(0);
+      await check('whole-system', '.board');
       // the guided tour: every step's card fits on screen and Next is tappable
       await page.getByRole('button', { name: /Trace/ }).tap();
       const tour = page.locator('.tour');

@@ -86,7 +86,7 @@ const BPN = {
 };
 const BOX = {
   client: [291, 22, 170, 48], api: [152, 382, 448, 34], model: [152, 440, 764, 90], context: [152, 192, 448, 166],
-  head: [626, 464, 150, 54], tok: [168, 464, 140, 54], tf: [324, 464, 286, 54], weights: [792, 464, 112, 54],
+  head: [632, 464, 142, 54], tok: [168, 464, 128, 54], tf: [328, 464, 272, 54], weights: [790, 464, 114, 54],
   's-sys': [168, 220, 200, 28], 's-schema': [168, 254, 200, 28], 's-hist': [168, 288, 200, 28], 's-user': [168, 322, 200, 28],
   's-tooldef': [384, 220, 200, 28], 's-ret': [384, 254, 200, 28], 's-toolres': [384, 288, 200, 28],
   know: [616, 192, 144, 166], 'rag-adv': [628, 322, 120, 24], tools: [776, 192, 140, 78], mcp: [776, 280, 140, 78],
@@ -179,7 +179,7 @@ function bpSVG(stage, hl = [], o = {}) {
   s += G('client', R(291, 22, 170, 48, 'var(--surface)', { stroke: 'var(--ink)', sw: 2, rx: 12 }) +
     `<circle cx="314" cy="38" r="7" style="fill:var(--ink)"/><path d="M302 60c0-9 5-14 12-14s12 5 12 14z" style="fill:var(--ink)"/>` +
     T(392, 43, 'Your app', 'var(--ink)', 't-title', 'middle', 'font-size:14px') + T(392, 59, 'chat · IDE · backend', 'var(--muted)', 't-sub') +
-    arrow(SPINE, 74, SPINE, 188, true));
+    arrow(SPINE, 78, SPINE, 184, true));
   // orchestration
   s += G('harness', R(152, 96, 200, 72, 'var(--harness)') + title2(252, 128, 'Agent loop', 'call → tools → repeat', '#fff', 14));
   s += G('mem', R(400, 96, 200, 72, 'var(--harness-soft)', { stroke: 'var(--harness)' }) + title2(500, 128, 'Memory + skills', 'kept outside the window', 'var(--harness)', 14));
@@ -200,7 +200,7 @@ function bpSVG(stage, hl = [], o = {}) {
   s += slot('s-toolres', 384, 288, 'Tool results', 'var(--tool)', '#fff');
   s += G('know', R(616, 192, 144, 166, 'var(--know)') +
     `<ellipse cx="688" cy="232" rx="26" ry="8" style="fill:none;stroke:#fff;stroke-width:2"/><path d="M662 232v26c0 4.4 11.6 8 26 8s26-3.6 26-8v-26" style="fill:none;stroke:#fff;stroke-width:2"/>` +
-    title2(688, 292, 'Knowledge', 'chunks · vectors · BM25', '#fff', 14) + arrow(612, 268, 588, 268));
+    title2(688, 292, 'Knowledge', 'chunks · vectors · BM25', '#fff', 14) + arrow(612, 268, 589, 268));
   s += G('rag-adv', R(628, 322, 120, 24, 'var(--know-soft)', { noShadow: 1, rx: 7 }) + T(688, 338, 'rerank · rewrite', 'var(--know)', 't-sub', 'middle', 'font-weight:700'));
   s += G('tools', R(776, 192, 140, 78, 'var(--tool)') + title2(846, 228, 'Tools', 'functions · code', '#fff', 14));
   s += G('mcp', R(776, 280, 140, 78, 'var(--tool-soft)', { stroke: 'var(--tool)' }) + title2(846, 312, 'MCP servers', 'one plug per service', 'var(--tool)', 13.5) +
@@ -213,19 +213,19 @@ function bpSVG(stage, hl = [], o = {}) {
     title2(766, 397, 'Gateway and serving', 'auth · routing · batching · streaming', '#fff', 13.5));
   // the model
   s += G('model', R(152, 440, 764, 90, 'var(--model-soft)', { stroke: 'var(--model)', sw: 2.5, rx: 14 }) + T(190, 457, 'THE MODEL', 'var(--model-ink)', 't-frame', 'start') +
-    (stage < BPN.tf.s ? T(on('head') ? 467 : 534, 496, 'LLM', 'var(--model-ink)', 't-big', 'middle', 'font-size:28px') + T(on('head') ? 467 : 534, 514, 'a next-token predictor', 'var(--model-ink)', 't-sub', 'middle', 'font-size:12px') : ''), true);
-  s += G('tok', R(168, 464, 140, 54, 'var(--model-2)') + title2(238, 488, 'Tokenizer', '→ embeddings', 'var(--model-t)', 13.5));
-  let tf = R(324, 464, 286, 54, 'var(--surface)', { stroke: 'var(--model)', sw: 2 });
+    (stage < BPN.tf.s ? T(on('head') ? 464 : 534, 496, 'LLM', 'var(--model-ink)', 't-big', 'middle', 'font-size:28px') + T(on('head') ? 464 : 534, 514, 'a next-token predictor', 'var(--model-ink)', 't-sub', 'middle', 'font-size:12px') : ''), true);
+  s += G('tok', R(168, 464, 128, 54, 'var(--model-2)') + title2(232, 488, 'Tokenizer', '→ embeddings', 'var(--model-t)', 13.5));
+  let tf = R(328, 464, 272, 54, 'var(--surface)', { stroke: 'var(--model)', sw: 2 });
   for (let i = 0; i < 4; i++) {
-    const x = 331 + i * 69;
-    tf += R(x, 470, 64, 19, 'var(--model)', { noShadow: 1, noGlow: 1, rx: 5 }) + T(x + 32, 483.5, 'Attention', 'var(--model-t)', 't-sub', 'middle', 'font-weight:700;font-size:10.5px');
-    tf += R(x, 493, 64, 19, 'var(--model-2)', { noShadow: 1, noGlow: 1, rx: 5 }) + T(x + 32, 506.5, 'MLP', 'var(--model-t)', 't-sub', 'middle', 'font-weight:700;font-size:10.5px');
+    const x = 334 + i * 66;
+    tf += R(x, 470, 62, 19, 'var(--model)', { noShadow: 1, noGlow: 1, rx: 5 }) + T(x + 31, 483.5, 'Attention', 'var(--model-t)', 't-sub', 'middle', 'font-weight:700;font-size:10.5px');
+    tf += R(x, 493, 62, 19, 'var(--model-2)', { noShadow: 1, noGlow: 1, rx: 5 }) + T(x + 31, 506.5, 'MLP', 'var(--model-t)', 't-sub', 'middle', 'font-weight:700;font-size:10.5px');
   }
   s += G('tf', tf);
-  s += G('head', R(626, 464, 150, 54, 'var(--model)') + title2(701, 488, 'Logits → softmax', '→ one sampled token', 'var(--model-t)', 13));
-  s += G('weights', R(792, 464, 112, 54, 'var(--surface)', { stroke: 'var(--model)', dash: '5 4', sw: 2 }) + T(848, 485, 'Weights', 'var(--model-ink)', 't-title', 'middle', 'font-size:13px') + T(848, 501, 'pretrain · SFT · RL', 'var(--model-ink)', 't-sub', 'middle', 'font-size:10.5px'));
-  if (on('tok')) s += `<g aria-hidden="true">${arrow(310, 491, 321, 491)}</g>`;
-  if (on('head')) s += `<g aria-hidden="true">${arrow(612, 491, 623, 491)}</g>`;
+  s += G('head', R(632, 464, 142, 54, 'var(--model)') + title2(703, 488, 'Logits → softmax', '→ one sampled token', 'var(--model-t)', 13));
+  s += G('weights', R(790, 464, 114, 54, 'var(--surface)', { stroke: 'var(--model)', dash: '5 4', sw: 2 }) + T(847, 485, 'Weights', 'var(--model-ink)', 't-title', 'middle', 'font-size:13px') + T(847, 501, 'pretrain · SFT · RL', 'var(--model-ink)', 't-sub', 'middle', 'font-size:10.5px'));
+  if (on('tok')) s += `<g aria-hidden="true">${arrow(300, 491, 323, 491)}</g>`; // a real tail, and 4 units of air at each end
+  if (on('head')) s += `<g aria-hidden="true">${arrow(604, 491, 627, 491)}</g>`;
   // compute
   let gp = R(152, 552, 548, 48, 'var(--hw)');
   for (let i = 0; i < 4; i++) { const x = 164 + i * 78; gp += R(x, 560, 68, 32, 'var(--hw-2)', { noShadow: 1, noGlow: 1, rx: 6 }) + T(x + 34, 581, 'GPU', '#fff', 't-sub', 'middle', 'font-weight:700'); }

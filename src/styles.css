@@ -339,28 +339,19 @@ footer.site a{color:var(--ink);font-weight:700}
 .step{max-width:640px;margin:0 auto;animation:stepIn .4s ease both}
 @keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .step > .eyebrow{color:var(--accent-ink)}
-/* the need that opens each lesson: an empty slot of the system diagram (dashed, on the map's dot grid)
-   that the lesson's block drops into, the need in the display face, and the blocks it adds as diagram chips */
-.need-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;margin:12px 0 22px;padding:16px 18px 16px 16px;
-  border:2px solid var(--line);border-radius:var(--r-l);box-shadow:0 4px 0 0 var(--line);
-  background:radial-gradient(var(--grid) 1.2px, transparent 1.3px) 0 0/16px 16px, var(--surface)}
-.need-slot{position:relative;width:56px;height:56px;border-radius:15px;border:2px dashed var(--line-strong);background:var(--paper)}
-.need-slot i{position:absolute;inset:7px;border-radius:10px;background:var(--nf);box-shadow:0 4px 0 0 color-mix(in srgb, var(--nf) 66%, #000);
-  animation:slotIn .7s cubic-bezier(.2,1.5,.4,1) .2s both}
-@keyframes slotIn{from{opacity:0;transform:translateY(-22px) scale(.55) rotate(-8deg)}to{opacity:1;transform:none}}
-.need-body{min-width:0}
+/* the need that opens each lesson: a plain card with the need and the blocks the lesson adds */
+.need-card{margin:12px 0 22px;padding:16px 18px;border:2px solid var(--line);border-radius:var(--r-l);background:var(--surface);box-shadow:0 4px 0 0 var(--line)}
 .need-k{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
 .need-q{margin:4px 0 12px;font-family:var(--f-display);font-weight:800;font-size:clamp(17px,1.9vw,19.5px);line-height:1.32;letter-spacing:-.01em;color:var(--ink);text-wrap:pretty}
 .need-fills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.need-adds{font-size:13px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
-.need-adds::after{content:"";width:18px;height:2px;border-radius:2px;background:var(--line-strong)}
+.need-adds{font-size:13px;font-weight:700;color:var(--muted)}
 .need-chip{appearance:none;border:1.5px solid color-mix(in srgb, var(--cf) 70%, #000);background:var(--cf);color:var(--ct);font:800 13px var(--f-body);
   min-height:32px;padding:5px 12px;border-radius:9px;cursor:pointer;box-shadow:0 3px 0 0 color-mix(in srgb, var(--cf) 66%, #000);transition:transform .12s, box-shadow .12s}
 .need-chip.soft{border-color:var(--ct);box-shadow:0 3px 0 0 color-mix(in srgb, var(--ct) 45%, var(--line))}
 .need-chip:hover{transform:translateY(-1px)}
 .need-chip:active{transform:translateY(3px);box-shadow:none}
 .need-chip:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
-@media (max-width: 640px){ .need-card{gap:12px;padding:14px} .need-slot{width:46px;height:46px;border-radius:13px} .need-slot i{inset:6px;border-radius:8px} }
+@media (max-width: 640px){ .need-card{padding:14px} }
 .step h2{font-size:clamp(24px,3vw,30px);font-weight:800;margin:6px 0 16px}
 .beat{animation:beatIn .45s cubic-bezier(.2,.9,.3,1) both}
 .beat + .beat{margin-top:14px}
@@ -540,23 +531,15 @@ footer.site a{color:var(--ink);font-weight:700}
 .board-canvas.dragging{cursor:grabbing}
 .board-canvas svg.bp{position:absolute;inset:0;width:100%;height:100%}
 .board-canvas svg.bp > rect:first-of-type{display:none}
-.pins{position:absolute;inset:0;pointer-events:none}
-.pin{position:absolute;left:0;top:0;pointer-events:auto;width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;border:2.5px solid var(--accent-shadow);background:var(--surface);color:var(--ink);
-  font-weight:900;font-size:13px;display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 0 var(--accent-shadow)}
-/* markers follow the camera frame by frame, so they never transition their position (a rebuilt marker would fly in from the corner) */
-.pin:hover{filter:brightness(1.06);box-shadow:0 4px 0 0 var(--accent-shadow)}
-.pin.done{background:var(--accent);color:var(--accent-fg);border-color:var(--accent-shadow)}
-.pin.cur{outline:4px solid var(--pear);outline-offset:2px}
-.pin svg{width:14px;height:14px}
-/* level markers: the level number plus the lessons it covers */
-.pin.lvl{width:auto;padding:0 9px 0 3px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin:0}
-.pin.lvl b{display:grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:900}
-.pin.lvl span{font-size:.86em;font-weight:800;color:var(--muted)}
-.pin.lvl.done{background:var(--accent)}
-.pin.lvl.done b{background:var(--surface);color:var(--ink)}
-.pin.lvl.done span{color:var(--accent-fg)}
-.pins.compact .pin.lvl{padding:0 3px}
-.pins.compact .pin.lvl span{display:none}
+/* level headings in the lesson index double as level controls for the map */
+.idx-level{appearance:none;display:flex;align-items:baseline;justify-content:space-between;gap:10px;width:100%;margin:14px 0 4px;padding:6px 8px;border:0;border-radius:10px;background:none;cursor:pointer;text-align:left;
+  font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.idx-level small{font:600 12px var(--f-body);letter-spacing:0;text-transform:none;color:var(--accent-ink);opacity:0;transition:opacity .15s}
+.idx-level:hover,.idx-level:focus-visible{background:var(--hover);color:var(--ink)}
+.idx-level:hover small,.idx-level:focus-visible small{opacity:1}
+@media (hover:none){ .idx-level small{opacity:1} }
+.lg.all{--c:var(--ink)}
+.lg.all i{background:conic-gradient(var(--model) 0 25%, var(--ctx) 0 50%, var(--tool) 0 75%, var(--harness) 0)}
 .lvl-card h3{font-size:20px;font-weight:800;margin:4px 0 6px}
 .lvl-card .lvl-blurb{color:var(--muted);font-size:14px;margin:0 0 12px}
 .lvl-card .idx-row span span{white-space:normal}
@@ -709,9 +692,12 @@ footer.site a{color:var(--ink);font-weight:700}
 .sc-best{font-weight:800;font-size:12.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
 .sc-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .sc-day{display:grid;justify-items:center;gap:4px}
-.sc-day .dot{width:34px;height:34px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;padding:6px}
+.sc-day .dot{position:relative;width:34px;height:34px;border-radius:50%;background:var(--sunk);border:2px solid var(--line);display:grid;place-items:center;padding:6px}
 .sc-day.on .dot{background:var(--fire-soft);border-color:var(--fire);box-shadow:inset 0 -3px 0 0 color-mix(in srgb, var(--fire) 35%, transparent)}
-.sc-day.today .dot{outline:2px dashed var(--fire-deep);outline-offset:2px}
+/* today: a ring of 16 identical dashes (a dashed outline draws uneven, broken dashes on a circle) */
+.sc-day.today .dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(from -5.625deg, var(--today-ring, var(--fire-deep)) 0 11.25deg, transparent 11.25deg 22.5deg);-webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px));mask:radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px))}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sc-day.today .dot{--today-ring:var(--fire)} }
+:root[data-theme="dark"] .sc-day.today .dot{--today-ring:var(--fire)}
 .sc-day small{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted)}
 .sc-day.today small{color:var(--ink)}
 .streak-chip.up{background:var(--fire-soft);color:var(--ink);border-color:var(--fire);box-shadow:0 3px 0 0 var(--fire-deep);animation:pop .6s cubic-bezier(.2,1.4,.4,1) both}
@@ -866,7 +852,7 @@ mi.tt{font-family:var(--f-mono)}
 .board-tools .btn svg{width:16px;height:16px;flex:none}
 /* inspector */
 /* the inspector fills the panel: rows keep their natural height (no stretching) and it scrolls when taller than the panel */
-.insp{display:grid;gap:12px;padding:4px 2px 18px;align-content:start;overflow-y:auto;overscroll-behavior:contain}
+.insp{display:grid;gap:12px;padding:18px 20px 28px;align-content:start;overflow-y:auto;overscroll-behavior:contain}
 .insp-cat{display:flex;align-items:center;gap:8px;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .insp-cat i{width:12px;height:12px;border-radius:4px;background:var(--c, var(--accent));flex:none}
 .insp-cat .in-view{text-transform:none;letter-spacing:0;font-weight:600}

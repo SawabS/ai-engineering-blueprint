@@ -94,8 +94,7 @@ function setViewContent(vid) {
   const tmp = h('div', { html }); const svg = tmp.firstElementChild;
   B.svg.replaceWith(svg); B.svg = svg; B.view = vid; B.hl = []; B.sel = null; B.selLevel = null;
   B.canvas.dataset.view = vid;
-  B.pins.hidden = vid !== 'root';
-  if (vid === 'root') { addRootBadges(); setBuildMode(B.mode, true); renderPins(); }
+  if (vid === 'root') { addRootBadges(); setBuildMode(B.mode, true); }
   renderToolsBar(); renderLegend();
   try { history.replaceState(null, '', vid === 'root' ? '#board' : '#board:' + vid); } catch (e) { /* ignore */ }
 }
@@ -181,6 +180,8 @@ function renderToolsBar() {
 }
 function renderLegend() {
   const B = BOARD; const lg = B.legend; lg.innerHTML = '';
+  // the first chip returns to everything; the others highlight one kind of block
+  lg.append(h('button', { class: 'lg all on', 'aria-pressed': 'true', onclick: () => clearSelection() }, h('i'), B.view === 'root' ? 'Whole system' : 'Whole view'));
   if (B.view === 'root') {
     CATS.forEach(c => lg.append(h('button', { class: 'lg', 'data-cat': c[0], 'aria-pressed': 'false', style: { '--c': c[2] }, onclick: e => toggleCat(c[0], e.currentTarget) }, h('i'), c[1])));
     return;
@@ -191,7 +192,7 @@ function renderLegend() {
 
 /* ---- selection and inspector ---- */
 function exHighlight(keys) {
-  const B = BOARD; highlight(keys);
+  const B = BOARD; highlight(keys); syncAllChip();
   $$('.sys-e', B.svg).forEach(e => {
     const on = keys.length && (keys.includes(e.dataset.a) || keys.includes(e.dataset.b));
     e.classList.toggle('hl', !!on); e.classList.toggle('dim', !!keys.length && !on);
@@ -216,7 +217,7 @@ function exInspect(key, quiet) {
   const B = BOARD; const n = exNode(key); if (!B || !n) return;
   if (B.tour) endTour(true);
   parkLesson();
-  B.sel = key; B.selLevel = null; renderPins();
+  B.sel = key; B.selLevel = null;
   const peers = n.root ? peerKeys(key) : [key]; exHighlight(peers); // a block on the top-level diagram selects everything its lesson added
   if (!quiet) SFX.select();
   const l = n.l ? LESSONS.find(x => x.id === n.l) : null;

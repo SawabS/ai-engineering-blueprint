@@ -47,7 +47,7 @@ for (const [w, h, name] of VIEWPORTS) {
         await expect(page.locator('.panel .idx')).toBeVisible();
         await page.waitForTimeout(700); // camera settles
         await check('board', { scope: '.board' });
-        await page.locator('.pin[data-u="2"]').click(); // level 3: near the top, clear of the bottom sheet on small phones
+        await page.locator('.idx-level[data-u="2"]').click(); // level 3, from the lesson index
         await page.waitForTimeout(700);
         await check('board-level', { scope: '.board' });
         await page.evaluate(() => exInspect('tools'));

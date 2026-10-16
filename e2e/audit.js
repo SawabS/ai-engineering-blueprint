@@ -54,12 +54,6 @@ async function audit(page, { touch, scope = 'document' }) {
       const ox = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left), oy = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
       if (ox > 2 && oy > 2) out.push(`map overlap: "${a.el.textContent.trim().slice(0, 20)}" and "${b.el.textContent.trim().slice(0, 20)}"`);
     }
-    // level markers on the system map never cover each other
-    const marks = [...document.querySelectorAll('.pin')].filter(visible).map(el => ({ el, r: el.getBoundingClientRect() }));
-    for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) {
-      const a = marks[i].r, b = marks[j].r;
-      if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2) out.push(`level markers overlap: ${label(marks[i].el)} at ${[a.left, a.top, a.width, a.height].map(Math.round)} and ${label(marks[j].el)} at ${[b.left, b.top, b.width, b.height].map(Math.round)}`);
-    }
     return [...new Set(out)];
   }, { touch, scope });
 }

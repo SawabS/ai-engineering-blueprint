@@ -104,7 +104,7 @@ test('drill down from the system diagram, keep going deeper, and climb back out'
   // Escape climbs one level, then closes the board from the top
   await page.keyboard.press('Escape');
   await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'root');
-  await expect(page.locator('.pins')).toBeVisible();
+  await expect(page.locator('.lg.all')).toHaveText('Whole system'); // back on the top-level diagram
   await page.waitForTimeout(500);
   await page.keyboard.press('Escape');
   await expect(page.locator('.board')).toHaveCount(0);
@@ -157,7 +157,7 @@ test('search finds any component and takes you to it', async ({ page }) => {
 
 test('inspecting a block keeps your lesson, and you can return to it', async ({ page }) => {
   await openBoardAt(page, null);
-  await page.locator('.pin[data-u="6"]').click();
+  await page.locator('.idx-level[data-u="6"]').click();
   await page.locator('.lvl-card .idx-row').nth(1).click(); // level 7's second lesson
   await expect(page.locator('.panel-head .ttl')).toHaveText('17. The KV cache');
   await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();

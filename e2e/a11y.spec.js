@@ -34,7 +34,7 @@ for (const theme of ['light', 'dark']) {
     found.push(...await scan(page, info, 'lesson-complete'));
     await page.evaluate(() => { closeLesson(); openBoard({}); });
     found.push(...await scan(page, info, 'board'));
-    await page.locator('.pin[data-u="2"]').click();
+    await page.locator('.idx-level[data-u="2"]').click();
     found.push(...await scan(page, info, 'board-lesson'));
     await page.getByRole('button', { name: /Trace/ }).click();
     found.push(...await scan(page, info, 'board-tour'));
@@ -85,10 +85,10 @@ test('keyboard: tab order reaches the map, focus is visible, Escape returns focu
   await expect(node).toBeFocused();
 });
 
-test('keyboard: board blocks and level markers are reachable and operable', async ({ page }) => {
+test('keyboard: board blocks and level headings are reachable and operable', async ({ page }) => {
   await openApp(page);
   await page.evaluate(() => openBoard({}));
-  await page.locator('.pin[data-u="0"]').focus();
+  await page.locator('.idx-level[data-u="0"]').focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.lvl-card h3')).toHaveText('One request');
   await page.locator('.lvl-card .idx-row').nth(2).focus();

@@ -27,12 +27,6 @@ test('every block of the diagram is introduced, and highlighted, by the lesson t
       if (!BOX[k]) out.push(k + ': no position');
     });
     LESSONS.forEach((l, i) => { if (!Object.values(BPN).some(n => n.s === i + 1)) out.push(l.id + ' adds no block'); });
-    // each level marker sits on, or just above, the top border of a block that level adds
-    if (LEVEL_MARKS.length !== COURSE.units.length) out.push('markers ' + LEVEL_MARKS.length);
-    LEVEL_MARKS.forEach(([x, y], ui) => {
-      const own = levelKeys(ui).map(k => BOX[k]);
-      if (!own.some(b => y >= b[1] - 30 && y <= b[1] + 2 && x >= b[0] - 2 && x <= b[0] + b[2])) out.push('level ' + (ui + 1) + ' marker is not on one of its blocks');
-    });
     // a selection group is exactly the blocks one lesson adds
     LESSONS.forEach(l => { const g = lessonKeys(l); if (!g.length || g.some(k => BPN[k].s !== l.stage)) out.push('group of ' + l.id); });
     TOUR.forEach(([ids, t]) => ids.forEach(id => { if (!BOX[id]) out.push('tour "' + t + '" names ' + id); }));

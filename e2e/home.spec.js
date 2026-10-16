@@ -87,4 +87,30 @@ test.describe('course page', () => {
     expect(stray).toEqual([]);
     expect(await page.evaluate(() => !!document.querySelector('link[rel="icon"][href^="data:image/svg+xml"]'))).toBe(true);
   });
+
+  test('every lesson card scrolls fully into view, and the tapped lesson stays clear of the top bar', async ({ page }) => {
+    test.setTimeout(120000);
+    await openApp(page);
+    const n = await page.locator('.mnode').count();
+    for (const i of [0, 4, 9, 13, n - 2, n - 1]) {
+      await page.evaluate(() => closePop());
+      const node = page.locator('.mnode').nth(i);
+      // the hardest case: the node sits right at the bottom edge when tapped
+      await node.evaluate(el => { const r = el.getBoundingClientRect(); window.scrollBy(0, r.bottom - (window.visualViewport ? visualViewport.height : innerHeight) + 30); });
+      await node.click();
+      await expect(page.locator('.pop')).toBeVisible();
+      await expect.poll(() => page.evaluate(() => { const c = document.querySelector('.pop').getBoundingClientRect(); const vh = window.visualViewport ? visualViewport.height : innerHeight; return c.bottom <= vh + 1; }), { message: 'card ' + (i + 1) + ' fully on screen' }).toBe(true);
+      const top = await page.evaluate(() => document.querySelector('.mnode.sel').getBoundingClientRect().top - document.querySelector('.topbar').getBoundingClientRect().bottom);
+      expect(top, 'lesson ' + (i + 1) + ' clear of the top bar').toBeGreaterThan(0);
+    }
+  });
+
+  test('each level rail runs straight out from behind its header', async ({ page }) => {
+    await openApp(page);
+    const r = await page.evaluate(() => [...document.querySelectorAll('.level')].map(lv => {
+      const d = lv.querySelector('svg.rail path').getAttribute('d');
+      return { starts: /^M 50 -\d+ L 50 0/.test(d), headerAbove: getComputedStyle(lv.querySelector('.level-head')).zIndex };
+    }));
+    r.forEach((x, i) => { expect(x.starts, 'level ' + (i + 1) + ' rail starts behind the header').toBe(true); expect(+x.headerAbove).toBeGreaterThan(0); });
+  });
 });

@@ -8,23 +8,65 @@ async function openBoard(page) {
 }
 
 test.describe('system map', () => {
-  test('opens with the lesson index and one marker per level', async ({ page }) => {
+  test('opens with the lesson index grouped by level, and nothing numbered on the map', async ({ page }) => {
     await openApp(page);
     await openBoard(page);
-    await expect(page.locator('.pin')).toHaveCount(8);
-    await expect(page.locator('.pin').first()).toHaveAccessibleName('Level 1: One request, lessons 1 to 3');
+    await expect(page.locator('.board-canvas button')).toHaveCount(0); // no markers or pins over the diagram
+    await expect(page.locator('.idx-level')).toHaveCount(8);
+    await expect(page.locator('.idx-level').first()).toHaveAccessibleName('Level 1: One request. Show it on the map');
+    await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.idx-row')).toHaveCount(19);
     await expectNoHorizontalScroll(page);
   });
 
-  test('a level marker selects everything its level adds and lists its lessons with their needs', async ({ page }) => {
+  test('pointing at a level or lesson in the index shows where it sits on the map', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'hover is a mouse interaction');
     await openApp(page);
     await openBoard(page);
-    await page.locator('.pin[data-u="2"]').click();
+    await page.locator('.idx-level[data-u="2"]').hover();
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+    await page.locator('.idx-row', { hasText: 'Tool calling' }).hover();
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+    await expect(page.locator('.board-canvas .bp-n.hl[data-id="s-toolres"]')).toHaveCount(1);
+    await page.locator('.panel-head').hover();
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(0);
+  });
+
+  test('Whole system and an empty-canvas click return from any selection to the whole diagram', async ({ page }) => {
+    await openApp(page);
+    await openBoard(page);
+    await page.locator('.board-canvas .bp-n[data-id="tools"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+    await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'false');
+    await page.locator('.lg.all').click();
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(0);
+    await expect(page.locator('.board-canvas .bp-n.dim')).toHaveCount(0);
+    await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.panel-head .ttl')).toHaveText('Lessons');
+    // a category, then a click on empty canvas
+    await page.locator('.lg', { hasText: 'Knowledge' }).click();
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+    await page.waitForFunction(() => !BOARD.anim);
+    const empty = await page.evaluate(() => { // a point on the canvas that has no block, toolbar or legend under it
+      const c = document.querySelector('.board-canvas').getBoundingClientRect();
+      for (let y = c.top + 70; y < c.bottom - 70; y += 9) for (let x = c.left + 10; x < c.right - 10; x += 9) {
+        const el = document.elementFromPoint(x, y); if (el && el.closest('.board-canvas') && !el.closest('.bp-n,.board-tools,.legend,.panel')) return [x, y];
+      } return null;
+    });
+    expect(empty).not.toBeNull();
+    await page.mouse.click(empty[0], empty[1]);
+    await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(0);
+    await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('a level heading selects everything its level adds and lists its lessons with their needs', async ({ page }) => {
+    await openApp(page);
+    await openBoard(page);
+    await page.locator('.idx-level[data-u="2"]').click();
     await expect(page.locator('.panel-head .ttl')).toHaveText('Level 3');
     await expect(page.locator('.lvl-card h3')).toHaveText('Your own knowledge');
     await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3); // knowledge store, retrieved chunks, advanced retrieval
-    await expect(page.locator('.pin.cur')).toHaveAttribute('data-u', '2');
     const rows = page.locator('.lvl-card .idx-row');
     await expect(rows).toHaveCount(3);
     await expect(rows.nth(1)).toContainText('Find the few passages');
@@ -54,7 +96,6 @@ test.describe('system map', () => {
     await expect(page.locator('.panel .player.docked .step h2')).toHaveText('Cutting documents into chunks');
     await expect(page.locator('.panel-head .ttl')).toHaveText('7. Retrieval, hands on');
     await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(2);
-    await expect(page.locator('.pin.cur')).toHaveCount(1);
   });
 
   test('clicking a block inspects it, and the inspector opens its lesson', async ({ page }) => {

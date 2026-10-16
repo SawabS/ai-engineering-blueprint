@@ -183,9 +183,11 @@ function buildMap(nx) {
     const done = u.lessons.filter(l => P.done[l.id]).length;
     const pts = u.lessons.map((l, k) => [stopX(l.idx), TOP + k * ROW + 42]);
     const curve = (a, b) => { const dy = (b[1] - a[1]) / 2; return ` C ${a[0]} ${a[1] + dy}, ${b[0]} ${b[1] - dy}, ${b[0]} ${b[1]}`; };
-    let d = `M 50 0` + curve([50, 0], pts[0]); for (let k = 1; k < n; k++) d += curve(pts[k - 1], pts[k]);
+    // the rail starts well up behind the level header and runs straight down out of it, so no cap or bend shows at the join
+    const START = `M 50 -48 L 50 0`;
+    let d = START + curve([50, 0], pts[0]); for (let k = 1; k < n; k++) d += curve(pts[k - 1], pts[k]);
     let dd = ''; const lastDone = u.lessons.reduce((a, l, k) => P.done[l.id] ? k : a, -1);
-    if (lastDone >= 0) { dd = `M 50 0` + curve([50, 0], pts[0]); for (let k = 1; k <= lastDone; k++) dd += curve(pts[k - 1], pts[k]); }
+    if (lastDone >= 0) { dd = START + curve([50, 0], pts[0]); for (let k = 1; k <= lastDone; k++) dd += curve(pts[k - 1], pts[k]); }
     const path = h('div', { class: 'path', style: { height: H + 'px' } });
     path.innerHTML = `<svg class="rail" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/>${dd ? `<path class="done" d="${dd}"/>` : ''}</svg>`;
     u.lessons.forEach((l, k) => {
@@ -207,7 +209,7 @@ function buildMap(nx) {
   return map;
 }
 let popEl = null;
-function closePop() { if (popEl) { popEl.remove(); popEl = null; } $$('.mnode.sel').forEach(n => n.classList.remove('sel')); }
+function closePop() { if (popEl) { const p = popEl.parentElement; if (p) p.style.marginBottom = ''; popEl.remove(); popEl = null; } $$('.mnode.sel').forEach(n => n.classList.remove('sel')); }
 // touch screens do not always show :active, so mirror the press with a class
 function pressable(el) {
   const on = () => el.classList.add('press'), off = () => el.classList.remove('press');
@@ -231,8 +233,24 @@ function openPop(l, path, pt, node) {
       h('button', { class: 'btn btn-accent', 'data-sfx': 'none', onclick: () => { closePop(); openLesson(l.idx); } }, done ? 'Review' : 'Start lesson'),
       h('button', { class: 'btn', onclick: () => { closePop(); openBoard({ lesson: l.idx }); }, html: ICON.board.replace('<svg', '<svg width="18" height="18"') + '<span>On the map</span>' })));
   path.append(popEl);
-  const r = popEl.getBoundingClientRect();
-  if (r.bottom > window.innerHeight - 12) window.scrollBy({ top: r.bottom - window.innerHeight + 24, behavior: 'smooth' });
+  revealPop(popEl, path, node);
+}
+// scroll so the whole card is on screen. Measured from layout (offsetHeight and the card's top inside the path), not from
+// getBoundingClientRect, which reads the card mid scale-in animation and comes up short; uses the visual viewport on phones,
+// and never pushes the tapped lesson up under the sticky top bar
+function revealPop(card, path, node) {
+  // the last lessons' cards hang past the end of the page; make room so the page can scroll to them
+  const need = parseFloat(card.style.top) + card.offsetHeight + 24 - path.offsetHeight;
+  if (need > 0) path.style.marginBottom = need + 'px';
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  const top = path.getBoundingClientRect().top + parseFloat(card.style.top);
+  const bottom = top + card.offsetHeight;
+  const bar = $('.topbar'); const barBottom = bar ? bar.getBoundingClientRect().bottom : 0;
+  let dy = bottom - (vh - 16);
+  if (node) dy = Math.min(dy, node.getBoundingClientRect().top - barBottom - 56); // keep the node (and its START tag) clear of the bar
+  if (dy <= 0) return;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollBy({ top: dy, behavior: still ? 'auto' : 'smooth' });
 }
 document.addEventListener('click', e => { if (popEl && !e.target.closest('.pop')) closePop(); });
 
@@ -307,18 +325,16 @@ function renderAside(animate) {
   if (animate) animateViewBox($('.zoom-card svg', el), [0, 0, 1000, 620], zb, 900);
 }
 
-// the lesson's opening card: the need is an empty slot on the system diagram, and the lesson's blocks drop into it
+// the lesson's opening card: the need it meets, and the blocks it adds (each opens on the system map)
 function needCard(l) {
-  const keys = lessonKeys(l); const [f0] = BLOCK_LOOK[keys[0]] || ['var(--accent)'];
+  const keys = lessonKeys(l);
   const chip = k => { const [f, t] = BLOCK_LOOK[k] || ['var(--surface)', 'var(--ink)'];
     return h('button', { class: 'need-chip' + (/soft|surface/.test(f) ? ' soft' : ''), style: { '--cf': f, '--ct': t }, 'data-sfx': 'none', title: 'Show it on the system map',
       'aria-label': `${BPN[k].t}: show it on the system map`, onclick: () => { openBoard({}); exInspect(k); } }, BPN[k].t); };
-  return h('section', { class: 'need-card', style: { '--nf': f0 }, 'aria-label': 'The need this lesson meets' },
-    h('div', { class: 'need-slot', 'aria-hidden': 'true' }, h('i')),
-    h('div', { class: 'need-body' },
-      h('div', { class: 'need-k' }, 'The need'),
-      h('p', { class: 'need-q' }, l.need),
-      h('div', { class: 'need-fills' }, h('span', { class: 'need-adds' }, 'This lesson adds'), keys.map(chip))));
+  return h('section', { class: 'need-card', 'aria-label': 'The need this lesson meets' },
+    h('div', { class: 'need-k' }, 'The need'),
+    h('p', { class: 'need-q' }, l.need),
+    h('div', { class: 'need-fills' }, h('span', { class: 'need-adds' }, 'This lesson adds'), keys.map(chip)));
 }
 function setProgress() {
   if (!L) return;
