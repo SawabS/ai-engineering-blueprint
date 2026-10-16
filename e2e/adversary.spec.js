@@ -19,7 +19,7 @@ test.describe('hostile input', () => {
       await ta.fill(text);
       await expect(page.locator('.toks .tok').first()).toBeVisible();
       await expectNoHorizontalScroll(page);
-      await page.evaluate(() => openLesson(11));
+      await page.evaluate(() => openLesson(LESSONS.findIndex(l => l.id === 'retrieval')));
       await page.evaluate(() => { L.si = 1; renderStep(true); });
       const q = page.getByRole('textbox', { name: 'Search query' });
       await q.fill(text);

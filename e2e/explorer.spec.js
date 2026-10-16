@@ -13,7 +13,7 @@ test('the system map data is complete and consistent', async ({ page }) => {
   await openApp(page);
   const problems = await page.evaluate(() => {
     const out = []; const lessonIds = new Set(LESSONS.map(l => l.id));
-    Object.keys(ROOT_GO).forEach(k => { if (!BPN[k]) out.push('ROOT_GO key is not a blueprint block: ' + k); if (!SYSV[ROOT_GO[k]]) out.push('ROOT_GO target missing: ' + k); });
+    Object.keys(ROOT_GO).forEach(k => { if (!BPN[k]) out.push('ROOT_GO key is not a diagram block: ' + k); if (!SYSV[ROOT_GO[k]]) out.push('ROOT_GO target missing: ' + k); });
     Object.entries(SYSV).forEach(([vid, v]) => {
       const ids = new Set();
       v.nodes.forEach(n => {
@@ -75,11 +75,11 @@ test('every view lays out cleanly: no overlaps, no clipped labels, nothing outsi
   expect(problems, problems.join('\n')).toEqual([]);
 });
 
-test('drill down from the blueprint, keep going deeper, and climb back out', async ({ page }) => {
+test('drill down from the system diagram, keep going deeper, and climb back out', async ({ page }) => {
   await openBoardAt(page, null);
-  await page.locator('.board-canvas .bp-n[data-id="roof"]').focus();
+  await page.locator('.board-canvas .bp-n[data-id="gateway"]').focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('.insp h3')).toHaveText('Serving layer');
+  await expect(page.locator('.insp h3')).toHaveText('Gateway and serving');
   await page.locator('.insp').getByRole('button', { name: 'Look inside: Serving layer' }).click();
   await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'serving');
   await expect(page.locator('.crumbs')).toContainText('System');
@@ -157,15 +157,15 @@ test('search finds any component and takes you to it', async ({ page }) => {
 
 test('inspecting a block keeps your lesson, and you can return to it', async ({ page }) => {
   await openBoardAt(page, null);
-  await page.locator('.pin[data-i="6"]').click();
-  await expect(page.locator('.panel-head .ttl')).toHaveText('7. The KV cache');
+  await page.locator('.pin[data-i="16"]').click();
+  await expect(page.locator('.panel-head .ttl')).toHaveText('17. The KV cache');
   await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
   const si = await page.evaluate(() => L.si);
   await page.locator('.board-canvas .bp-n[data-id="gpu"]').focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.insp h3')).toHaveText('GPUs and HBM');
   await page.locator('.insp').getByRole('button', { name: 'Back to my lesson' }).click();
-  await expect(page.locator('.panel-head .ttl')).toHaveText('7. The KV cache');
+  await expect(page.locator('.panel-head .ttl')).toHaveText('17. The KV cache');
   expect(await page.evaluate(() => L.si)).toBe(si);
 });
 

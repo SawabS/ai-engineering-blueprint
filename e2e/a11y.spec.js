@@ -34,7 +34,7 @@ for (const theme of ['light', 'dark']) {
     found.push(...await scan(page, info, 'lesson-complete'));
     await page.evaluate(() => { closeLesson(); openBoard({}); });
     found.push(...await scan(page, info, 'board'));
-    await page.locator('.pin[data-i="11"]').click();
+    await page.locator('.pin[data-i="6"]').click();
     found.push(...await scan(page, info, 'board-lesson'));
     await page.getByRole('button', { name: /Trace/ }).click();
     found.push(...await scan(page, info, 'board-tour'));

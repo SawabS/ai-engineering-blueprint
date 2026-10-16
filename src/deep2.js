@@ -1,6 +1,6 @@
-/* ================= "Go deeper" content, units 5 to 8 ================= */
+/* ================= "Go deeper" content, part 2 ================= */
 
-/* ---------- 11. Fine-tune or retrieve ---------- */
+/* ---------- 6. Fine-tune or retrieve ---------- */
 DEEP['knowledge'] = {
   2: {
     title: 'RAG end to end, with real tools',
@@ -81,7 +81,7 @@ context = "\n\n".join(r[0] for r in rows)                # goes into the prompt 
   }
 };
 
-/* ---------- 12. Retrieval, hands on ---------- */
+/* ---------- 7. Retrieval, hands on ---------- */
 DEEP['retrieval'] = {
   0: {
     title: 'Chunking in practice',
@@ -160,7 +160,7 @@ def hybrid(query, k=5, rrf_k=60):
   }
 };
 
-/* ---------- 13. Advanced retrieval ---------- */
+/* ---------- 8. Advanced retrieval ---------- */
 DEEP['advanced-rag'] = {
   0: {
     title: 'Bi-encoders versus cross-encoders',
@@ -243,7 +243,7 @@ def standalone_query(history, message):
   }
 };
 
-/* ---------- 14. Tool calling ---------- */
+/* ---------- 9. Tool calling ---------- */
 DEEP['tools'] = {
   0: {
     title: 'A complete tool round trip in code',
@@ -333,7 +333,7 @@ print(resp.content[0].text)` }],
   }
 };
 
-/* ---------- 15. MCP ---------- */
+/* ---------- 10. MCP ---------- */
 DEEP['mcp'] = {
   1: {
     title: 'The protocol on the wire, and a server in 15 lines',
@@ -400,7 +400,7 @@ uv run mcp run server.py --transport streamable-http      # remote clients conne
   }
 };
 
-/* ---------- 16. Agent loop ---------- */
+/* ---------- 11. Agent loop ---------- */
 DEEP['agent-loop'] = {
   0: {
     title: 'The whole agent loop in code',
@@ -457,7 +457,7 @@ def run_agent(task, tools, registry, max_steps=20):
   }
 };
 
-/* ---------- 17. Context engineering ---------- */
+/* ---------- 12. Context engineering ---------- */
 DEEP['context-eng'] = {
   0: {
     title: 'Compaction and clearing, concretely',
@@ -469,7 +469,7 @@ DEEP['context-eng'] = {
 <li><b>Tool-result clearing:</b> replace results older than \(k\) steps with a one-line placeholder.</li>
 <li><b>Compaction:</b> when the window passes a threshold, summarise the conversation into decisions, open questions and next steps, then continue from the summary.</li>
 <li><b>Structured notes:</b> the agent writes a running plan or todo file it can re-read after compaction.</li>
-<li><b>Sub-agents:</b> push heavy reading into a separate context that returns only a summary (lesson 18).</li>
+<li><b>Sub-agents:</b> push heavy reading into a separate context that returns only a summary (lesson 13).</li>
 </ul>`,
     code: [{ lang: 'python', title: 'Clear stale tool results', src: R`
 def clear_old_tool_results(messages, keep_last=3):
@@ -534,7 +534,7 @@ See reference/edge-cases.md for credit notes and multi-currency invoices.` }],
   }
 };
 
-/* ---------- 18. Multi-agent ---------- */
+/* ---------- 13. Multi-agent ---------- */
 DEEP['multi-agent'] = {
   1: {
     title: 'The token arithmetic of fan-out',
@@ -661,7 +661,7 @@ def traced_call(messages):
   },
   4: {
     title: 'Where to go next',
-    math: R`<p>Each block of the blueprint has a deep literature. These are reliable next steps, roughly in course order.</p>`,
+    math: R`<p>Each block of the system has a deep literature. These are reliable next steps, roughly in course order.</p>`,
     refs: [
       { t: 'Neural Networks: Zero to Hero', s: 'Andrej Karpathy, free video course building GPT from scratch', u: 'https://karpathy.ai/zero-to-hero.html' },
       { t: 'Hugging Face LLM Course', s: 'Free course on transformers, fine-tuning and tokenizers', u: 'https://huggingface.co/learn/llm-course' },

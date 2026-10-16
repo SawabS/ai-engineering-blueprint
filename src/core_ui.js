@@ -1,7 +1,7 @@
 /* ================= icons ================= */
 const SV = (inner, sw = 2.4) => `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
 const ICON = {
-  'two-boxes': SV('<rect x="4" y="9" width="11" height="14" rx="2.5"/><rect x="18" y="9" width="10" height="14" rx="2.5" stroke-dasharray="3 2.6"/>'),
+  'two-boxes': SV('<rect x="5" y="3.5" width="22" height="8" rx="2.5"/><path d="M16 12v8M12.5 16.5 16 20l3.5-3.5"/><rect x="5" y="21" width="22" height="7.5" rx="2.5" stroke-dasharray="3 2.6"/>'), // one request: app above, model below
   'next-token': SV('<path d="M6 26V19M12 26V7M18 26V14M24 26V21"/>', 3.4),
   tokens: SV('<rect x="3" y="11" width="8" height="10" rx="2"/><rect x="12" y="11" width="8" height="10" rx="2"/><rect x="21" y="11" width="8" height="10" rx="2"/>'),
   attention: SV('<circle cx="6" cy="23" r="2.6"/><circle cx="16" cy="23" r="2.6"/><circle cx="26" cy="23" r="2.6"/><path d="M6 20c2-10 18-10 20 0M16 20c1-6 9-6 10 0"/>'),
@@ -132,11 +132,11 @@ function renderHome() {
     h('div', { class: 'brand', html: BRAND_SVG + '<span class="wm"><small>AI Engineering</small><b>Blueprint</b></span>' }),
     h('div', { class: 'top-right' }, statPills(), githubBtn(), themeBtn())));
 
-  // blueprint card with maximize
+  // the system diagram card, with a slider through the lessons
   scrubStage = stage;
   const bpWrap = h('div', { class: 'bp-svg-wrap', html: bpSVG(stage, [], { click: 1, nofocus: 1, uid: 'h', ghost: 1 }) });
   attachBlueprintTips(bpWrap, id => openBoard({ lesson: lessonForNode(id).idx }));
-  const range = h('input', { type: 'range', min: 1, max: MAX_STAGE, value: stage, id: 'scrub', 'aria-label': 'Preview blueprint stage' });
+  const range = h('input', { type: 'range', min: 1, max: MAX_STAGE, value: stage, id: 'scrub', 'aria-label': 'Preview the system after each lesson' });
   const lbl = h('div', { class: 'lbl' });
   const setScrub = (v, animate) => {
     const prev = scrubStage; scrubStage = v; const l = LESSONS[v - 1];
@@ -146,8 +146,8 @@ function renderHome() {
   range.addEventListener('input', () => setScrub(+range.value, true));
   setScrub(stage, false);
   const bpCard = h('div', { class: 'bp-card' },
-    h('div', { class: 'bp-head' }, h('span', { class: 't' }, 'Your blueprint'),
-      h('button', { class: 'max-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.max + '<span>Board</span>' })),
+    h('div', { class: 'bp-head' }, h('span', { class: 't' }, 'Your system'),
+      h('button', { class: 'max-btn', 'aria-label': 'Open the system map', onclick: () => openBoard({}), html: ICON.max + '<span>Map</span>' })),
     bpWrap,
     h('div', { class: 'scrub' }, range, h('button', { class: 'btn btn-sm btn-ghost', onclick: () => { range.value = stage; setScrub(stage, false); } }, 'Mine'), lbl));
 
@@ -155,7 +155,7 @@ function renderHome() {
     h('div', { class: 'course-title' },
       h('div', { class: 'eyebrow' }, 'Course'),
       h('h1', null, 'AI Engineering Blueprint'),
-      h('p', null, 'From a naked LLM to a full agent harness, one block at a time.'),
+      h('p', null, 'From one API request to a production agent system, adding each piece only when a real need demands it.'),
       h('div', { class: 'course-meta' },
         h('span', { html: ICON.book + `${MAX_STAGE} lessons` }),
         h('span', { html: ICON.spark + `${STEP_TOTAL} exercises` }))),
@@ -225,10 +225,11 @@ function openPop(l, path, pt, node) {
     h('div', { class: 'k' }, `Lesson ${l.idx + 1}${done ? ' · complete' : ''}`),
     h('h3', null, l.title),
     h('p', null, l.sub),
+    h('p', { style: { fontSize: '13.5px' } }, h('b', { style: { color: 'var(--ink)' } }, 'Need: '), l.need),
     h('p', { style: { fontSize: '13.5px' } }, h('b', { style: { color: 'var(--ink)' } }, 'Adds: '), l.added),
     h('div', { class: 'acts' },
       h('button', { class: 'btn btn-accent', 'data-sfx': 'none', onclick: () => { closePop(); openLesson(l.idx); } }, done ? 'Review' : 'Start lesson'),
-      h('button', { class: 'btn', onclick: () => { closePop(); openBoard({ lesson: l.idx }); }, html: ICON.board.replace('<svg', '<svg width="18" height="18"') + '<span>On board</span>' })));
+      h('button', { class: 'btn', onclick: () => { closePop(); openBoard({ lesson: l.idx }); }, html: ICON.board.replace('<svg', '<svg width="18" height="18"') + '<span>On the map</span>' })));
   path.append(popEl);
   const r = popEl.getBoundingClientRect();
   if (r.bottom > window.innerHeight - 12) window.scrollBy({ top: r.bottom - window.innerHeight + 24, behavior: 'smooth' });
@@ -256,7 +257,7 @@ function openLesson(i) {
       h('div', { class: 'p-steps', role: 'group', 'aria-label': 'Lesson steps' }, lesson.steps.map((s, k) =>
         h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
       h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => stepBy(1), html: ICON.left }),
-      h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
+      h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the system map', onclick: () => openBoard({}), html: ICON.board }),
       themeBtn()),
     h('div', { class: 'p-body' },
       h('main', { class: 'p-main', id: 'p-main', tabindex: '0', 'aria-label': 'Lesson content' }),
@@ -300,7 +301,8 @@ function renderAside(animate) {
       h('span', { class: 'nest', html: `<svg width="22" height="22" viewBox="0 0 22 22">${Array.from({ length: i + 1 }, (_, k) => `<rect x="${1 + k * 2.6}" y="${1 + k * 2.6}" width="${20 - k * 5.2}" height="${20 - k * 5.2}" rx="5" style="fill:${k === i ? 'var(--pear)' : 'none'};stroke:${k === i ? 'var(--pear-deep)' : 'var(--line-strong)'};stroke-width:1.5"/>`).join('')}</svg>` }),
       h('span', null, t)))),
     h('div', { class: 'zoom-card' }, h('div', { html: bpSVG(l.stage, l.hl, { uid: 'z', vb: zb.join(' ') }) }), h('span', { class: 'zoom-tag' }, 'Zoomed in'),
-      h('button', { class: 'max-btn', 'aria-label': 'Open the blueprint board with this lesson', onclick: () => openBoard({}), html: ICON.max + '<span>Board</span>' })),
+      h('button', { class: 'max-btn', 'aria-label': 'Open the system map with this lesson', onclick: () => openBoard({}), html: ICON.max + '<span>Map</span>' })),
+    h('p', { class: 'aside-note' }, h('strong', null, 'The need: '), l.need),
     h('p', { class: 'aside-note' }, h('strong', null, 'This lesson adds: '), l.added));
   if (animate) animateViewBox($('.zoom-card svg', el), [0, 0, 1000, 620], zb, 900);
 }
@@ -356,6 +358,7 @@ function renderStep(revealAll) {
   beats.forEach((b, k) => { b.hidden = k >= L.beat; });
   const box = h('section', { class: 'step', 'aria-live': 'polite' },
     h('div', { class: 'eyebrow' }, `Step ${L.si + 1} of ${l.steps.length}${st.kind === 'quiz' ? ' · Check your thinking' : st.kind === 'task' ? ' · Your turn' : ''}`),
+    L.si === 0 && l.need ? h('p', { class: 'need' }, h('span', { class: 'need-k' }, 'The need'), l.need) : null,
     h('h2', null, st.title), beats);
   main.append(box);
   setProgress(); renderFoot();
@@ -498,7 +501,7 @@ function finishLesson() {
   main.append(h('section', { class: 'done-screen', style: { '--u': l.unit.color } },
     h('div', { class: 'done-badge', html: ICON[l.id] || ICON.check }),
     h('div', { class: 'eyebrow' }, `Lesson ${l.idx + 1} complete`),
-    h('h2', null, l.doneTitle || 'The blueprint just grew.'),
+    h('h2', null, l.doneTitle || 'Your system just grew.'),
     h('span', { class: 'added' }, '+ ' + l.short),
     h('p', { class: 'lede', style: { marginTop: '14px' } }, l.recap),
     bp,
@@ -507,7 +510,7 @@ function finishLesson() {
   const foot = $('#p-foot'); foot.className = 'p-foot'; foot.innerHTML = '';
   const docked = !!BOARD;
   // the only way on is back to the track, where the next lesson waits (as in Brilliant and Duolingo)
-  foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Up next on the track: ${nx.title}` : 'You finished the whole blueprint.')),
+  foot.append(h('div', { class: 'inner' }, h('div', { class: 'fb only-hint' }, h('span', { class: 'kbd-hint' }, nx ? `Up next on the track: ${nx.title}` : 'You finished the whole course.')),
     h('div', { class: 'actions' },
       h('button', { class: 'btn btn-accent', 'data-primary': 1, 'data-sfx': 'none', onclick: closeLesson }, docked ? 'Back to lessons' : 'Back to course map'))));
   if (docked) boardRefresh();

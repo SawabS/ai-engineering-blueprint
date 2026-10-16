@@ -1,11 +1,11 @@
-/* ================= blueprint board =================
-   A full-screen, pannable and zoomable copy of the finished blueprint. Lessons open in a side panel
+/* ================= system map (the board) =================
+   A full-screen, pannable and zoomable copy of the finished architecture. Lessons open in a side panel
    (a bottom sheet on phones) that can be resized by dragging its grip and hidden completely. */
 let BOARD = null;
 const PANEL_KEY = 'ai-eng-blueprint.panel';
-// one pin per lesson, in blueprint coordinates
-const PINS = [[505, 322], [340, 146], [340, 372], [340, 204], [452, 146], [480, 466], [408, 526], [255, 46], [706, 146], [706, 186], [844, 146], [706, 266], [835, 196],
-  [844, 226], [844, 294], [556, 134], [844, 354], [844, 480], [980, 584]];
+// one pin per lesson, in diagram coordinates, on the top-left corner of the block that lesson adds (the top-right holds the + badge)
+const PINS = [[291, 22], [626, 464], [168, 464], [168, 220], [168, 254], [616, 192], [384, 254], [628, 322], [776, 192], [776, 280],
+  [152, 96], [400, 96], [616, 96], [324, 464], [792, 464], [152, 552], [716, 556], [616, 378], [934, 12]];
 const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
 
 function openBoard(opts = {}) {
@@ -14,7 +14,7 @@ function openBoard(opts = {}) {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(PANEL_KEY)) || {}; } catch (e) { return {}; } })();
   const B = BOARD = { x: 0, y: 0, s: 1, w: clamp(saved.w || 440, 320, 760), sh: clamp(saved.sh || 58, 30, 94), hidden: false, hl: [], mode: doneCount() ? 'build' : 'full', view: 'root', trail: [], parked: null, busy: false };
 
-  const canvas = h('div', { class: 'board-canvas', 'data-view': 'root', 'aria-label': 'Blueprint board. Drag to pan, pinch or scroll to zoom. Select a block to inspect it; blocks marked + open a detailed view.' });
+  const canvas = h('div', { class: 'board-canvas', 'data-view': 'root', 'aria-label': 'System map. Drag to pan, pinch or scroll to zoom. Select a block to inspect it; blocks marked + open a detailed view.' });
   canvas.innerHTML = bpSVG(MAX_STAGE, [], { click: 1, uid: 'B' });
   const pins = h('div', { class: 'pins' });
   canvas.append(pins);
@@ -30,11 +30,11 @@ function openBoard(opts = {}) {
     h('div', { class: 'board-tools' }),
     h('div', { class: 'legend', role: 'group', 'aria-label': 'Highlight a part of the system' }),
     panel, tab);
-  const el = h('div', { class: 'board', role: 'dialog', 'aria-label': 'Blueprint board' },
+  const el = h('div', { class: 'board', role: 'dialog', 'aria-label': 'System map' },
     h('div', { class: 'board-top' },
       h('button', { class: 'btn btn-sm', 'aria-label': 'Back to course', onclick: () => closeBoard(true), html: ICON.left.replace('<svg', '<svg width="16" height="16"') + '<span>Course</span>' }),
       h('span', { class: 'board-mark', html: BRAND_SVG }),
-      h('h2', null, 'Blueprint board'),
+      h('h2', null, 'System map'),
       h('span', { class: 'sp' }),
       h('div', { class: 'zoom-ctl' },
         h('button', { 'aria-label': 'Zoom out', onclick: () => zoomCenter(1.25) }, '−'), pct,
@@ -55,6 +55,7 @@ function openBoard(opts = {}) {
   setBuildMode(B.mode, true);
   wireCanvas(B); wireGrip(B);
   B.ro = new ResizeObserver(() => applyCam()); B.ro.observe(canvas);
+  panel.addEventListener('transitionend', () => applyCam()); // pins re-check what the sheet covers once it settles
   renderPins();
 
   const p = $('.player');
@@ -164,9 +165,14 @@ function applyCam() {
   B.canvas.style.backgroundPosition = `${-B.x / B.s}px ${-B.y / B.s}px`;
   const coarse = matchMedia('(pointer: coarse)').matches;
   const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
+  // pins that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
+  const vr = visibleRect(), tb = B.tools.getBoundingClientRect(), lg = B.legend.getBoundingClientRect(), cv = B.canvas.getBoundingClientRect();
+  const under = (px, py, r) => r.width && px > r.left - cv.left - 16 && px < r.right - cv.left + 16 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
   $$('.pin', B.pins).forEach(p => {
     const [X, Y] = PINS[+p.dataset.i];
-    p.style.transform = `translate(${(X - B.x) / B.s}px, ${(Y - B.y) / B.s}px)`;
+    const px = (X - B.x) / B.s, py = (Y - B.y) / B.s;
+    p.style.visibility = px < 0 || py < 0 || px > vr.w || py > vr.h || under(px, py, tb) || under(px, py, lg) ? 'hidden' : '';
+    p.style.transform = `translate(${px}px, ${py}px)`;
     p.style.width = p.style.height = pinPx + 'px'; p.style.margin = `${-pinPx / 2}px 0 0 ${-pinPx / 2}px`; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
   });
   B.pct.textContent = Math.round(baseScale() / B.s * 100) + '%';
@@ -283,9 +289,9 @@ function wireCanvas(B) {
 
 /* ---- build view, legend, guided tour ---- */
 const CATS = [
-  ['model', 'Model', 'var(--model)', ['house', 'head', 'tok', 'tf', 'weights']],
-  ['serving', 'Serving', 'var(--serve)', ['gpu', 'kv', 'roof', 'wire']],
-  ['context', 'Context', 'var(--ctx)', ['garden', 's-sys', 's-schema', 's-hist', 's-user']],
+  ['model', 'Model', 'var(--model)', ['model', 'head', 'tok', 'tf', 'weights']],
+  ['serving', 'API and compute', 'var(--serve)', ['api', 'gateway', 'gpu', 'kv']],
+  ['context', 'Context', 'var(--ctx)', ['context', 's-sys', 's-schema', 's-hist', 's-user']],
   ['knowledge', 'Knowledge', 'var(--know)', ['know', 's-ret', 'rag-adv']],
   ['tools', 'Tools', 'var(--tool)', ['tools', 's-tooldef', 's-toolres', 'mcp']],
   ['agents', 'Agents', 'var(--harness)', ['harness', 'mem', 'sub']],
@@ -305,18 +311,22 @@ function toggleCat(cat, btn) {
   const ids = B.view === 'root' ? CATS.find(c => c[0] === cat)[3] : SYSV[B.view].nodes.filter(n => n.cat === cat).map(n => n.key);
   exHighlight(ids); fitBox(rawBox(ids), true);
 }
+// one request, down through the layers and back up
 const TOUR = [
-  [['you'], 'You ask a question', 'You type into an app. You never talk to the weights directly; the app builds a context for you.'],
-  [['wire'], 'One stateless API call', 'The app sends the whole message list over HTTP. Nothing about you is remembered between calls.'],
-  [['roof'], 'The serving layer', 'A gateway checks your key, a router picks a replica, and a scheduler batches you with other users.'],
-  [['s-sys', 's-hist', 's-ret', 's-user'], 'The context is assembled', 'System prompt, conversation history, retrieved chunks and your message become one long token sequence.'],
-  [['tok'], 'Text becomes numbers', 'The tokenizer cuts the text into IDs, and each ID becomes a learned vector.'],
+  [['client'], 'A request leaves your app', 'A user types, a job runs or an IDE asks. Your app decides what to send; it never talks to the weights directly.'],
+  [['harness'], 'The agent loop takes it', 'If the app is an agent, the harness owns this request: it will call the model, run tools and loop until the task is done.'],
+  [['s-sys', 's-hist', 's-user', 's-schema'], 'The context is assembled', 'System prompt, conversation history, the new message and an output schema become one token sequence, rebuilt for this call.'],
+  [['know', 's-ret'], 'Knowledge is fetched', 'Retrieval pulls the few passages that answer this question from the knowledge store into the context.'],
+  [['tools', 'mcp', 's-tooldef'], 'Tools are described', 'Definitions of the tools the model may call, local or behind MCP servers, are placed in the context too.'],
+  [['api'], 'One stateless API call', 'The whole context crosses the API in a single HTTPS request. Nothing about the previous call is remembered.'],
+  [['gateway'], 'The serving layer', 'A gateway checks the key and rate limits, a router picks a replica, and a scheduler batches the request with other users.'],
+  [['tok'], 'Text becomes numbers', 'The tokenizer cuts the context into IDs, and each ID becomes a learned vector.'],
   [['tf', 'weights'], 'Through the transformer', 'Dozens of attention and MLP blocks mix the tokens using billions of trained weights.'],
-  [['gpu', 'kv'], 'On the GPUs', 'Weights sit in GPU memory, and the KV cache stores past keys and values so each new token is cheap.'],
-  [['head'], 'One token is chosen', 'The output head scores every token in the vocabulary, softmax turns scores into probabilities, and one is sampled.'],
-  [['harness', 'tools', 'mcp'], 'Maybe a tool call', 'If the model asks for a tool, the harness runs it, appends the result and calls the model again.'],
-  [['evals'], 'Watched in production', 'Every call is traced, evaluated and guarded, so problems show up before users do.'],
-  [['you', 'wire'], 'Tokens stream back', 'The answer streams back to you one token at a time, and the loop starts again on your next message.']
+  [['gpu', 'kv'], 'On the GPUs', 'The weights sit in GPU memory, and the KV cache stores past keys and values so each new token is cheap.'],
+  [['head'], 'One token is chosen', 'The output head scores every token in the vocabulary, softmax turns scores into probabilities, and one is sampled. Repeat until done.'],
+  [['harness', 'tools', 's-toolres'], 'Maybe a tool call', 'If the model asked for a tool, the harness runs it, appends the result to the context and calls the model again.'],
+  [['evals'], 'Watched at every layer', 'Every call is traced, checked by guardrails and covered by evals, so problems show up before users see them.'],
+  [['client', 'api'], 'Tokens stream back', 'The answer streams back up to your app one token at a time, and the next request starts from the top.']
 ];
 function blockCenter(ids) { const b = rawBox(ids); return [b[0] + b[2] / 2, b[1] + b[3] / 2]; }
 function tourSteps() {

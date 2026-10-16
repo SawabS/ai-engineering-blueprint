@@ -19,7 +19,7 @@ test('the page only talks to its own origin and Google Fonts', async ({ page }) 
   const hosts = new Set();
   page.on('request', r => { const u = new URL(r.url()); if (!['data:', 'blob:'].includes(u.protocol)) hosts.add(u.host); });
   await openApp(page);
-  await page.evaluate(() => { openLesson(11); });
+  await page.evaluate(() => { openLesson(LESSONS.findIndex(l => l.id === 'retrieval')); });
   await page.evaluate(() => { closeLesson(); openBoard({}); });
   const allowed = new Set(['127.0.0.1:' + (process.env.PORT || 4173), 'fonts.googleapis.com', 'fonts.gstatic.com']);
   expect([...hosts].filter(h => !allowed.has(h))).toEqual([]);
@@ -27,7 +27,7 @@ test('the page only talks to its own origin and Google Fonts', async ({ page }) 
 
 test('no inline event-handler attributes and no javascript: URLs in the DOM', async ({ page }) => {
   await openApp(page);
-  for (const go of [() => {}, () => page.evaluate(() => openLesson(13)), () => page.evaluate(() => { closeLesson(); openBoard({}); })]) {
+  for (const go of [() => {}, () => page.evaluate(() => openLesson(LESSONS.findIndex(l => l.id === 'tools'))), () => page.evaluate(() => { closeLesson(); openBoard({}); })]) {
     await go();
     const bad = await page.evaluate(() => [...document.querySelectorAll('*')].flatMap(el => [...el.attributes]
       .filter(a => /^on/i.test(a.name) || /^\s*javascript:/i.test(a.value)).map(a => `${el.tagName}[${a.name}]`)));

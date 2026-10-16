@@ -14,8 +14,8 @@ async function satisfyGate(page) {
   const ready = () => page.evaluate(() => L.ready);
   const clickUntilReady = async name => { for (let i = 0; i < 14 && !(await ready()); i++) await w.getByRole('button', { name }).click(); };
   if (type === 'twoBoxes') {
-    await w.locator('.bp-n[data-id="house"]').click();
-    await w.locator('.bp-n[data-id="garden"]').click();
+    await w.locator('.bp-n[data-id="context"]').click();
+    await w.locator('.bp-n[data-id="model"]').click();
   } else if (type === 'autoregress') await clickUntilReady('Run one forward pass');
   else if (type === 'nextWordGame') {
     for (let r = 0; r < 3; r++) { await w.locator('.w-row button').first().click(); await w.getByRole('button', { name: /Next round|Finish/ }).click(); }
@@ -144,7 +144,7 @@ test.describe('moving back and forth inside a lesson', () => {
     await expect(page.locator('#p-foot [data-primary]')).toBeVisible();
     await page.evaluate(() => advance());
     await page.locator('.p-steps .p-seg').nth(0).click();
-    await expect(page.locator('.step h2')).toHaveText('Start with the smallest true picture');
+    await expect(page.locator('.step h2')).toHaveText('The smallest AI system');
     await expect(page.locator('.step .beat:visible')).toHaveCount(await page.locator('.step .beat').count()); // fully revealed
     await expect(page.locator('#p-foot [data-primary]')).toBeEnabled();
   });
@@ -219,14 +219,14 @@ test.describe('moving back and forth inside a lesson', () => {
     const foot = page.locator('#p-foot');
     await expect(foot.getByRole('button')).toHaveCount(1);
     await expect(foot.locator('[data-primary]')).toHaveText('Back to course map');
-    await expect(foot).toContainText('Up next on the track: Two boxes');
+    await expect(foot).toContainText('Up next on the track: Your first request');
     // from the completion screen the arrows still step back into this lesson
     await page.keyboard.press('ArrowLeft');
     expect(await page.evaluate(() => [L.lesson.id, L.phase, L.si === L.lesson.steps.length - 1])).toEqual(['tokens', 'step', true]);
     await page.evaluate(() => finishLesson());
     await foot.locator('[data-primary]').click();
     await expect(page.locator('.player')).toHaveCount(0);
-    const next = page.getByRole('button', { name: /^Lesson 1: Two boxes, start here/ });
+    const next = page.getByRole('button', { name: /^Lesson 1: Your first request, start here/ });
     await expect(next).toBeFocused();
     await expect(next).toBeInViewport();
   });

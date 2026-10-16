@@ -69,7 +69,7 @@ for (const [w, h, name] of VIEWPORTS) {
         await page.getByRole('dialog').getByRole('button', { name: 'Start lesson' }).click();
         await page.evaluate(() => { L.si = 0; renderStep(true); });
         await check('lesson', { scope: '.player' });
-        await page.evaluate(() => openLesson(11));
+        await page.evaluate(() => openLesson(LESSONS.findIndex(l => l.id === 'retrieval')));
         await page.evaluate(() => { L.si = 1; renderStep(true); });
         await check('lesson-wide-widget', { scope: '.player' });
         await page.evaluate(() => { L.si = 2; renderStep(true); });
@@ -80,7 +80,7 @@ for (const [w, h, name] of VIEWPORTS) {
         await expect(page.locator('.panel .idx')).toBeVisible();
         await page.waitForTimeout(700); // camera settles
         await check('board', { scope: '.board' });
-        await page.locator('.pin[data-i="6"]').click();
+        await page.locator('.pin[data-i="6"]').click(); // retrieval: near the top, clear of the bottom sheet on small phones
         await page.waitForTimeout(700);
         await check('board-lesson', { scope: '.board' });
         await page.getByRole('button', { name: /Trace/ }).click();

@@ -1,13 +1,13 @@
-// The blueprint board: opening, docking, panel resize/hide, pan and zoom, legend, build view, tour.
+// The system map (board): opening, docking, panel resize/hide, pan and zoom, legend, build view, tour.
 const { test, expect, openApp, expectNoHorizontalScroll } = require('./fixtures');
 
 async function openBoard(page) {
-  await page.getByRole('button', { name: 'Open the blueprint board' }).first().click();
-  await expect(page.getByRole('dialog', { name: 'Blueprint board' })).toBeVisible();
+  await page.getByRole('button', { name: 'Open the system map' }).first().click();
+  await expect(page.getByRole('dialog', { name: 'System map' })).toBeVisible();
   await expect(page.locator('.panel .idx')).toBeVisible();
 }
 
-test.describe('blueprint board', () => {
+test.describe('system map', () => {
   test('opens with the lesson index and 19 pins', async ({ page }) => {
     await openApp(page);
     await openBoard(page);
@@ -19,9 +19,9 @@ test.describe('blueprint board', () => {
   test('a pin docks its lesson in the panel and focuses its blocks', async ({ page }) => {
     await openApp(page);
     await openBoard(page);
-    await page.getByRole('button', { name: /^Lesson 12: Retrieval, hands on/ }).click();
+    await page.getByRole('button', { name: /^Lesson 7: Retrieval, hands on/ }).click();
     await expect(page.locator('.panel .player.docked .step h2')).toHaveText('Cutting documents into chunks');
-    await expect(page.locator('.panel-head .ttl')).toHaveText('12. Retrieval, hands on');
+    await expect(page.locator('.panel-head .ttl')).toHaveText('7. Retrieval, hands on');
     await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(2);
     await expect(page.locator('.pin.cur')).toHaveCount(1);
   });
@@ -32,8 +32,8 @@ test.describe('blueprint board', () => {
     await page.locator('.board-canvas .bp-n[data-id="kv"]').click();
     await expect(page.locator('.panel-head .ttl')).toHaveText('Explorer');
     await expect(page.locator('.insp h3')).toHaveText('KV cache');
-    await page.locator('.insp').getByRole('button', { name: 'Lesson 7: The KV cache' }).click();
-    await expect(page.locator('.panel-head .ttl')).toHaveText('7. The KV cache');
+    await page.locator('.insp').getByRole('button', { name: 'Lesson 17: The KV cache' }).click();
+    await expect(page.locator('.panel-head .ttl')).toHaveText('17. The KV cache');
   });
 
   test('the panel hides completely and comes back', async ({ page }) => {
@@ -106,24 +106,24 @@ test.describe('blueprint board', () => {
     await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(0);
   });
 
-  test('"My build" sketches unfinished blocks, "Full building" shows all', async ({ page }) => {
+  test('"My system" sketches unfinished blocks, "Full system" shows all', async ({ page }) => {
     await openApp(page, { done: ['two-boxes', 'next-token'] });
     await openBoard(page);
     await expect(page.locator('.board-canvas .bp-n[data-id="head"]')).not.toHaveClass(/sketch/);
     await expect(page.locator('.board-canvas .bp-n[data-id="kv"]')).toHaveClass(/sketch/);
-    await page.getByRole('button', { name: 'Full building' }).click();
+    await page.getByRole('button', { name: 'Full system' }).click();
     await expect(page.locator('.board-canvas .bp-n.sketch')).toHaveCount(0);
   });
 
-  test('the guided tour walks all 11 steps and restores the panel', async ({ page }) => {
+  test('the guided tour follows one request through all 14 steps and restores the panel', async ({ page }) => {
     await openApp(page);
     await openBoard(page);
     await page.getByRole('button', { name: /Trace/ }).click();
     const tour = page.getByRole('dialog', { name: 'Trace a request' });
-    await expect(tour).toContainText('Step 1 of 11');
-    for (let k = 2; k <= 11; k++) { await tour.getByRole('button', { name: 'Next' }).click(); await expect(tour).toContainText(`Step ${k} of 11`); }
+    await expect(tour).toContainText('Step 1 of 14');
+    for (let k = 2; k <= 14; k++) { await tour.getByRole('button', { name: 'Next' }).click(); await expect(tour).toContainText(`Step ${k} of 14`); }
     await tour.getByRole('button', { name: 'Back' }).click();
-    await expect(tour).toContainText('Step 10 of 11');
+    await expect(tour).toContainText('Step 13 of 14');
     await tour.getByRole('button', { name: 'Next' }).click();
     await tour.getByRole('button', { name: 'Done' }).click();
     await expect(tour).toHaveCount(0);
@@ -135,7 +135,7 @@ test.describe('blueprint board', () => {
     await openApp(page, { hash: 'tokens' });
     await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
     const si = await page.evaluate(() => [L.si, L.beat]);
-    await page.getByRole('button', { name: /Open the blueprint board/ }).first().click();
+    await page.getByRole('button', { name: /Open the system map/ }).first().click();
     await expect(page.locator('.panel .player.docked')).toBeVisible();
     expect(await page.evaluate(() => [L.si, L.beat])).toEqual(si);
     await page.getByRole('button', { name: 'Open the lesson full screen' }).click();

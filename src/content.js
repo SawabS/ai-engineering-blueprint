@@ -1,21 +1,30 @@
-/* ================= curriculum ================= */
+/* ================= curriculum =================
+   Application first: each lesson starts from a need the current system cannot meet and adds the component that meets it. */
 const COURSE = { units: [
 {
-  title: 'Two boxes', side: 'the whole site', color: 'var(--accent)', where: 'Blueprint: house + garden',
-  blurb: 'A model and a context, joined by an API. The picture every later lesson zooms into.',
+  title: 'One request', side: 'the smallest AI system', color: 'var(--accent)',
+  blurb: 'Your app sends a context to a model API and gets tokens back. What the model computes, what comes back, and what you pay for.',
   lessons: [
   {
-    id: 'two-boxes', title: 'Two boxes', sub: 'The mental model the whole course hangs on', short: 'the two boxes',
-    trail: ['The whole system'], hl: ['house', 'garden', 'you', 'wire'],
-    added: 'The model and the context, joined by an API', doneTitle: 'The site is marked out.',
-    recap: 'An AI system is a frozen model plus the context you hand it on each request. Every technique in this course either improves the model or improves its context.',
+    id: 'two-boxes', title: 'Your first request', sub: 'One call to a model: the smallest AI system', short: 'one request',
+    need: 'Get an answer from a language model inside your own software.',
+    trail: ['Your system'], hl: ['client', 'context', 'api', 'model'],
+    added: 'Your app, a context, a model API and the model', doneTitle: 'Your first AI system is running.',
+    recap: 'An AI system starts as one request: your app sends a context to a model API, and a frozen model returns tokens. Every technique in this course improves the model or improves the context, and each one is added only when a need demands it.',
     steps: [
-      { kind: 'learn', title: 'Start with the smallest true picture',
-        body: `<p>When you type into a chatbot it feels like talking to a mind that knows you. Engineering starts by replacing that feeling with a diagram you can reason about.</p>
-<p>The diagram has two boxes. <span class="k">The model</span> is a fixed function: give it a sequence of tokens and it returns a probability for every possible next token. <span class="k">The context</span> is the sequence you give it. That is all the model ever sees.</p>`,
-        widget: { type: 'twoBoxes' }, gate: true, gateText: 'Click both boxes to continue' },
+      { kind: 'learn', title: 'The smallest AI system',
+        body: `<p>Every AI product, from a one-line feature to ChatGPT or Claude Code, starts with the same move: your application sends <span class="k">one request</span> to a model API and gets tokens back.</p>
+<div class="mono-box" style="margin:12px 0"><span class="dim">POST /v1/messages</span>
+{
+  "model": "some-model",
+  "max_tokens": 200,
+  "system": "You are a concise support assistant.",
+  "messages": [{ "role": "user", "content": "Where is my order?" }]
+}</div>
+<p>Two things meet in that request. <span class="k">The context</span> is everything you send: instructions, the conversation, any documents. <span class="k">The model</span> is the fixed function on the other side that reads it and predicts what comes next. Click both on the diagram.</p>`,
+        widget: { type: 'twoBoxes' }, gate: true, gateText: 'Click the context and the model to continue' },
       { kind: 'quiz', title: 'Where does memory live?',
-        body: `<p>A user tells a chatbot their name on Monday. On Tuesday, in a brand new chat, the bot greets them by name.</p><p>In the two-box picture, where must the name have been at the moment the model produced the greeting?</p>`,
+        body: `<p>A user tells a chatbot their name on Monday. On Tuesday, in a brand new chat, the bot greets them by name.</p><p>Looking at the request, where must the name have been at the moment the model produced the greeting?</p>`,
         options: ['Inside the model weights, updated after Monday\'s chat', 'In the context of Tuesday\'s request, placed there by the application', 'In GPU memory left over from Monday\'s session', 'The model recognises users by their account ID'],
         answer: 1,
         why: { 0: 'Production weights are frozen and shared by every user. Updating them per conversation would mean a training run per chat.', 2: 'GPU memory holds weights and short-lived caches for requests in flight. Nothing survives as a per-user diary.', 3: 'The model receives tokens, not accounts. If an ID matters, the application must turn it into text in the context.' },
@@ -25,15 +34,16 @@ const COURSE = { units: [
 \\[ P(\\text{next token} \\mid \\text{context}) = \\operatorname{model}(\\text{context};\\; \\theta) \\]
 <p>Two consequences follow. First, the model keeps <span class="k">no state between calls</span>. Chat history, memory, documents and tool results only exist for the model if an application writes them into the context.</p>
 <p>Second, every improvement you will ever ship falls on one side of that equation. You either make the function better or cheaper to run (training, hardware, serving), or you make its input better (prompts, retrieval, tools, agents).</p>` },
-      { kind: 'learn', title: 'A house and a garden',
-        body: `<p>Think of the model as a <span class="k">house</span> and the context as its <span class="k">garden</span>. Right now each is a plain block. Every lesson zooms into one of them and adds a room, a floor or a path.</p>
-<p>By the end the house has GPUs in its foundation and a serving layer for a roof, and the garden holds retrieval, tools, memory and a whole crew of agents. Drag the slider to see where we are going. Whenever a detail feels lost, the blueprint beside each lesson shows which block you are standing in.</p>`,
+      { kind: 'learn', title: 'Grow it only when a need appears',
+        body: `<p>This request is a complete AI system, and many real features never need more. This course adds a component only when a <span class="k">need</span> appears that the request cannot meet: the answer must parse, the model does not know your documents, the task needs actions, the run outgrows one context, the bill or the latency is too high.</p>
+<p>The diagram is a layered architecture read top to bottom as the path of one request: clients, orchestration, context, model API, model and compute, with evals across all of them. Drag the slider to watch it grow lesson by lesson. By the end it is the architecture behind ChatGPT, Claude Code and the AI features companies ship, and you will know which layer to open when something has to change.</p>`,
         widget: { type: 'bpPreview' } }
     ]
   },
   {
     id: 'next-token', title: 'A next-token machine', sub: 'Logits, softmax, temperature and sampling', short: 'the output head',
-    trail: ['The whole system', 'The model', 'Output head'], hl: ['head'],
+    need: 'Understand what comes back from the model, and control it: temperature, top-p, length.',
+    trail: ['Your system', 'Model', 'Output head'], hl: ['head'],
     added: 'The output head: logits → softmax → sampled token',
     recap: 'The model scores every token in its vocabulary, softmax turns scores into probabilities, and a sampler picks one. Generation repeats that loop one token at a time.',
     steps: [
@@ -61,7 +71,7 @@ const COURSE = { units: [
         options: ['Output tokens are physically larger than input tokens', 'The prompt is processed in one parallel pass, while each output token needs its own sequential pass', 'The model searches the web for every output token', 'Output tokens are generated on the CPU'],
         answer: 1,
         why: { 0: 'Every token is the same kind of object, an integer ID mapped to a vector.', 2: 'A bare model has no network access at all.', 3: 'Both phases run on the GPU. The difference is parallel versus sequential work.' },
-        explain: 'The prompt is known in advance, so all its positions are computed together. This phase is called <strong>prefill</strong>. Output tokens depend on each other, so they come out one forward pass at a time. This is <strong>decode</strong>. The split will matter a lot when we build the serving layer.' },
+        explain: 'The prompt is known in advance, so all its positions are computed together. This phase is called <strong>prefill</strong>. Output tokens depend on each other, so they come out one forward pass at a time. This is <strong>decode</strong>. The split will matter again when you run a model yourself.' },
       { kind: 'learn', title: 'The knobs in every API',
         body: `<p>You now understand every generation parameter you will meet in a provider's documentation. They all act on the output head and the decoding loop, and none of them changes the weights.</p>
 <div class="cards3">
@@ -72,16 +82,12 @@ const COURSE = { units: [
 <div class="mini-card"><b>seed</b><span>Makes sampling repeatable where the provider supports it.</span></div>
 </div>` }
     ]
-  }]
-},
-{
-  title: 'Inside the house', side: 'the model', color: 'var(--accent)', where: 'Blueprint: the house interior',
-  blurb: 'Tokenizers, embeddings, attention and training. How the function in the house is built.',
-  lessons: [
+  },
   {
     id: 'tokens', title: 'Tokens and embeddings', sub: 'How text becomes numbers', short: 'the tokenizer',
-    trail: ['The whole system', 'The model', 'Tokenizer → embeddings'], hl: ['tok'],
-    added: 'A tokenizer and an embedding table at the ground floor',
+    need: 'Know what you are billed for, why the window is counted in tokens, and why some languages cost more.',
+    trail: ['Your system', 'Model', 'Tokenizer → embeddings'], hl: ['tok'],
+    added: 'A tokenizer and an embedding table at the entrance to the model',
     recap: 'Text is split into subword tokens, each token becomes an integer ID, and each ID becomes a learned vector. Languages the tokenizer rarely saw pay more tokens per sentence.',
     steps: [
       { kind: 'learn', title: 'The model never sees letters',
@@ -98,7 +104,7 @@ const COURSE = { units: [
         body: `<p>Each token ID selects one row of the <span class="k">embedding table</span>, a learned vector of a few thousand numbers. Training arranges these vectors so that related tokens sit near each other and directions carry meaning.</p>
 <p>The map below is a two-dimensional cartoon of that space. Real embeddings live in thousands of dimensions, but the arithmetic works the same way.</p>`,
         widget: { type: 'embedMap' },
-        after: '<div class="eyebrow">And word order?</div>Attention by itself treats tokens as an unordered set. Models add position information, most commonly <strong>rotary position embeddings (RoPE)</strong>, which rotate query and key vectors by an angle that depends on position. How well a model handles very long inputs depends heavily on this choice.' },
+        after: '<div class="eyebrow">And word order?</div>Attention, the model\'s core operation (lesson 14), treats tokens as an unordered set. Models add position information, most commonly <strong>rotary position embeddings (RoPE)</strong>, which rotate query and key vectors by an angle that depends on position. How well a model handles very long inputs depends heavily on this choice.' },
       { kind: 'quiz', title: 'Why subwords?',
         body: '<p>Why do LLMs use subword tokens instead of whole words or single characters?</p>',
         options: ['Whole words cannot cover new or rare words, and characters make sequences very long. Subwords balance vocabulary size against sequence length', 'GPUs can only multiply subwords', 'Single characters cannot be embedded as vectors', 'Whole-word vocabularies are illegal to distribute'],
@@ -106,200 +112,16 @@ const COURSE = { units: [
         why: { 1: 'GPUs multiply vectors. Any token scheme produces vectors.', 2: 'Characters can be embedded perfectly well. The cost is sequence length.', 3: 'There is no legal issue. The trade-off is purely technical.' },
         explain: 'A word-level vocabulary explodes in size and still meets unknown words. Character-level input makes every sequence several times longer, and attention cost grows with length. Subwords keep a vocabulary around 100k to 200k while handling any string through byte fallback.' }
     ]
-  },
-  {
-    id: 'attention', title: 'Attention', sub: 'How tokens read each other', short: 'transformer blocks',
-    trail: ['The whole system', 'The model', 'Transformer blocks', 'Attention'], hl: ['tf'],
-    added: 'N stacked transformer blocks of attention and MLP',
-    recap: 'Attention lets each token pull information from earlier tokens, weighted by relevance. MLPs transform each token on its own. Stacking dozens of these blocks turns embeddings into a prediction.',
-    steps: [
-      { kind: 'learn', title: 'Each token asks a question',
-        body: `<p>Inside each block, every token produces three vectors: a <span class="k">query</span> (what am I looking for?), a <span class="k">key</span> (what do I contain?) and a <span class="k">value</span> (what do I hand over if chosen?). A token compares its query with every earlier key, softmaxes the scores into weights, and takes a weighted average of the values.</p>
-\\[ \\operatorname{Attention}(Q,K,V) = \\operatorname{softmax}\\left( \\frac{QK^\\top}{\\sqrt{d}} \\right) V \\]
-<p>Click a word to see where it looks. Then change the last word and watch what <em>it</em> refers to.</p>`,
-        widget: { type: 'attention' } },
-      { kind: 'learn', title: 'No peeking at the future',
-        body: `<p>During training the model sees whole sentences, yet it must learn to predict each token from the ones before it. A <span class="k">causal mask</span> enforces this: token <em>i</em> may only attend to positions 1 through <em>i</em>. Click a row to see what one token is allowed to read.</p>`,
-        widget: { type: 'causalMask' } },
-      { kind: 'quiz', title: 'Can token 5 see token 7?',
-        body: '<p>In a decoder-only model like GPT, Claude or Llama, can the 5th token of a prompt attend to the 7th?</p>',
-        options: ['Yes, the whole prompt is visible to every token', 'No, the causal mask hides later positions from earlier ones', 'Only in the last layer', 'Only when temperature is above 1'],
-        answer: 1,
-        why: { 0: 'Prefill computes all positions in parallel, but each position still uses the mask.', 2: 'The mask applies in every layer.', 3: 'Temperature acts on the output distribution, not on attention.' },
-        explain: 'Every layer applies the same causal mask. This is what makes the KV cache possible later: the representation of token 5 never changes when token 7 arrives, so it can be computed once and stored.' },
-      { kind: 'learn', title: 'Attention mixes, the MLP transforms',
-        body: `<p>A transformer block has two halves. <span class="k">Attention</span> moves information <em>between</em> tokens. The <span class="k">MLP</span> (feed-forward network) transforms each token <em>on its own</em> and holds roughly two thirds of the parameters; much factual association lives there.</p>
-<p>Both halves add their output onto a running vector per token, the <span class="k">residual stream</span>. A model stacks 30 to over 100 such blocks. Attention is also split into many <span class="k">heads</span> that each learn a different kind of relation, such as syntax, coreference or copying.</p>
-<div class="cards3">
-<div class="mini-card"><b>Embeddings</b><span>One vector per token enters the stack.</span></div>
-<div class="mini-card"><b>× N blocks</b><span>Attention, then MLP, each added to the residual stream.</span></div>
-<div class="mini-card"><b>Output head</b><span>The last vector becomes logits over the vocabulary. You built this in lesson 2.</span></div>
-</div>` },
-      { kind: 'quiz', title: 'Where the cost hides',
-        body: '<p>Attention compares every token with every earlier token. If you double the length of a prompt, the attention-score work for prefill grows by roughly:</p>',
-        options: ['× 2', '× 4', 'It stays the same', '× 8'],
-        answer: 1,
-        why: { 0: 'The MLP work grows × 2, but attention compares pairs of tokens.', 2: 'More tokens always means more pairs to compare.', 3: 'Pairs grow with the square of length, not the cube.' },
-        explain: 'Pairs of tokens grow with n², so doubling n quadruples the score matrix. This quadratic term is why long contexts are expensive and why so much research targets efficient attention.' }
-    ]
-  },
-  {
-    id: 'training', title: 'Where the weights come from', sub: 'Pretraining, fine-tuning and reinforcement learning', short: 'the weights',
-    trail: ['The whole system', 'The model', 'Weights'], hl: ['weights'],
-    added: 'Weights shaped by pretraining, SFT and RL',
-    recap: 'Pretraining teaches prediction from trillions of tokens. Supervised fine-tuning teaches the assistant format. Reinforcement learning sharpens helpfulness, safety and reasoning. Facts that change belong in context, not weights.',
-    steps: [
-      { kind: 'learn', title: 'Be the model for a minute',
-        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is \\(-\\ln p(\\text{correct token})\\). Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
-<p>Play three rounds. Your choice is the model's sample; the loss shows what gradient descent would push against.</p>`,
-        widget: { type: 'nextWordGame' }, gate: true, gateText: 'Play three rounds to continue' },
-      { kind: 'learn', title: 'From autocomplete to assistant',
-        body: `<p>A pretrained <span class="k">base model</span> is a superb autocomplete with no idea it is supposed to help anyone. Post-training turns it into an assistant in stages.</p>
-<p><span class="k">Supervised fine-tuning (SFT)</span> trains on curated conversations, so the model learns the chat format and the habit of answering. <span class="k">Reinforcement learning</span> then optimises against preference judgments (RLHF, DPO) and, increasingly, verifiable rewards such as passing tests or reaching a correct maths answer, which is how reasoning models learn to think at length.</p>`,
-        widget: { type: 'trainingStages' } },
-      { kind: 'quiz', title: 'The policy changed this morning',
-        body: '<p>Your refund policy changed this morning. What is the right way to have the assistant follow the new policy today?</p>',
-        options: ['Pretrain a new model on the updated policy', 'Fine-tune the current model on examples of the new policy', 'Put the current policy text into the context, through the system prompt or retrieval', 'Lower the temperature so it guesses less'],
-        answer: 2,
-        why: { 0: 'Pretraining costs months and millions of dollars, for one paragraph of changed text.', 1: 'Fine-tuning is slow to iterate, learns facts unreliably, and the old policy may still leak out. Next month you would have to do it again.', 3: 'Temperature cannot inject knowledge the model does not have.' },
-        explain: 'Facts that change belong in the context, where you can edit them instantly and cite them. Fine-tuning earns its cost when you need a behaviour: a format, a tone, a skill or a language the base model lacks.' },
-      { kind: 'learn', title: 'Fine-tuning without retraining everything',
-        body: `<p>Full fine-tuning updates every weight and needs memory for gradients and optimiser state several times the model's size. <span class="k">LoRA</span> freezes the original weights and learns small low-rank matrices beside them, often well under one percent of the parameter count. Adapters can be swapped per customer or task at serving time.</p>
-<div class="cards3">
-<div class="mini-card"><b>Worth fine-tuning</b><span>A strict output format at scale, a domain's jargon, a low-resource language or dialect, distilling a big model into a small cheap one.</span></div>
-<div class="mini-card"><b>Not worth it</b><span>Fresh facts, per-user data, anything you can solve with a better prompt or retrieval.</span></div>
-<div class="mini-card"><b>Continued pretraining</b><span>Raw text in a new language or domain, before SFT, when the base model barely knows it.</span></div>
-</div>` },
-      { kind: 'quiz', title: 'What does LoRA train?',
-        body: '<p>When you fine-tune with LoRA, which parameters change?</p>',
-        options: ['Every weight in the model, at a lower learning rate', 'Only the embedding table', 'Small low-rank adapter matrices added beside frozen weights', 'Only the tokenizer vocabulary'],
-        answer: 2,
-        why: { 0: 'That describes full fine-tuning, which LoRA exists to avoid.', 1: 'Adapters usually attach to attention and MLP projections, not the embedding table.', 3: 'The tokenizer is not a trained matrix in this sense.' },
-        explain: 'LoRA adds a product of two thin matrices to selected weight matrices and trains only those. The base stays untouched, so one served model can carry many adapters.' }
-    ]
   }]
 },
 {
-  title: 'Foundation and roof', side: 'hardware and serving', color: 'var(--accent)', where: 'Blueprint: under and over the house',
-  blurb: 'GPUs to hold the weights, the KV cache, and the serving layer that turns one box into a service.',
-  lessons: [
-  {
-    id: 'gpus', title: 'Housing the weights', sub: 'GPUs, memory and precision', short: 'the GPU foundation',
-    trail: ['The whole system', 'The model', 'GPUs (foundation)'], hl: ['gpu'],
-    added: 'A GPU foundation holding the weights in high-bandwidth memory',
-    recap: 'Weights need parameters × bytes of GPU memory. Decoding reads every active weight for each token, so speed is bounded by memory bandwidth. Quantization and parallelism are the levers.',
-    steps: [
-      { kind: 'learn', title: 'Weights are numbers in memory',
-        body: `<p>A model with <em>N</em> parameters stored at <em>b</em> bytes each needs <span class="k">N × b bytes</span> of GPU memory before it answers a single question. That memory is <span class="k">HBM</span>, the high-bandwidth memory stacked beside the GPU chip.</p>
-<p>Use the calculator to size a deployment. The speed estimate assumes one user at a time, where every token requires reading all weights once.</p>`,
-        widget: { type: 'vramCalc' } },
-      { kind: 'quiz', title: 'Fit a 70B model',
-        body: '<p>A 70-billion-parameter model in BF16 (2 bytes per parameter). How many 80 GB GPUs do you need <em>just for the weights</em>?</p>',
-        options: ['1', '2', '4', '8'],
-        answer: 1,
-        why: { 0: '70 × 10⁹ × 2 bytes = 140 GB. That is far more than one 80 GB card.', 2: 'Four is a sensible deployment because the KV cache needs room, but the weights alone fit in two.', 3: 'Eight cards would hold the weights four times over.' },
-        explain: '140 GB fits in two 80 GB cards, with almost nothing left for the KV cache you will meet next lesson. Real deployments of this size often use four cards, or quantize to FP8 so the weights fit on one.' },
-      { kind: 'learn', title: 'Speed is a memory problem',
-        body: `<p>During decode, generating one token for one user requires streaming every active weight from HBM through the compute units. The arithmetic is cheap; the reading is not. So a single stream's speed is roughly <span class="k">memory bandwidth ÷ model size in bytes</span>.</p>
-<p>This is why <span class="k">quantization</span> matters twice: storing weights in FP8 or INT4 cuts memory and also cuts the bytes read per token, so decoding speeds up almost in proportion. The cost is a small, measurable quality loss, which grows at very low precision.</p>` },
-      { kind: 'learn', title: 'Splitting a model across GPUs',
-        body: `<p>When a model does not fit on one card, or one card is too slow, you split it.</p>
-<div class="cards3">
-<div class="mini-card"><b>Tensor parallel</b><span>Each weight matrix is sliced across GPUs in one server. Needs very fast links between cards.</span></div>
-<div class="mini-card"><b>Pipeline parallel</b><span>Different layers live on different GPUs or servers. Activations flow from stage to stage.</span></div>
-<div class="mini-card"><b>Expert parallel</b><span>In mixture-of-experts models, different experts live on different GPUs.</span></div>
-</div>
-<p style="margin-top:14px">A <span class="k">mixture-of-experts (MoE)</span> model routes each token through only a few of its many expert MLPs. It has a large <em>total</em> parameter count but a small <em>active</em> count per token.</p>` },
-      { kind: 'quiz', title: 'What does sparsity buy?',
-        body: '<p>An MoE model has 400B total parameters but activates about 17B per token. Compared with a dense 400B model, what changes?</p>',
-        options: ['It needs about 17B parameters of memory', 'Compute and bytes read per token look like a 17B model, but all 400B must still sit in memory', 'Nothing changes, the parameter count is what matters', 'It no longer needs GPUs'],
-        answer: 1,
-        why: { 0: 'Any token might route to any expert, so every expert must be loaded.', 2: 'Active parameters drive per-token compute and bandwidth, which is the whole point of the design.', 3: 'It still runs matrix multiplies on accelerators.' },
-        explain: 'MoE trades memory for speed: you pay to store every expert, but each token only touches a few, so decoding is fast for the model\'s total size.' }
-    ]
-  },
-  {
-    id: 'kv-cache', title: 'The KV cache', sub: 'Why long context costs memory', short: 'the KV cache',
-    trail: ['The whole system', 'The model', 'GPUs (foundation)', 'KV cache'], hl: ['kv'],
-    added: 'A KV cache sharing GPU memory with the weights',
-    recap: 'Keys and values of past tokens are cached so decode does linear work per token. The cache grows with context length × concurrent users and competes with the weights for memory.',
-    steps: [
-      { kind: 'learn', title: 'Do not recompute the past',
-        body: `<p>When token 501 is generated, attention needs the keys and values of tokens 1 to 500. Because of the causal mask, those never change. So the server computes them once and stores them: the <span class="k">KV cache</span>. Each new token then only computes its own query, key and value.</p>`,
-        widget: { type: 'kvReuse' } },
-      { kind: 'learn', title: 'How big is the cache?',
-        body: `<p>Per token, every layer stores one key and one value vector for each KV head:</p>
-\\[ \\text{bytes per token} = 2 \\times \\text{layers} \\times \\text{kv heads} \\times \\text{head dim} \\times \\text{bytes per value} \\]
-<p>The calculator uses the shape of a typical 70B model: 80 layers, 8 KV heads of dimension 128, stored in BF16. Push the context length and the number of concurrent users until the GPUs run out.</p>`,
-        widget: { type: 'kvCalc' } },
-      { kind: 'quiz', title: 'One long conversation',
-        body: '<p>At 320 KiB per token, roughly how much memory does the cache need for one user with a 128,000-token context?</p>',
-        options: ['About 400 MB', 'About 4 GB', 'About 40 GB', 'About 400 GB'],
-        answer: 2,
-        why: { 0: '131,072 tokens × 327,680 bytes is in the tens of gigabytes.', 1: 'Off by a factor of ten. Multiply 131,072 by 327,680.', 3: 'Off by a factor of ten in the other direction.' },
-        explain: '131,072 × 327,680 bytes ≈ 43 GB, about 40 GiB. One long conversation can need a quarter of the memory the weights do, which is why long-context requests are priced higher and why servers cap concurrent long sequences.' },
-      { kind: 'learn', title: 'Tricks that make room',
-        body: `<div class="cards3">
-<div class="mini-card"><b>Grouped-query attention</b><span>Many query heads share a few KV heads. Eight KV heads instead of 64 shrinks the cache eight-fold.</span></div>
-<div class="mini-card"><b>Paged attention</b><span>Cache stored in fixed-size blocks like virtual memory pages, so memory is not wasted on fragmentation.</span></div>
-<div class="mini-card"><b>Prefix caching</b><span>Requests that start with an identical prefix reuse its cache. Providers sell this as prompt caching.</span></div>
-<div class="mini-card"><b>Cache quantization</b><span>Store keys and values in FP8 to halve the footprint.</span></div>
-</div>` },
-      { kind: 'quiz', title: 'Make prompt caching work for you',
-        body: '<p>Every request in your app sends the same 6,000-token system prompt and tool list, followed by a short user message. Which layout lets prefix caching save the most?</p>',
-        options: ['Put the user message first so it is processed fastest', 'Keep the long stable part identical and first, and put changing content at the end', 'Shuffle the order so no single part dominates', 'Insert the current timestamp at the very top'],
-        answer: 1,
-        why: { 0: 'A cache hit requires an identical prefix. Starting with the changing message breaks the match on token one.', 2: 'Any change early in the sequence invalidates everything after it.', 3: 'A timestamp at the top changes every request, so nothing after it can be reused.' },
-        explain: 'The cache is keyed on an exact prefix. Stable content first and volatile content last can cut prefill time and input cost dramatically. This one design rule shapes how good agents assemble their context.' }
-    ]
-  },
-  {
-    id: 'serving', title: 'The serving layer', sub: 'Turning a GPU box into a service', short: 'the serving roof',
-    trail: ['The whole system', 'The model', 'Serving layer (roof)'], hl: ['roof', 'wire'],
-    added: 'A serving roof: gateway, router, continuous batching, streaming',
-    recap: 'A serving stack queues requests, batches them so one pass over the weights serves many users, separates prefill from decode, and streams tokens back over a stateless API.',
-    steps: [
-      { kind: 'learn', title: 'Follow one request',
-        body: '<p>Step through what happens between pressing Enter and seeing the first word.</p>',
-        widget: { type: 'flow', id: 'journey' }, gate: true, gateText: 'Step through the whole journey to continue' },
-      { kind: 'learn', title: 'Batching: one read, many users',
-        body: `<p>Decoding one stream leaves the GPU's arithmetic units mostly idle while it waits on memory. Reading the weights once and applying them to many sequences at the same time is almost free, so servers <span class="k">batch</span>.</p>
-<p>Static batching waits for the slowest sequence in a batch before admitting new work. <span class="k">Continuous batching</span> swaps finished sequences out and new ones in at every step. Compare the two schedules.</p>`,
-        widget: { type: 'batching' } },
-      { kind: 'learn', title: 'The numbers users feel',
-        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time is approximately:</p>
-\\[ T_{\\text{total}} \\approx \\text{TTFT} + n_{\\text{out}} \\times \\text{TPOT} \\]`,
-        widget: { type: 'latencyCalc' } },
-      { kind: 'quiz', title: 'Diagnose the complaint',
-        body: '<p>Users say: "It takes four seconds before anything appears, then the text flows quickly." Which number is bad, and where would you look?</p>',
-        options: ['TPOT: decode is too slow, use a smaller model', 'TTFT: look at queueing and prefill, such as very long prompts or an overloaded scheduler', 'Throughput: the GPU is idle', 'Temperature: it is set too high'],
-        answer: 1,
-        why: { 0: 'Fast streaming means decode is healthy.', 2: 'Throughput is a server-wide figure; the symptom here is the wait before the first token.', 3: 'Temperature affects which tokens are chosen, not when they arrive.' },
-        explain: 'A slow start with fast streaming points to TTFT. Typical fixes: trim or cache the prompt prefix, add capacity or priority to the queue, or route long prompts to dedicated prefill workers.' },
-      { kind: 'learn', title: 'The contract at the wire',
-        body: `<p>Everything above sits behind a simple, <span class="k">stateless</span> HTTP API. You send the full list of messages; you get tokens back, usually streamed as server-sent events.</p>
-<div class="mono-box" style="margin:12px 0"><span class="dim">POST /v1/messages</span>
-{
-  "model": "some-model",
-  "max_tokens": 400,
-  "temperature": 0.2,
-  "system": "You are a concise support assistant.",
-  "messages": [
-    { "role": "user", "content": "Where is my order?" }
-  ],
-  "stream": true
-}</div>
-<p>You can rent this roof from a provider, or build it with open-source engines such as vLLM, SGLang or TensorRT-LLM on your own GPUs. That decision trades control and data residency against operational load. Either way, the garden side of the blueprint only ever sees this contract.</p>` }
-    ]
-  }]
-},
-{
-  title: 'Context is the program', side: 'the context', color: 'var(--accent)', where: 'Blueprint: the garden',
-  blurb: 'System prompts, roles, the window, structured outputs. Same model, different behaviour.',
+  title: 'Shaping the request', side: 'the context', color: 'var(--accent)',
+  blurb: 'System prompts, history, the window and structured output. The same model becomes a different program.',
   lessons: [
   {
     id: 'context', title: 'Context is the program', sub: 'System prompts, roles and the window', short: 'the context window',
-    trail: ['The whole system', 'The context', 'Context window'], hl: ['s-sys', 's-hist', 's-user'],
+    need: 'Make the same model behave like your product, and hold a conversation even though it remembers nothing.',
+    trail: ['Your system', 'Context', 'Context window'], hl: ['s-sys', 's-hist', 's-user'],
     added: 'A context window: system prompt, history and the user message',
     recap: 'The same weights behave like different programs depending on context. Chat is an illusion built by re-sending history, and the window is a hard, expensive budget.',
     steps: [
@@ -330,7 +152,8 @@ const COURSE = { units: [
   },
   {
     id: 'steering', title: 'Steering the output', sub: 'Few-shot, structured output and reasoning', short: 'the output schema',
-    trail: ['The whole system', 'The context', 'Output schema'], hl: ['s-schema', 'head'],
+    need: 'Your code has to parse the answer, every single time.',
+    trail: ['Your system', 'Context', 'Output schema'], hl: ['s-schema', 'head'],
     added: 'An output schema that constrains which tokens can be sampled',
     recap: 'Examples teach format and edge cases. Constrained decoding masks invalid tokens so output always parses. Reasoning tokens trade latency for accuracy on multi-step problems.',
     steps: [
@@ -364,16 +187,17 @@ const COURSE = { units: [
   }]
 },
 {
-  title: 'Knowledge', side: 'the context', color: 'var(--accent)', where: 'Blueprint: the garden shed',
-  blurb: 'Fine-tuning versus retrieval, the RAG pipeline, hybrid search, reranking and agentic RAG.',
+  title: 'Your own knowledge', side: 'retrieval', color: 'var(--accent)',
+  blurb: 'The model does not know your documents. Fetch the right passages into the context: RAG, hybrid search and reranking.',
   lessons: [
   {
     id: 'knowledge', title: 'Fine-tune or retrieve?', sub: 'Where knowledge should live', short: 'the knowledge store',
-    trail: ['The whole system', 'The context', 'Knowledge store'], hl: ['know'],
+    need: 'The model does not know your documents, your policies, or anything that changed after it was trained.',
+    trail: ['Your system', 'Context', 'Knowledge store'], hl: ['know'],
     added: 'A knowledge store beside the context window',
     recap: 'Knowledge can live in weights, in the prompt, or in an external store fetched into the prompt. Retrieval-augmented generation handles large, changing or private knowledge.',
     steps: [
-      { kind: 'learn', title: 'Three homes for knowledge',
+      { kind: 'learn', title: 'Three places for knowledge',
         body: `<p>Every fact your system uses has to live somewhere.</p>
 <div class="cards3">
 <div class="mini-card"><b>In the weights</b><span>Learned in training. Free at query time, but slow to change, hard to cite, and impossible to scope per user.</span></div>
@@ -397,7 +221,8 @@ const COURSE = { units: [
   },
   {
     id: 'retrieval', title: 'Retrieval, hands on', sub: 'Chunking, embeddings, BM25 and hybrid search', short: 'retrieved chunks',
-    trail: ['The whole system', 'The context', 'Knowledge store', 'Retrieval'], hl: ['know', 's-ret'],
+    need: 'Find the few passages that answer this question among thousands of documents.',
+    trail: ['Your system', 'Context', 'Knowledge store', 'Retrieval'], hl: ['know', 's-ret'],
     added: 'Retrieved chunks flowing from the store into the context',
     recap: 'Documents are chunked and indexed. Dense search matches meaning, sparse search matches exact terms, and hybrid search fuses both. Top-k decides how much reaches the model.',
     steps: [
@@ -424,7 +249,8 @@ const COURSE = { units: [
   },
   {
     id: 'advanced-rag', title: 'Advanced retrieval', sub: 'Reranking, query rewriting and agentic RAG', short: 'rerank and rewrite',
-    trail: ['The whole system', 'The context', 'Knowledge store', 'Advanced retrieval'], hl: ['rag-adv', 'know'],
+    need: 'Retrieval misses vague follow-ups, exact codes and questions that span several documents.',
+    trail: ['Your system', 'Context', 'Knowledge store', 'Advanced retrieval'], hl: ['rag-adv', 'know'],
     added: 'Rerankers, query rewriting and agentic retrieval',
     recap: 'Retrieve wide, rerank narrow. Rewrite vague follow-ups into standalone questions. Let an agent decide when and what to search when one shot is not enough. Evaluate retrieval separately from generation.',
     steps: [
@@ -455,12 +281,13 @@ const COURSE = { units: [
   }]
 },
 {
-  title: 'Hands', side: 'the context', color: 'var(--accent)', where: 'Blueprint: tools in the garden',
-  blurb: 'Tool calling and MCP. How a text predictor reads files, queries APIs and runs code.',
+  title: 'Taking action', side: 'tools', color: 'var(--accent)',
+  blurb: 'Let the model ask your code to look things up and act, and plug into any service through MCP.',
   lessons: [
   {
     id: 'tools', title: 'Tool calling', sub: 'Letting the model ask your code to act', short: 'tools',
-    trail: ['The whole system', 'The context', 'Tools'], hl: ['tools', 's-tooldef', 's-toolres'],
+    need: 'Answers are not enough: look up live data and take actions in other systems.',
+    trail: ['Your system', 'Context', 'Tools'], hl: ['tools', 's-tooldef', 's-toolres'],
     added: 'Tools, with their definitions and results in the context',
     recap: 'The model emits a structured request; your code executes it and appends the result; the model continues. Good tools have clear descriptions, tight schemas and concise results.',
     steps: [
@@ -495,7 +322,8 @@ const COURSE = { units: [
   },
   {
     id: 'mcp', title: 'MCP: a plug for every tool', sub: 'Hosts, clients, servers and the protocol', short: 'MCP servers',
-    trail: ['The whole system', 'The context', 'Tools', 'MCP servers'], hl: ['mcp', 'tools'],
+    need: 'Every AI app needs the same integrations: files, calendars, databases, issue trackers.',
+    trail: ['Your system', 'Context', 'Tools', 'MCP servers'], hl: ['mcp', 'tools'],
     added: 'MCP servers plugged into the tools layer',
     recap: 'The Model Context Protocol standardises how AI applications discover and call tools, read resources and use prompt templates. It turns N × M custom integrations into N + M, and every server is a trust decision.',
     steps: [
@@ -529,13 +357,14 @@ const COURSE = { units: [
   }]
 },
 {
-  title: 'The harness', side: 'agents', color: 'var(--accent)', where: 'Blueprint: the loop around the garden',
-  blurb: 'Agent loops, context engineering, memory, skills and multi-agent systems.',
+  title: 'Agents', side: 'orchestration', color: 'var(--accent)',
+  blurb: 'Put the model and its tools in a loop, keep its context sharp over long runs, and split broad work across sub-agents.',
   lessons: [
   {
-    id: 'agent-loop', title: 'The agent loop', sub: 'Model + tools + a loop = an agent', short: 'the harness',
-    trail: ['The whole system', 'The context', 'Harness'], hl: ['harness'],
-    added: 'A harness wrapping the context in an agent loop',
+    id: 'agent-loop', title: 'The agent loop', sub: 'Model + tools + a loop = an agent', short: 'the agent loop',
+    need: 'Some tasks take many steps, and only the model can decide what the next step should be.',
+    trail: ['Your system', 'Orchestration', 'Agent loop'], hl: ['harness'],
+    added: 'An agent loop (the harness) in the orchestration layer',
     recap: 'An agent is a model calling tools in a loop until it decides it is done. The harness owns the loop, tool execution, permissions, context assembly, limits and logging.',
     steps: [
       { kind: 'learn', title: 'An agent is a loop',
@@ -570,7 +399,8 @@ const COURSE = { units: [
   },
   {
     id: 'context-eng', title: 'Context engineering', sub: 'Keeping a long-running agent sharp', short: 'memory and skills',
-    trail: ['The whole system', 'The context', 'Harness', 'Memory and skills'], hl: ['mem', 'harness'],
+    need: 'Long runs drown in stale tool output and lose track of the goal.',
+    trail: ['Your system', 'Orchestration', 'Memory and skills'], hl: ['mem', 'harness'],
     added: 'Memory and on-demand skills kept outside the window',
     recap: 'Long agent runs fill the window with stale tool output. Clear old results, compact history, keep notes in memory files and load skills progressively, so every call sees a small, relevant context.',
     steps: [
@@ -604,7 +434,8 @@ const COURSE = { units: [
   },
   {
     id: 'multi-agent', title: 'Many models, one answer', sub: 'Orchestrators, sub-agents and routing', short: 'sub-agents',
-    trail: ['The whole system', 'The context', 'Harness', 'Sub-agents'], hl: ['sub', 'harness'],
+    need: 'Broad tasks are too big, and too slow, for a single context.',
+    trail: ['Your system', 'Orchestration', 'Sub-agents'], hl: ['sub', 'harness'],
     added: 'Sub-agents, each with its own clean context',
     recap: 'Multi-agent systems split work across model calls with isolated contexts. They buy parallelism and focus at the price of more tokens and coordination. Routing sends each task to the cheapest model that can do it.',
     steps: [
@@ -637,14 +468,210 @@ const COURSE = { units: [
   }]
 },
 {
-  title: 'Keeping it standing', side: 'production', color: 'var(--accent)', where: 'Blueprint: the inspection band',
-  blurb: 'Evals, tracing, guardrails and cost. What separates a demo from a product.',
+  title: 'Inside the model', side: 'the model', color: 'var(--accent)',
+  blurb: 'Why long prompts cost more, why details get lost, and where behaviour comes from: attention and training.',
   lessons: [
   {
-    id: 'production', title: 'Keeping the building standing', sub: 'Evals, guardrails, tracing and cost', short: 'evals and tracing',
-    trail: ['The whole system', 'Evals, guardrails, tracing'], hl: ['evals'],
-    added: 'An inspection band: evals, guardrails, tracing and cost control',
-    doneTitle: 'The blueprint is complete.',
+    id: 'attention', title: 'Attention', sub: 'How tokens read each other', short: 'transformer blocks',
+    need: 'Long prompts cost more than expected, and details in the middle get missed. Open the model to see why.',
+    trail: ['Your system', 'Model', 'Transformer blocks', 'Attention'], hl: ['tf'],
+    added: 'N stacked transformer blocks of attention and MLP',
+    recap: 'Attention lets each token pull information from earlier tokens, weighted by relevance. MLPs transform each token on its own. Stacking dozens of these blocks turns embeddings into a prediction.',
+    steps: [
+      { kind: 'learn', title: 'Each token asks a question',
+        body: `<p>The model you have been calling since lesson 1 is a stack of dozens of transformer blocks. Inside each block, every token produces three vectors: a <span class="k">query</span> (what am I looking for?), a <span class="k">key</span> (what do I contain?) and a <span class="k">value</span> (what do I hand over if chosen?). A token compares its query with every earlier key, softmaxes the scores into weights, and takes a weighted average of the values.</p>
+\\[ \\operatorname{Attention}(Q,K,V) = \\operatorname{softmax}\\left( \\frac{QK^\\top}{\\sqrt{d}} \\right) V \\]
+<p>Click a word to see where it looks. Then change the last word and watch what <em>it</em> refers to.</p>`,
+        widget: { type: 'attention' } },
+      { kind: 'learn', title: 'No peeking at the future',
+        body: `<p>During training the model sees whole sentences, yet it must learn to predict each token from the ones before it. A <span class="k">causal mask</span> enforces this: token <em>i</em> may only attend to positions 1 through <em>i</em>. Click a row to see what one token is allowed to read.</p>`,
+        widget: { type: 'causalMask' } },
+      { kind: 'quiz', title: 'Can token 5 see token 7?',
+        body: '<p>In a decoder-only model like GPT, Claude or Llama, can the 5th token of a prompt attend to the 7th?</p>',
+        options: ['Yes, the whole prompt is visible to every token', 'No, the causal mask hides later positions from earlier ones', 'Only in the last layer', 'Only when temperature is above 1'],
+        answer: 1,
+        why: { 0: 'Prefill computes all positions in parallel, but each position still uses the mask.', 2: 'The mask applies in every layer.', 3: 'Temperature acts on the output distribution, not on attention.' },
+        explain: 'Every layer applies the same causal mask. This is what makes the KV cache possible later: the representation of token 5 never changes when token 7 arrives, so it can be computed once and stored.' },
+      { kind: 'learn', title: 'Attention mixes, the MLP transforms',
+        body: `<p>A transformer block has two halves. <span class="k">Attention</span> moves information <em>between</em> tokens. The <span class="k">MLP</span> (feed-forward network) transforms each token <em>on its own</em> and holds roughly two thirds of the parameters; much factual association lives there.</p>
+<p>Both halves add their output onto a running vector per token, the <span class="k">residual stream</span>. A model stacks 30 to over 100 such blocks. Attention is also split into many <span class="k">heads</span> that each learn a different kind of relation, such as syntax, coreference or copying.</p>
+<div class="cards3">
+<div class="mini-card"><b>Embeddings</b><span>One vector per token enters the stack.</span></div>
+<div class="mini-card"><b>× N blocks</b><span>Attention, then MLP, each added to the residual stream.</span></div>
+<div class="mini-card"><b>Output head</b><span>The last vector becomes logits over the vocabulary. You built this in lesson 2.</span></div>
+</div>` },
+      { kind: 'quiz', title: 'Where the cost hides',
+        body: '<p>Attention compares every token with every earlier token. If you double the length of a prompt, the attention-score work for prefill grows by roughly:</p>',
+        options: ['× 2', '× 4', 'It stays the same', '× 8'],
+        answer: 1,
+        why: { 0: 'The MLP work grows × 2, but attention compares pairs of tokens.', 2: 'More tokens always means more pairs to compare.', 3: 'Pairs grow with the square of length, not the cube.' },
+        explain: 'Pairs of tokens grow with n², so doubling n quadruples the score matrix. This quadratic term is why long contexts are expensive and why so much research targets efficient attention.' }
+    ]
+  },
+  {
+    id: 'training', title: 'Where the weights come from', sub: 'Pretraining, fine-tuning and reinforcement learning', short: 'the weights',
+    need: 'Prompting is not enough: you need a format, a domain or a language the model does not have.',
+    trail: ['Your system', 'Model', 'Weights'], hl: ['weights'],
+    added: 'Weights shaped by pretraining, SFT and RL',
+    recap: 'Pretraining teaches prediction from trillions of tokens. Supervised fine-tuning teaches the assistant format. Reinforcement learning sharpens helpfulness, safety and reasoning. Facts that change belong in context, not weights.',
+    steps: [
+      { kind: 'learn', title: 'Be the model for a minute',
+        body: `<p><span class="k">Pretraining</span> has one objective: predict the next token across trillions of tokens of text and code. The loss for each prediction is \\(-\\ln p(\\text{correct token})\\). Confident and right costs almost nothing. Confident and wrong costs a lot.</p>
+<p>Play three rounds. Your choice is the model's sample; the loss shows what gradient descent would push against.</p>`,
+        widget: { type: 'nextWordGame' }, gate: true, gateText: 'Play three rounds to continue' },
+      { kind: 'learn', title: 'From autocomplete to assistant',
+        body: `<p>A pretrained <span class="k">base model</span> is a superb autocomplete with no idea it is supposed to help anyone. Post-training turns it into an assistant in stages.</p>
+<p><span class="k">Supervised fine-tuning (SFT)</span> trains on curated conversations, so the model learns the chat format and the habit of answering. <span class="k">Reinforcement learning</span> then optimises against preference judgments (RLHF, DPO) and, increasingly, verifiable rewards such as passing tests or reaching a correct maths answer, which is how reasoning models learn to think at length.</p>`,
+        widget: { type: 'trainingStages' } },
+      { kind: 'quiz', title: 'The policy changed this morning',
+        body: '<p>Your refund policy changed this morning. What is the right way to have the assistant follow the new policy today?</p>',
+        options: ['Pretrain a new model on the updated policy', 'Fine-tune the current model on examples of the new policy', 'Put the current policy text into the context, through the system prompt or retrieval', 'Lower the temperature so it guesses less'],
+        answer: 2,
+        why: { 0: 'Pretraining costs months and millions of dollars, for one paragraph of changed text.', 1: 'Fine-tuning is slow to iterate, learns facts unreliably, and the old policy may still leak out. Next month you would have to do it again.', 3: 'Temperature cannot inject knowledge the model does not have.' },
+        explain: 'Facts that change belong in the context, where you can edit them instantly and cite them. Fine-tuning earns its cost when you need a behaviour: a format, a tone, a skill or a language the base model lacks.' },
+      { kind: 'learn', title: 'Fine-tuning without retraining everything',
+        body: `<p>Full fine-tuning updates every weight and needs memory for gradients and optimiser state several times the model's size. <span class="k">LoRA</span> freezes the original weights and learns small low-rank matrices beside them, often well under one percent of the parameter count. Adapters can be swapped per customer or task at serving time.</p>
+<div class="cards3">
+<div class="mini-card"><b>Worth fine-tuning</b><span>A strict output format at scale, a domain's jargon, a low-resource language or dialect, distilling a big model into a small cheap one.</span></div>
+<div class="mini-card"><b>Not worth it</b><span>Fresh facts, per-user data, anything you can solve with a better prompt or retrieval.</span></div>
+<div class="mini-card"><b>Continued pretraining</b><span>Raw text in a new language or domain, before SFT, when the base model barely knows it.</span></div>
+</div>` },
+      { kind: 'quiz', title: 'What does LoRA train?',
+        body: '<p>When you fine-tune with LoRA, which parameters change?</p>',
+        options: ['Every weight in the model, at a lower learning rate', 'Only the embedding table', 'Small low-rank adapter matrices added beside frozen weights', 'Only the tokenizer vocabulary'],
+        answer: 2,
+        why: { 0: 'That describes full fine-tuning, which LoRA exists to avoid.', 1: 'Adapters usually attach to attention and MLP projections, not the embedding table.', 3: 'The tokenizer is not a trained matrix in this sense.' },
+        explain: 'LoRA adds a product of two thin matrices to selected weight matrices and trains only those. The base stays untouched, so one served model can carry many adapters.' }
+    ]
+  }]
+},
+{
+  title: 'Running it yourself', side: 'compute and serving', color: 'var(--accent)',
+  blurb: 'When cost, privacy or scale push you to host a model: GPUs, the KV cache, and the serving layer behind the API.',
+  lessons: [
+  {
+    id: 'gpus', title: 'Hosting the weights', sub: 'GPUs, memory and precision', short: 'GPUs',
+    need: 'Cost, privacy or data residency push you to run an open model on hardware you control.',
+    trail: ['Your system', 'Compute', 'GPUs'], hl: ['gpu'],
+    added: 'GPUs holding the weights in high-bandwidth memory',
+    recap: 'Weights need parameters × bytes of GPU memory. Decoding reads every active weight for each token, so speed is bounded by memory bandwidth. Quantization and parallelism are the levers.',
+    steps: [
+      { kind: 'learn', title: 'Weights are numbers in memory',
+        body: `<p>A model with <em>N</em> parameters stored at <em>b</em> bytes each needs <span class="k">N × b bytes</span> of GPU memory before it answers a single question. That memory is <span class="k">HBM</span>, the high-bandwidth memory stacked beside the GPU chip.</p>
+<p>Use the calculator to size a deployment. The speed estimate assumes one user at a time, where every token requires reading all weights once.</p>`,
+        widget: { type: 'vramCalc' } },
+      { kind: 'quiz', title: 'Fit a 70B model',
+        body: '<p>A 70-billion-parameter model in BF16 (2 bytes per parameter). How many 80 GB GPUs do you need <em>just for the weights</em>?</p>',
+        options: ['1', '2', '4', '8'],
+        answer: 1,
+        why: { 0: '70 × 10⁹ × 2 bytes = 140 GB. That is far more than one 80 GB card.', 2: 'Four is a sensible deployment because the KV cache needs room, but the weights alone fit in two.', 3: 'Eight cards would hold the weights four times over.' },
+        explain: '140 GB fits in two 80 GB cards, with almost nothing left for the KV cache you will meet next lesson. Real deployments of this size often use four cards, or quantize to FP8 so the weights fit on one.' },
+      { kind: 'learn', title: 'Speed is a memory problem',
+        body: `<p>During decode, generating one token for one user requires streaming every active weight from HBM through the compute units. The arithmetic is cheap; the reading is not. So a single stream's speed is roughly <span class="k">memory bandwidth ÷ model size in bytes</span>.</p>
+<p>This is why <span class="k">quantization</span> matters twice: storing weights in FP8 or INT4 cuts memory and also cuts the bytes read per token, so decoding speeds up almost in proportion. The cost is a small, measurable quality loss, which grows at very low precision.</p>` },
+      { kind: 'learn', title: 'Splitting a model across GPUs',
+        body: `<p>When a model does not fit on one card, or one card is too slow, you split it.</p>
+<div class="cards3">
+<div class="mini-card"><b>Tensor parallel</b><span>Each weight matrix is sliced across GPUs in one server. Needs very fast links between cards.</span></div>
+<div class="mini-card"><b>Pipeline parallel</b><span>Different layers live on different GPUs or servers. Activations flow from stage to stage.</span></div>
+<div class="mini-card"><b>Expert parallel</b><span>In mixture-of-experts models, different experts live on different GPUs.</span></div>
+</div>
+<p style="margin-top:14px">A <span class="k">mixture-of-experts (MoE)</span> model routes each token through only a few of its many expert MLPs. It has a large <em>total</em> parameter count but a small <em>active</em> count per token.</p>` },
+      { kind: 'quiz', title: 'What does sparsity buy?',
+        body: '<p>An MoE model has 400B total parameters but activates about 17B per token. Compared with a dense 400B model, what changes?</p>',
+        options: ['It needs about 17B parameters of memory', 'Compute and bytes read per token look like a 17B model, but all 400B must still sit in memory', 'Nothing changes, the parameter count is what matters', 'It no longer needs GPUs'],
+        answer: 1,
+        why: { 0: 'Any token might route to any expert, so every expert must be loaded.', 2: 'Active parameters drive per-token compute and bandwidth, which is the whole point of the design.', 3: 'It still runs matrix multiplies on accelerators.' },
+        explain: 'MoE trades memory for speed: you pay to store every expert, but each token only touches a few, so decoding is fast for the model\'s total size.' }
+    ]
+  },
+  {
+    id: 'kv-cache', title: 'The KV cache', sub: 'Why long context costs memory', short: 'the KV cache',
+    need: 'Long contexts and many concurrent users run the GPUs out of memory.',
+    trail: ['Your system', 'Compute', 'KV cache'], hl: ['kv'],
+    added: 'A KV cache sharing GPU memory with the weights',
+    recap: 'Keys and values of past tokens are cached so decode does linear work per token. The cache grows with context length × concurrent users and competes with the weights for memory.',
+    steps: [
+      { kind: 'learn', title: 'Do not recompute the past',
+        body: `<p>When token 501 is generated, attention needs the keys and values of tokens 1 to 500. Because of the causal mask, those never change. So the server computes them once and stores them: the <span class="k">KV cache</span>. Each new token then only computes its own query, key and value.</p>`,
+        widget: { type: 'kvReuse' } },
+      { kind: 'learn', title: 'How big is the cache?',
+        body: `<p>Per token, every layer stores one key and one value vector for each KV head:</p>
+\\[ \\text{bytes per token} = 2 \\times \\text{layers} \\times \\text{kv heads} \\times \\text{head dim} \\times \\text{bytes per value} \\]
+<p>The calculator uses the shape of a typical 70B model: 80 layers, 8 KV heads of dimension 128, stored in BF16. Push the context length and the number of concurrent users until the GPUs run out.</p>`,
+        widget: { type: 'kvCalc' } },
+      { kind: 'quiz', title: 'One long conversation',
+        body: '<p>At 320 KiB per token, roughly how much memory does the cache need for one user with a 128,000-token context?</p>',
+        options: ['About 400 MB', 'About 4 GB', 'About 40 GB', 'About 400 GB'],
+        answer: 2,
+        why: { 0: '131,072 tokens × 327,680 bytes is in the tens of gigabytes.', 1: 'Off by a factor of ten. Multiply 131,072 by 327,680.', 3: 'Off by a factor of ten in the other direction.' },
+        explain: '131,072 × 327,680 bytes ≈ 43 GB, about 40 GiB. One long conversation can need a quarter of the memory the weights do, which is why long-context requests are priced higher and why servers cap concurrent long sequences.' },
+      { kind: 'learn', title: 'Tricks that make room',
+        body: `<div class="cards3">
+<div class="mini-card"><b>Grouped-query attention</b><span>Many query heads share a few KV heads. Eight KV heads instead of 64 shrinks the cache eight-fold.</span></div>
+<div class="mini-card"><b>Paged attention</b><span>Cache stored in fixed-size blocks like virtual memory pages, so memory is not wasted on fragmentation.</span></div>
+<div class="mini-card"><b>Prefix caching</b><span>Requests that start with an identical prefix reuse its cache. Providers sell this as prompt caching.</span></div>
+<div class="mini-card"><b>Cache quantization</b><span>Store keys and values in FP8 to halve the footprint.</span></div>
+</div>` },
+      { kind: 'quiz', title: 'Make prompt caching work for you',
+        body: '<p>Every request in your app sends the same 6,000-token system prompt and tool list, followed by a short user message. Which layout lets prefix caching save the most?</p>',
+        options: ['Put the user message first so it is processed fastest', 'Keep the long stable part identical and first, and put changing content at the end', 'Shuffle the order so no single part dominates', 'Insert the current timestamp at the very top'],
+        answer: 1,
+        why: { 0: 'A cache hit requires an identical prefix. Starting with the changing message breaks the match on token one.', 2: 'Any change early in the sequence invalidates everything after it.', 3: 'A timestamp at the top changes every request, so nothing after it can be reused.' },
+        explain: 'The cache is keyed on an exact prefix. Stable content first and volatile content last can cut prefill time and input cost dramatically. It is also why well-built agent harnesses keep stable content first and append new content at the end.' }
+    ]
+  },
+  {
+    id: 'serving', title: 'The serving layer', sub: 'Turning a GPU box into a service', short: 'the serving layer',
+    need: 'One GPU server must answer many users at once, quickly, behind the same API your app already calls.',
+    trail: ['Your system', 'Model API', 'Gateway and serving'], hl: ['gateway', 'api'],
+    added: 'A gateway and serving stack behind the API: routing, continuous batching, streaming',
+    recap: 'A serving stack queues requests, batches them so one pass over the weights serves many users, separates prefill from decode, and streams tokens back over a stateless API.',
+    steps: [
+      { kind: 'learn', title: 'Follow one request',
+        body: '<p>Step through what happens between pressing Enter and seeing the first word.</p>',
+        widget: { type: 'flow', id: 'journey' }, gate: true, gateText: 'Step through the whole journey to continue' },
+      { kind: 'learn', title: 'Batching: one read, many users',
+        body: `<p>Decoding one stream leaves the GPU's arithmetic units mostly idle while it waits on memory. Reading the weights once and applying them to many sequences at the same time is almost free, so servers <span class="k">batch</span>.</p>
+<p>Static batching waits for the slowest sequence in a batch before admitting new work. <span class="k">Continuous batching</span> swaps finished sequences out and new ones in at every step. Compare the two schedules.</p>`,
+        widget: { type: 'batching' } },
+      { kind: 'learn', title: 'The numbers users feel',
+        body: `<p>Two latencies matter. <span class="k">Time to first token (TTFT)</span> covers queueing plus prefill, and grows with prompt length. <span class="k">Time per output token (TPOT)</span> is the decode rhythm users watch stream by. Total time is approximately:</p>
+\\[ T_{\\text{total}} \\approx \\text{TTFT} + n_{\\text{out}} \\times \\text{TPOT} \\]`,
+        widget: { type: 'latencyCalc' } },
+      { kind: 'quiz', title: 'Diagnose the complaint',
+        body: '<p>Users say: "It takes four seconds before anything appears, then the text flows quickly." Which number is bad, and where would you look?</p>',
+        options: ['TPOT: decode is too slow, use a smaller model', 'TTFT: look at queueing and prefill, such as very long prompts or an overloaded scheduler', 'Throughput: the GPU is idle', 'Temperature: it is set too high'],
+        answer: 1,
+        why: { 0: 'Fast streaming means decode is healthy.', 2: 'Throughput is a server-wide figure; the symptom here is the wait before the first token.', 3: 'Temperature affects which tokens are chosen, not when they arrive.' },
+        explain: 'A slow start with fast streaming points to TTFT. Typical fixes: trim or cache the prompt prefix, add capacity or priority to the queue, or route long prompts to dedicated prefill workers.' },
+      { kind: 'learn', title: 'The contract at the wire',
+        body: `<p>Everything in this lesson sits behind the API you have been calling since lesson 1: a simple, <span class="k">stateless</span> HTTP contract. You send the full list of messages; you get tokens back, usually streamed as server-sent events.</p>
+<div class="mono-box" style="margin:12px 0"><span class="dim">POST /v1/messages</span>
+{
+  "model": "some-model",
+  "max_tokens": 400,
+  "temperature": 0.2,
+  "system": "You are a concise support assistant.",
+  "messages": [
+    { "role": "user", "content": "Where is my order?" }
+  ],
+  "stream": true
+}</div>
+<p>You can rent this layer from a provider, or build it with open-source engines such as vLLM, SGLang or TensorRT-LLM on your own GPUs. That decision trades control and data residency against operational load. Either way, every layer above the API only ever sees this contract, which is why you can switch models or providers without rewriting your application.</p>` }
+    ]
+  }]
+},
+{
+  title: 'Production', side: 'across every layer', color: 'var(--accent)',
+  blurb: 'Evals, guardrails, tracing and cost. What separates a demo from a product, and the whole system mapped onto real products.',
+  lessons: [
+  {
+    id: 'production', title: 'Running it in production', sub: 'Evals, guardrails, tracing and cost', short: 'evals and tracing',
+    need: 'Real users and real money: the system must stay correct, safe and affordable while it keeps changing.',
+    trail: ['Your system', 'Across every layer'], hl: ['evals'],
+    added: 'Evals, guardrails, tracing and cost control across every layer',
+    doneTitle: 'You can build the whole system.',
     recap: 'Evaluate every change against a test set, trace every call, put deterministic guardrails at the edges, and control cost with caching, routing and limits. You now have the full map of the field.',
     steps: [
       { kind: 'learn', title: 'You cannot improve what you do not measure',
@@ -652,7 +679,7 @@ const COURSE = { units: [
 <p>Switch the prompt version and watch a regression appear.</p>`,
         widget: { type: 'evalRun' } },
       { kind: 'learn', title: 'Trace every call',
-        body: `<p>A <span class="k">trace</span> records one user request as a tree of spans: retrieval, each model call, each tool call, with timing, tokens and cost. When something is slow, wrong or expensive, the trace tells you which block of the blueprint to open. Click a span.</p>`,
+        body: `<p>A <span class="k">trace</span> records one user request as a tree of spans: retrieval, each model call, each tool call, with timing, tokens and cost. When something is slow, wrong or expensive, the trace tells you which block of the system to open. Click a span.</p>`,
         widget: { type: 'trace' } },
       { kind: 'quiz', title: 'Read the trace',
         body: '<p>In the trace above, which single span contributes the most latency to the request?</p>',
@@ -668,10 +695,10 @@ const COURSE = { units: [
 <div class="mini-card"><b>Cost levers</b><span>Prompt caching, model routing, max_tokens, batch APIs for offline work, trimming tool output.</span></div>
 <div class="mini-card"><b>Online monitoring</b><span>Sample live traffic into your eval set; watch thumbs-down rates and drift.</span></div>
 </div>` },
-      { kind: 'learn', title: 'The whole blueprint',
-        body: `<p>Look how far the two boxes have come. The house: tokenizer, transformer blocks and output head, weights from pretraining and post-training, GPUs underneath, a KV cache in their memory, and a serving roof. The garden: a context window with a system prompt, schema, history, retrieved chunks and tool traffic, fed by a knowledge store and tools behind MCP, wrapped by a harness with memory, skills and sub-agents, all watched by evals and traces.</p>
-<p>Every new technique you read about will land in one of these blocks. Hover any block to recall its story, and click it to revisit its lesson later from the course page.</p>`,
-        widget: { type: 'bpPreview', full: true } }
+      { kind: 'learn', title: 'One diagram, real products',
+        body: `<p>Look at what one request grew into. Your app at the top; an agent loop with memory and sub-agents; a context assembled from instructions, history, retrieved knowledge and tool traffic; a stateless API with a serving stack behind it; the model, from tokenizer to sampler; GPUs and their KV cache; and evals, guardrails and traces across every layer.</p>
+<p>Every AI product is this diagram with different blocks switched on. Pick one below and see which layers it relies on. Every new technique you read about lands in one of these blocks, and when something is slow, wrong or expensive, the trace tells you which one to open.</p>`,
+        widget: { type: 'productsMap' } }
     ]
   }]
 }

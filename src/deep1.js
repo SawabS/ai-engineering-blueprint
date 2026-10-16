@@ -1,11 +1,11 @@
-/* ================= "Go deeper" content, units 1 to 4 =================
+/* ================= "Go deeper" content, part 1 (keyed by lesson id; numbers are lesson positions) =================
    Keyed by lesson id, then by step index. Every string is String.raw so TeX backslashes survive.
    Fields: title, math (HTML with \( \) and \[ \]), code [{lang,title,src}], codeNote, tools [{n,d,u,tag}], refs [{t,s,u}]. */
 const R = String.raw;
 const CLAUDE_DOCS = 'https://platform.claude.com/docs/en';
 const DEEP = {};
 
-/* ---------- 1. Two boxes ---------- */
+/* ---------- 1. Your first request ---------- */
 DEEP['two-boxes'] = {
   2: {
     title: 'The model, written properly',
@@ -129,7 +129,7 @@ def sample(logits, T=0.8, top_k=None, top_p=None):
   },
   3: {
     title: 'The decoding loop in ten lines',
-    codeNote: 'This is what <code>generate()</code> does under the hood, minus the KV cache you will meet in lesson 7. Each pass re-reads the whole sequence, which is why the cache matters.',
+    codeNote: 'This is what <code>generate()</code> does under the hood, minus the KV cache you will meet in lesson 17. Each pass re-reads the whole sequence, which is why the cache matters.',
     code: [{ lang: 'python', title: 'Autoregressive sampling by hand (PyTorch + Transformers)', src: R`
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -281,7 +281,7 @@ print(cos(vec(" king"), vec(" banana"), dim=0).item())` }],
   }
 };
 
-/* ---------- 4. Attention ---------- */
+/* ---------- 14. Attention ---------- */
 DEEP['attention'] = {
   0: {
     title: 'Scaled dot-product attention, step by step',
@@ -351,7 +351,7 @@ out = F.scaled_dot_product_attention(q, k, v, is_causal=True)` }
   }
 };
 
-/* ---------- 5. Training ---------- */
+/* ---------- 15. Training ---------- */
 DEEP['training'] = {
   0: {
     title: 'The loss, perplexity and compute',
@@ -385,7 +385,7 @@ optimizer.step(); optimizer.zero_grad()` }],
     math: R`<h4>Supervised fine-tuning</h4>
 <p>Same cross-entropy as pretraining, but only on the assistant's tokens. Prompt tokens are masked out of the loss so the model learns to answer, not to imitate users:</p>
 \[ \mathcal{L}_{\text{SFT}} = -\sum_{t \in \text{assistant}} \log p_\theta(y_t \mid x, y_{<t}) \]
-<p>The conversations are rendered with the model's <b>chat template</b>, the exact special tokens that mark system, user and assistant turns (lesson 9 shows one). Training and serving must use the same template.</p>
+<p>The conversations are rendered with the model's <b>chat template</b>, the exact special tokens that mark system, user and assistant turns (lesson 4 shows one). Training and serving must use the same template.</p>
 <h4>Direct Preference Optimisation (DPO)</h4>
 <p>Given a prompt \(x\), a preferred answer \(y_w\) and a rejected one \(y_l\), DPO raises the likelihood ratio of \(y_w\) over \(y_l\) relative to a frozen reference model \(\pi_{\text{ref}}\):</p>
 \[ \mathcal{L}_{\text{DPO}} = -\log \sigma\left( \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} \right) \]
@@ -445,7 +445,7 @@ trainer.save_model("qwen-lora")      # saves only the small adapter weights` }],
   }
 };
 
-/* ---------- 6. GPUs ---------- */
+/* ---------- 16. GPUs ---------- */
 DEEP['gpus'] = {
   0: {
     title: 'Sizing GPU memory',
@@ -476,7 +476,7 @@ python -c "import torch; print(torch.cuda.mem_get_info())"   # (free, total) byt
     title: 'The bandwidth bound and quantization',
     math: R`<p>At batch size 1, every decoded token must stream all active weights from HBM once, so</p>
 \[ \text{tokens/s} \lesssim \frac{\text{memory bandwidth}}{N_{\text{active}} \times b} \]
-<p>A 70B model in FP8 on one H100 (3.35 TB/s): \(3.35 \times 10^{12} / 70 \times 10^{9} \approx 48\) tokens per second at best. An 8B model in BF16: about 210. Batching reuses each weight read across many sequences, which is why servers batch (lesson 8).</p>
+<p>A 70B model in FP8 on one H100 (3.35 TB/s): \(3.35 \times 10^{12} / 70 \times 10^{9} \approx 48\) tokens per second at best. An 8B model in BF16: about 210. Batching reuses each weight read across many sequences, which is why servers batch (lesson 18).</p>
 <h4>Arithmetic intensity</h4>
 <p>A kernel is memory-bound when its FLOPs per byte moved fall below the hardware ratio (about 300 FLOPs/byte for BF16 on H100). Decode at small batch does about 2 FLOPs per weight per token, far below that line; prefill on long prompts is compute-bound.</p>
 <h4>Quantization</h4>
@@ -534,7 +534,7 @@ vllm serve <model> --tensor-parallel-size 8 --pipeline-parallel-size 2` }],
   }
 };
 
-/* ---------- 7. KV cache ---------- */
+/* ---------- 17. KV cache ---------- */
 DEEP['kv-cache'] = {
   1: {
     title: 'The cache formula, worked',
@@ -607,7 +607,7 @@ print(resp.usage.cache_read_input_tokens, resp.usage.cache_creation_input_tokens
   }
 };
 
-/* ---------- 8. Serving ---------- */
+/* ---------- 18. Serving ---------- */
 DEEP['serving'] = {
   1: {
     title: 'Why batching is almost free',
@@ -645,7 +645,7 @@ vllm bench serve --model Qwen/Qwen2.5-7B-Instruct \
     ]
   },
   4: {
-    title: 'Build the roof yourself',
+    title: 'Build the serving layer yourself',
     codeNote: 'Most open engines expose an OpenAI-compatible API, so the same client code talks to vLLM, SGLang, Ollama or a gateway in front of several providers.',
     code: [
       { lang: 'bash', title: 'Start an OpenAI-compatible server', src: R`
@@ -679,7 +679,7 @@ for chunk in stream:                      # server-sent events, one delta per to
   }
 };
 
-/* ---------- 9. Context is the program ---------- */
+/* ---------- 4. Context is the program ---------- */
 DEEP['context'] = {
   0: {
     title: 'Chat templates: what the model really reads',
@@ -765,7 +765,7 @@ def trim(history, budget, count):
   }
 };
 
-/* ---------- 10. Steering ---------- */
+/* ---------- 5. Steering ---------- */
 DEEP['steering'] = {
   0: {
     title: 'Writing good few-shot examples',

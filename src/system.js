@@ -1,5 +1,5 @@
 /* ================= System explorer: drill-down views of the whole architecture =================
-   The root view is the blueprint itself. Every block opens a detailed view, and nodes inside views open
+   The root view is the layered architecture diagram itself. Every block opens a detailed view, and nodes inside views open
    further views, so learners can go as deep as they like and always climb back with the breadcrumb.
    Node: N(id, x, y, title, subtitle, category, { w, h, shape, go, l (lesson id), d (description),
          how [steps], num (key figure), tl [tool names or {n,u}] })
@@ -16,7 +16,7 @@ const SYSV = {};
 
 /* ---------- people, inputs and outputs ---------- */
 SYSV.inputs = {
-  title: 'Inputs and outputs', sub: 'Everything that talks to the system, and everything it sends back', from: 'you',
+  title: 'Inputs and outputs', sub: 'Everything that talks to the system, and everything it sends back', from: 'client',
   lanes: [{ x: 20, y: 70, w: 220, h: 550, t: 'INPUTS', cat: 'user' }, { x: 760, y: 70, w: 220, h: 550, t: 'OUTPUTS', cat: 'user' }],
   nodes: [
     N('chat', 52, 100, 'Chat UI', 'typed messages', 'user', { l: 'two-boxes', d: 'The familiar case: a person types in a web or mobile app. The app, not the person, sends requests to the model.' }),
@@ -47,9 +47,9 @@ SYSV.inputs = {
   ]
 };
 
-/* ---------- the model (house interior) ---------- */
+/* ---------- the model ---------- */
 SYSV.model = {
-  title: 'Inside the model', sub: 'From text to one next token, one forward pass', from: 'house',
+  title: 'Inside the model', sub: 'From text to one next token, one forward pass', from: 'model',
   lanes: [{ x: 20, y: 60, w: 960, h: 240, t: 'ONE FORWARD PASS', cat: 'model' }, { x: 20, y: 320, w: 960, h: 170, t: 'WHAT IT DEPENDS ON', cat: 'gpu' }],
   nodes: [
     N('text', 40, 110, 'Context text', 'all tokens of this request', 'ctx', { go: 'context', l: 'context', d: 'The assembled context: system prompt, history, retrieved text, tool traffic and the user message, rendered through the chat template.' }),
@@ -263,7 +263,7 @@ SYSV.kv = {
 
 /* ---------- serving layer ---------- */
 SYSV.serving = {
-  title: 'Serving layer', sub: 'How one request becomes streamed tokens on shared GPUs', from: 'roof',
+  title: 'Serving layer', sub: 'How one request becomes streamed tokens on shared GPUs', from: 'gateway',
   lanes: [{ x: 20, y: 60, w: 960, h: 270, t: 'REQUEST PATH', cat: 'serve' }, { x: 20, y: 350, w: 960, h: 140, t: 'SUPPORTING SERVICES', cat: 'serve' }, { x: 20, y: 510, w: 960, h: 115, t: 'HARDWARE', cat: 'gpu' }],
   nodes: [
     N('client', 40, 100, 'Client', 'your app or harness', 'user', { go: 'inputs', l: 'serving', d: 'Sends the full message list over HTTPS; the API is stateless.' }),
@@ -301,7 +301,7 @@ SYSV.serving = {
 
 /* ---------- context assembly ---------- */
 SYSV.context = {
-  title: 'Context assembly', sub: 'Everything the model will see on this call, built fresh every time', from: 'garden',
+  title: 'Context assembly', sub: 'Everything the model will see on this call, built fresh every time', from: 'context',
   lanes: [{ x: 20, y: 60, w: 300, h: 565, t: 'INGREDIENTS (STABLE FIRST)', cat: 'ctx' }, { x: 340, y: 60, w: 640, h: 565, t: 'BUILD AND CHECK', cat: 'ctx' }],
   nodes: [
     N('sys', 50, 95, 'System prompt', 'role, rules, format', 'ctx', { w: 240, h: 54, l: 'context', d: 'Standing instructions. Stable, so it goes first where prompt caching can reuse it.' }),
@@ -527,7 +527,7 @@ SYSV.agents = {
 
 /* ---------- production ---------- */
 SYSV.ops = {
-  title: 'Keeping it standing', sub: 'Guardrails at the edges, traces everywhere, evals on every change', from: 'evals',
+  title: 'Production operations', sub: 'Guardrails at the edges, traces everywhere, evals on every change', from: 'evals',
   lanes: [{ x: 20, y: 60, w: 960, h: 175, t: 'ONLINE: EVERY REQUEST', cat: 'ship' }, { x: 20, y: 255, w: 960, h: 175, t: 'OBSERVE', cat: 'serve' }, { x: 20, y: 450, w: 960, h: 175, t: 'IMPROVE: EVERY CHANGE', cat: 'agent' }],
   nodes: [
     N('in', 40, 110, 'Traffic', 'users, events, APIs', 'user', { go: 'inputs', d: 'Everything that reaches the system.' }),
@@ -557,10 +557,10 @@ SYSV.ops = {
   ]
 };
 
-/* Which view each root blueprint block opens. */
+/* Which view each block of the top-level diagram opens. */
 const ROOT_GO = {
-  house: 'model', garden: 'context', you: 'inputs', wire: 'serving', head: 'decode', tok: 'tokenizer', tf: 'block', weights: 'training', gpu: 'gpu', kv: 'kv',
-  roof: 'serving', 's-sys': 'context', 's-hist': 'context', 's-user': 'context', 's-schema': 'decode', know: 'rag', 's-ret': 'rag', 'rag-adv': 'rag',
+  model: 'model', context: 'context', client: 'inputs', api: 'serving', head: 'decode', tok: 'tokenizer', tf: 'block', weights: 'training', gpu: 'gpu', kv: 'kv',
+  gateway: 'serving', 's-sys': 'context', 's-hist': 'context', 's-user': 'context', 's-schema': 'decode', know: 'rag', 's-ret': 'rag', 'rag-adv': 'rag',
   tools: 'tools', 's-tooldef': 'tools', 's-toolres': 'tools', mcp: 'mcp', harness: 'harness', mem: 'memory', sub: 'agents', evals: 'ops'
 };
 

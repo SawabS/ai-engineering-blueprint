@@ -1,6 +1,6 @@
 /* ================= System explorer engine =================
    Renders SYSV views as SVG, drills in and out with a zoom transition, shows an inspector in the board
-   panel, plays each view's request flow, and searches every component. Works inside the blueprint board. */
+   panel, plays each view's request flow, and searches every component. Works inside the system map. */
 
 /* ---- rendering ---- */
 function sysColor(cat) { return (SYS_CAT[cat] || SYS_CAT.ext)[0]; }
@@ -79,7 +79,7 @@ function exNode(key) {
     const l = lessonForNode(key); const cat = CATS.find(c => c[3].includes(key));
     const catMap = { model: 'model', serving: 'serve', context: 'ctx', knowledge: 'know', tools: 'tool', agents: 'agent', production: 'ship' };
     const b = BOX[key] || [0, 0, 0, 0];
-    return { key, root: true, t: BPN[key].t, s: '', d: BPN[key].d, cat: key === 'you' ? 'user' : catMap[cat ? cat[0] : 'model'] || 'model', l: l.id, go: ROOT_GO[key], x: b[0], y: b[1], w: b[2], h: b[3] };
+    return { key, root: true, t: BPN[key].t, s: '', d: BPN[key].d, cat: key === 'client' ? 'user' : catMap[cat ? cat[0] : 'model'] || 'model', l: l.id, go: ROOT_GO[key], x: b[0], y: b[1], w: b[2], h: b[3] };
   }
   return null;
 }
@@ -164,7 +164,7 @@ function renderToolsBar() {
   if (B.view === 'root') {
     bar.append(
       h('button', { class: 'btn btn-accent btn-sm', 'data-sfx': 'none', onclick: () => startTour(), html: ICON.play + '<span class="t-long">Trace a request</span><span class="t-short">Trace</span>' }),
-      seg([['build', 'My build'], ['full', 'Full building']], B.mode, v => setBuildMode(v), 'Board view'));
+      seg([['build', 'My system'], ['full', 'Full system']], B.mode, v => setBuildMode(v), 'Board view'));
     return;
   }
   const crumbs = h('nav', { class: 'crumbs', 'aria-label': 'Where you are' });

@@ -34,18 +34,20 @@ const WIDGETS = {};
 WIDGETS.twoBoxes = (box, o, api) => {
   whead(box, 'Interactive', 'Click the blocks');
   const texts = {
-    house: '<b>The model.</b> Billions of fixed numbers that map a sequence of tokens to probabilities for the next token. The same input always yields the same distribution, and nothing you say changes the weights.',
-    garden: '<b>The context.</b> The exact tokens sent on this one request: instructions, the conversation so far, documents, tool results. If something is not in here, the model cannot use it.',
-    you: '<b>You.</b> You never touch the model directly. An application turns what you type into a context and sends it.',
-    wire: '<b>The API.</b> One HTTP request per model call: context in, tokens out. No memory survives between calls.'
+    context: '<b>The context.</b> The exact tokens sent on this one request: instructions, the conversation so far, documents, tool results. If something is not in here, the model cannot use it.',
+    model: '<b>The model.</b> Billions of fixed numbers that map a sequence of tokens to probabilities for the next token. The same input always yields the same distribution, and nothing you send changes the weights.',
+    client: '<b>Your app.</b> A chat window, an IDE or a backend job. It never touches the model directly; it turns what the user does into a context and sends it.',
+    api: '<b>The model API.</b> One HTTPS request per model call: context in, tokens out. No memory survives between calls.'
   };
   const seen = new Set();
-  const wrap = h('div', { html: bpSVG(1, [], { click: 1, uid: 'w1' }) });
-  const info = h('div', { class: 'callout', html: 'Click the model (left), then the context (right).' });
+  const draw = hl => bpSVG(1, hl, { click: 1, uid: 'w1', vb: '0 0 1000 620' });
+  const wrap = h('div', { html: draw([]) });
+  const info = h('div', { class: 'callout', html: 'The request travels down from your app. Click the context, then the model.' });
   const pick = id => {
-    seen.add(id); info.innerHTML = texts[id] || '';
-    wrap.innerHTML = bpSVG(1, [id], { click: 1, uid: 'w1' });
-    if (seen.has('house') && seen.has('garden')) api.ready();
+    if (!texts[id]) return;
+    seen.add(id); info.innerHTML = texts[id];
+    wrap.innerHTML = draw([id]);
+    if (seen.has('model') && seen.has('context')) api.ready();
   };
   wrap.addEventListener('click', e => { const g = e.target.closest('.bp-n'); if (g) pick(g.dataset.id); });
   wrap.addEventListener('keydown', e => { if (e.key === 'Enter') { const g = e.target.closest('.bp-n'); if (g) { e.stopPropagation(); pick(g.dataset.id); } } });
@@ -53,17 +55,44 @@ WIDGETS.twoBoxes = (box, o, api) => {
 };
 WIDGETS.bpPreview = (box, o) => {
   const start = o.full ? MAX_STAGE : 1;
-  whead(box, o.full ? 'The finished blueprint' : 'Where this course goes', o.full ? 'Hover a block for its story' : 'Drag the slider');
+  whead(box, o.full ? 'The whole system' : 'How the system grows', o.full ? 'Hover a block for its story' : 'Drag the slider');
   const wrap = h('div', { html: bpSVG(start, [], { uid: 'w2', click: 1, ghost: 1 }) });
   attachBlueprintTips(wrap);
   const lbl = h('div', { class: 'w-hint' });
+  const say = v => { const l = LESSONS[v - 1]; lbl.innerHTML = `<b>Lesson ${v}.</b> ${esc(l.need)} Adds: <b>${esc(l.added)}</b>`; };
   let cur = start;
-  const s = slider('bp-prev', 'Stage', 1, MAX_STAGE, 1, start, v => `${v} / ${MAX_STAGE}`, v => {
-    wrap.innerHTML = bpSVG(v, [], { uid: 'w2', click: 1, ghost: 1, enter: v > cur ? v : 0 }); cur = v;
-    lbl.innerHTML = `Lesson ${v} adds: <b>${esc(LESSONS[v - 1].added)}</b>`;
+  const s = slider('bp-prev', 'Lesson', 1, MAX_STAGE, 1, start, v => `${v} / ${MAX_STAGE}`, v => {
+    wrap.innerHTML = bpSVG(v, [], { uid: 'w2', click: 1, ghost: 1, enter: v > cur ? v : 0 }); cur = v; say(v);
   });
-  lbl.innerHTML = `Lesson ${start} adds: <b>${esc(LESSONS[start - 1].added)}</b>`;
+  say(start);
   box.append(wrap, h('div', { class: 'w-col', style: { marginTop: '10px' } }, s, lbl));
+};
+// the finale: the same diagram, with the blocks a real product relies on switched on
+const PRODUCTS = [
+  ['feature', 'One-call feature', 'Summarise a ticket, classify an email, pull fields from an invoice.',
+    'Most AI features in real software are exactly lesson 1 plus lesson 5: one request with a clear system prompt and an output schema, behind your own code. No agent, no retrieval, no GPUs of your own. Start here, and add a layer only when a need appears.',
+    ['client', 'context', 's-sys', 's-user', 's-schema', 'api', 'model', 'tok', 'head']],
+  ['chat', 'Chat assistant', 'ChatGPT, Claude and similar assistants.',
+    'A chat assistant re-sends the conversation on every turn, offers tools such as web search and code execution, retrieves from files you upload, and keeps a memory of you outside the window. The provider runs everything below the API: gateway, model and GPUs, with safety checks and evals around it.',
+    ['client', 'context', 's-sys', 's-hist', 's-user', 's-tooldef', 's-toolres', 's-ret', 'know', 'tools', 'mem', 'api', 'gateway', 'model', 'tok', 'tf', 'head', 'weights', 'gpu', 'kv', 'evals']],
+  ['coding', 'Coding agent', 'Claude Code, Codex and similar tools.',
+    'A coding agent is an agent loop running on your machine: tools that read and edit files and run commands, permission checks before risky actions, project memory files such as CLAUDE.md or AGENTS.md, skills, MCP servers and sub-agents with their own contexts. It calls a hosted model through the same API as any other app.',
+    ['client', 'harness', 'mem', 'sub', 'context', 's-sys', 's-hist', 's-user', 's-tooldef', 's-toolres', 'tools', 'mcp', 'api']],
+  ['enterprise', 'Enterprise integration', 'A support assistant over company data.',
+    'A company assistant retrieves from internal policies and manuals with access control, reaches the CRM and order systems through MCP or internal tools, returns structured output to existing software, and wraps everything in guardrails, evals and tracing. Teams with strict data rules self-host an open model and run the bottom layers themselves.',
+    ['client', 'harness', 'context', 's-sys', 's-schema', 's-hist', 's-user', 's-ret', 's-tooldef', 's-toolres', 'know', 'rag-adv', 'tools', 'mcp', 'api', 'gateway', 'model', 'gpu', 'kv', 'evals']]
+];
+WIDGETS.productsMap = (box) => {
+  whead(box, 'Real products, one diagram', 'Pick a product');
+  const wrap = h('div'); const info = h('div', { class: 'callout' });
+  attachBlueprintTips(wrap);
+  const show = key => {
+    const [, name, eg, d, ids] = PRODUCTS.find(p => p[0] === key);
+    wrap.innerHTML = bpSVG(MAX_STAGE, ids, { uid: 'w3', click: 1, nofocus: 1 });
+    info.innerHTML = `<b>${esc(name)}</b> <span class="w-hint">${esc(eg)}</span><br>${esc(d)}`;
+  };
+  box.append(seg(PRODUCTS.map(p => [p[0], p[1]]), 'feature', show, 'Product'), h('div', { style: { marginTop: '10px' } }, wrap), info);
+  show('feature');
 };
 
 /* ---------- next token ---------- */
