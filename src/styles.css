@@ -828,7 +828,7 @@ mi.tt{font-family:var(--f-mono)}
 .sysv .sn-t{font-weight:800;fill:color-mix(in srgb, var(--c) 55%, var(--ink))}
 .sysv .sn-s{font-weight:500;fill:var(--muted)}
 .bp .dive circle{fill:var(--c, var(--accent-ink));stroke:var(--surface);stroke-width:2}
-.bp .dive path{stroke:#fff;stroke-width:2.2;stroke-linecap:round;fill:none}
+.bp .dive path{stroke:var(--surface);stroke-width:2.2;stroke-linecap:round;fill:none} /* the plus matches the circle's stroke in both themes */
 .bp .root-dive circle{fill:var(--ink);opacity:.72}
 .bp .drill:hover .dive circle{opacity:1}
 .sysv .ep{fill:none;stroke:color-mix(in srgb, var(--ink) 34%, transparent);stroke-width:2;marker-end:url(#sysArr);transition:opacity .25s, stroke .25s}

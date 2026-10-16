@@ -11,8 +11,9 @@ const SFX = (() => {
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
         ctx = new AC();
         const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = 0.5;
-        const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3; comp.attack.value = 0.004; comp.release.value = 0.2;
-        out = ctx.createGain(); out.gain.value = 0.6;
+        // a limiter just below full scale, so the louder level never clips (it used to compress from -20 dB, which flattened everything)
+        const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -3; comp.knee.value = 2; comp.ratio.value = 20; comp.attack.value = 0.002; comp.release.value = 0.12;
+        out = ctx.createGain(); out.gain.value = 2.2; // about 3x the original loudness (+200%), measured; use the system volume to turn it down
         out.connect(lp); lp.connect(comp); comp.connect(ctx.destination);
         noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.3), ctx.sampleRate);
         const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
