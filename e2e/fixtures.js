@@ -61,4 +61,14 @@ async function expectNoHorizontalScroll(page) {
   expect(over, 'horizontal overflow in px').toBeLessThanOrEqual(1);
 }
 
-module.exports = { test, expect, openApp, revealBeats, expectNoHorizontalScroll, dayKey, STORE, THEME };
+/** On phones the system map opens with its sheet closed; this opens it through its tab, as a learner would. */
+async function showPanel(page) {
+  if (await page.evaluate(() => !!(BOARD && BOARD.hidden))) {
+    await page.locator('.panel-tab').click();
+    await page.waitForTimeout(120); // the map re-frames itself around the opened sheet
+  }
+  await expect(page.locator('.panel')).not.toHaveClass(/hidden/);
+  await page.waitForFunction(() => !BOARD.anim);
+}
+
+module.exports = { test, expect, openApp, showPanel, revealBeats, expectNoHorizontalScroll, dayKey, STORE, THEME };

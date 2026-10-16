@@ -1,5 +1,5 @@
 // The course's backbone: one request, grown by need, drawn as a layered architecture.
-const { test, expect, openApp } = require('./fixtures');
+const { test, expect, openApp, showPanel } = require('./fixtures');
 
 const ORDER = ['two-boxes', 'next-token', 'tokens', 'context', 'steering', 'knowledge', 'retrieval', 'advanced-rag', 'tools', 'mcp',
   'agent-loop', 'context-eng', 'multi-agent', 'attention', 'training', 'gpus', 'kv-cache', 'serving', 'production'];
@@ -109,6 +109,7 @@ test('each lesson opens with its need, and the blocks it adds open on the system
   await expect(page.locator('.board')).toBeVisible();
   await expect(page.locator('.insp h3')).toHaveText('Tool results');
   await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+  await showPanel(page); // phones keep the sheet closed until it is opened
   await page.locator('.insp').getByRole('button', { name: 'Back to my lesson' }).click();
   await expect(page.locator('.panel-head .ttl')).toHaveText('9. Tool calling');
 });

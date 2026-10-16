@@ -1,10 +1,19 @@
 // The system map (board): opening, docking, panel resize/hide, pan and zoom, legend, build view, tour.
-const { test, expect, openApp, expectNoHorizontalScroll } = require('./fixtures');
+const { test, expect, openApp, showPanel, expectNoHorizontalScroll } = require('./fixtures');
 
+/** Opens the map from the course page, checks it starts on the whole, full system, then opens the panel. */
 async function openBoard(page) {
   await page.getByRole('button', { name: 'Open the system map' }).first().click();
   await expect(page.getByRole('dialog', { name: 'System map' })).toBeVisible();
+  await expectWholeSystem(page);
+  await showPanel(page);
   await expect(page.locator('.panel .idx')).toBeVisible();
+}
+/** The default view: Full system and Whole system on, nothing highlighted, nothing dimmed or sketched. */
+async function expectWholeSystem(page) {
+  await expect(page.getByRole('button', { name: 'Full system' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.board-canvas .bp-n.hl, .board-canvas .bp-n.dim, .board-canvas .bp-n.sketch')).toHaveCount(0);
 }
 
 test.describe('system map', () => {
@@ -17,6 +26,38 @@ test.describe('system map', () => {
     await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.idx-row')).toHaveCount(19);
     await expectNoHorizontalScroll(page);
+  });
+
+  test('the map opens on the whole, full system: from the course, from inside a lesson, and after a reload', async ({ page, isMobile }) => {
+    await openApp(page, { done: ['two-boxes', 'next-token', 'tokens'], hash: 'tools' }); // progress, and a lesson open
+    await page.getByRole('button', { name: 'Open the system map' }).first().click();
+    await expect(page.locator('.board')).toBeVisible();
+    await expectWholeSystem(page); // the open lesson does not select its blocks
+    await expect(page.locator('.panel .player.docked')).toHaveCount(1); // it waits in the panel
+    await expect(page.locator('.panel')).toHaveClass(isMobile ? /hidden/ : /^(?!.*hidden)/);
+    await page.reload();
+    await expect(page.locator('.board')).toBeVisible();
+    await expectWholeSystem(page);
+    await expect(page.locator('.panel')).toHaveClass(isMobile ? /hidden/ : /^(?!.*hidden)/);
+  });
+
+  test('phone: the sheet stays closed while you select, until you tap its tab', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'bottom sheet is phone only');
+    await openApp(page, { hash: 'tools' });
+    await page.getByRole('button', { name: 'Open the system map' }).first().tap();
+    const tab = page.locator('.panel-tab');
+    await expect(tab).toBeInViewport(); await expect(tab).toHaveText('Lesson panel');
+    await page.locator('.board-canvas .bp-n[data-id="kv"]').tap();
+    await expect(page.locator('.board-canvas .bp-n.hl[data-id="kv"]')).toHaveCount(1); // the selection shows on the map
+    await expect(page.locator('.panel')).toHaveClass(/hidden/); // and the sheet stays closed
+    await expect(tab).toHaveText('Details');
+    await page.locator('.lg', { hasText: 'Knowledge' }).tap();
+    await expect(page.locator('.panel')).toHaveClass(/hidden/);
+    await tab.tap();
+    await expect(page.locator('.panel')).not.toHaveClass(/hidden/);
+    await expect(page.locator('.insp h3')).toHaveText('KV cache'); // the details of what was selected
+    await page.locator('.insp').getByRole('button', { name: 'Back to my lesson' }).tap();
+    await expect(page.locator('.panel-head .ttl')).toHaveText('9. Tool calling');
   });
 
   test('pointing at a level or lesson in the index shows where it sits on the map', async ({ page, isMobile }) => {
@@ -181,6 +222,7 @@ test.describe('system map', () => {
   test('"My system" sketches unfinished blocks, "Full system" shows all', async ({ page }) => {
     await openApp(page, { done: ['two-boxes', 'next-token'] });
     await openBoard(page);
+    await page.getByRole('button', { name: 'My system' }).click();
     await expect(page.locator('.board-canvas .bp-n[data-id="head"]')).not.toHaveClass(/sketch/);
     await expect(page.locator('.board-canvas .bp-n[data-id="kv"]')).toHaveClass(/sketch/);
     await page.getByRole('button', { name: 'Full system' }).click();
@@ -208,6 +250,7 @@ test.describe('system map', () => {
     await page.locator('#p-foot').getByRole('button', { name: 'Continue' }).click();
     const si = await page.evaluate(() => [L.si, L.beat]);
     await page.getByRole('button', { name: /Open the system map/ }).first().click();
+    await showPanel(page);
     await expect(page.locator('.panel .player.docked')).toBeVisible();
     expect(await page.evaluate(() => [L.si, L.beat])).toEqual(si);
     await page.getByRole('button', { name: 'Open the lesson full screen' }).click();

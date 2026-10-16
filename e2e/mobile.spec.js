@@ -92,6 +92,18 @@ for (const name of DEVICES) {
       await page.getByRole('button', { name: 'Open the system map' }).first().tap();
       await expect(page.locator('.board')).toBeVisible();
       await check('map', '.board');
+      // phones held upright open on the map alone: the whole system, the sheet closed until its tab is tapped
+      await expect(page.locator('.lg.all')).toHaveAttribute('aria-pressed', 'true');
+      if (await page.evaluate(() => BOARD.hidden)) {
+        await page.locator('.board-canvas .bp-n[data-id="tools"]').tap(); // selecting keeps the sheet closed
+        await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+        await expect(page.locator('.panel')).toHaveClass(/hidden/);
+        await check('map-selected', '.board');
+        await page.locator('.panel-tab').tap();
+        await expect(page.locator('.insp h3')).toHaveText('Tools');
+        await page.locator('.lg.all').tap();
+      }
+      await expect(page.locator('.panel')).not.toHaveClass(/hidden/);
       // a level heading in the lesson index opens its card and lights its blocks
       const level = page.locator('.idx-level[data-u="2"]');
       await level.scrollIntoViewIfNeeded();

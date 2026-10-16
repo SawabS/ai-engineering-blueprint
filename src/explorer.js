@@ -212,7 +212,8 @@ function unparkLesson() {
   const B = BOARD; if (!B || !B.parked) return false;
   const p = B.parked; B.parked = null; boardDock(p, L.lesson); return true;
 }
-function exPanelOpen() { const B = BOARD; if (B.hidden) { B.hidden = false; B.panel.classList.remove('hidden'); B.main.classList.remove('panel-off'); B.tab.hidden = true; } }
+// opens the panel to show a selection; on phones the sheet stays closed until the learner taps its tab
+function exPanelOpen() { const B = BOARD; if (B.hidden && !isPhone()) { B.hidden = false; B.panel.classList.remove('hidden'); B.main.classList.remove('panel-off'); B.tab.hidden = true; } }
 function exInspect(key, quiet) {
   const B = BOARD; const n = exNode(key); if (!B || !n) return;
   if (B.tour) endTour(true);
@@ -245,6 +246,7 @@ function exInspect(key, quiet) {
   B.ttl.textContent = 'Explorer'; B.expandBtn.hidden = true;
   B.panelBody.innerHTML = ''; B.panelBody.append(body); B.panelBody.scrollTop = 0;
   if (!quiet) exPanelOpen();
+  syncTab();
 }
 function exShowView(vid) {
   const B = BOARD; const v = SYSV[vid]; if (!B || !v) return;
@@ -257,7 +259,7 @@ function exShowView(vid) {
     h('div', { class: 'insp-sec' }, h('h4', null, 'In this view'), h('div', { class: 'insp-links' }, v.nodes.map(m =>
       h('button', { class: 'insp-link', style: { '--c': sysColor(m.cat) }, onclick: () => exInspect(m.key) }, m.t, m.go ? h('small', null, '+ detailed view') : null)))));
   B.ttl.textContent = 'Explorer'; B.expandBtn.hidden = true;
-  B.panelBody.innerHTML = ''; B.panelBody.append(body); B.panelBody.scrollTop = 0;
+  B.panelBody.innerHTML = ''; B.panelBody.append(body); B.panelBody.scrollTop = 0; syncTab();
 }
 
 /* ---- search across every component ---- */

@@ -1,5 +1,5 @@
 // Adversarial ("try to break it") tests: hostile input, rapid clicking, broken state, odd navigation, extreme sizes.
-const { test, expect, openApp, expectNoHorizontalScroll, STORE } = require('./fixtures');
+const { test, expect, openApp, expectNoHorizontalScroll, STORE, showPanel } = require('./fixtures');
 
 const PAYLOADS = [
   '<img src=x onerror="window.__pwned=1">',
@@ -123,6 +123,7 @@ test.describe('broken state and odd navigation', () => {
   test('resizing across the phone breakpoint keeps the board usable', async ({ page }) => {
     await openApp(page);
     await page.evaluate(() => openBoard({ lesson: 4 }));
+    await showPanel(page); // a phone opens on the map with the sheet closed
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.locator('.panel .player')).toBeVisible();
     await page.setViewportSize({ width: 1366, height: 768 });

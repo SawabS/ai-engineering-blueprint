@@ -1,11 +1,12 @@
 // System explorer: data integrity, layout of every view, drill-down navigation, flows, search and accessibility.
 const AxeBuilder = require('@axe-core/playwright').default;
-const { test, expect, openApp, expectNoHorizontalScroll } = require('./fixtures');
+const { test, expect, openApp, showPanel, expectNoHorizontalScroll } = require('./fixtures');
 
 async function openBoardAt(page, view) {
   await openApp(page);
   await page.evaluate(v => { openBoard({}); if (v) exJump(v); }, view);
   if (view) await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', view);
+  await showPanel(page);
   await page.waitForTimeout(900);
 }
 

@@ -1,7 +1,7 @@
 // Layout matrix: 12 screen sizes x 2 themes, thirteen app states each (see audit.js for the checks).
 const path = require('path');
 const fs = require('fs');
-const { test, expect, openApp } = require('./fixtures');
+const { test, expect, openApp, showPanel } = require('./fixtures');
 const { audit } = require('./audit');
 
 const VIEWPORTS = [
@@ -44,8 +44,11 @@ for (const [w, h, name] of VIEWPORTS) {
         await page.locator('#p-foot').getByRole('button', { name: 'Check' }).click();
         await check('quiz-feedback', { scope: '.player' });
         await page.evaluate(() => { closeLesson(); openBoard({}); });
-        await expect(page.locator('.panel .idx')).toBeVisible();
         await page.waitForTimeout(700); // camera settles
+        await check('board-open', { scope: '.board' }); // phones open on the map alone, the sheet closed
+        await showPanel(page);
+        await expect(page.locator('.panel .idx')).toBeVisible();
+        await page.waitForTimeout(700);
         await check('board', { scope: '.board' });
         await page.locator('.idx-level[data-u="2"]').click(); // level 3, from the lesson index
         await page.waitForTimeout(700);

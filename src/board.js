@@ -9,7 +9,7 @@ function openBoard(opts = {}) {
   hideTip(); closePop();
   if (BOARD) { if (opts.lesson != null) openLesson(opts.lesson); return; }
   const saved = (() => { try { return JSON.parse(localStorage.getItem(PANEL_KEY)) || {}; } catch (e) { return {}; } })();
-  const B = BOARD = { x: 0, y: 0, s: 1, w: clamp(saved.w || 440, 320, 760), sh: clamp(saved.sh || 58, 30, 94), hidden: false, hl: [], mode: doneCount() ? 'build' : 'full', view: 'root', trail: [], parked: null, busy: false };
+  const B = BOARD = { x: 0, y: 0, s: 1, w: clamp(saved.w || 440, 320, 760), sh: clamp(saved.sh || 58, 30, 94), hidden: isPhone(), hl: [], mode: 'full', view: 'root', trail: [], parked: null, busy: false };
 
   const canvas = h('div', { class: 'board-canvas', 'data-view': 'root', 'aria-label': 'System map. Drag to pan, pinch or scroll to zoom. Select a block to inspect it; blocks marked + open a detailed view.' });
   canvas.innerHTML = bpSVG(MAX_STAGE, [], { click: 1, uid: 'B' });
@@ -20,7 +20,7 @@ function openBoard(opts = {}) {
   const hideBtn = h('button', { class: 'icon-btn', 'aria-label': 'Hide the panel', title: 'Hide panel', onclick: () => setPanelHidden(true), html: ICON.close });
   const grip = h('div', { class: 'panel-grip', role: 'separator', 'aria-label': 'Drag to resize the panel', 'aria-orientation': 'vertical', 'aria-valuemin': 320, 'aria-valuemax': 760, 'aria-valuenow': 440, tabindex: '0' });
   const panel = h('aside', { class: 'panel', 'aria-label': 'Lesson panel' }, grip, h('div', { class: 'panel-head' }, ttl, expandBtn, hideBtn), panelBody);
-  const tab = h('button', { class: 'panel-tab', hidden: true, onclick: () => setPanelHidden(false), html: ICON.panel + '<span>Lesson panel</span>' });
+  const tab = h('button', { class: 'panel-tab', hidden: !B.hidden, onclick: () => setPanelHidden(false), html: ICON.panel + '<span>Lesson panel</span>' });
   const main = h('div', { class: 'board-main' }, canvas,
     h('div', { class: 'board-tools' }),
     h('div', { class: 'legend', role: 'group', 'aria-label': 'Highlight a part of the system' }),
@@ -38,6 +38,7 @@ function openBoard(opts = {}) {
       h('button', { class: 'icon-btn', 'aria-label': 'Show or hide the lesson panel', title: 'Lesson panel', onclick: () => setPanelHidden(!B.hidden), html: ICON.panel }),
       themeBtn()),
     main);
+  if (B.hidden) { panel.classList.add('hidden'); main.classList.add('panel-off'); }
   Object.assign(B, { el, canvas, pct, panel, panelBody, ttl, expandBtn, tab, main, svg: $('svg', canvas), tools: $('.board-tools', main), legend: $('.legend', main) });
   renderToolsBar(); renderLegend(); addRootBadges();
   main.style.setProperty('--pw', B.w + 'px'); grip.setAttribute('aria-valuenow', Math.round(B.w));
@@ -54,7 +55,8 @@ function openBoard(opts = {}) {
   wirePeers(B);
 
   const p = $('.player');
-  if (p && L) { p.classList.add('docked'); p.setAttribute('role', 'region'); boardDock(p, L.lesson); }
+  // coming from a lesson, the lesson waits in the panel but the map opens on the whole system, nothing selected
+  if (p && L) { p.classList.add('docked'); p.setAttribute('role', 'region'); boardDock(p, L.lesson, false); }
   else if (opts.lesson != null) { fitAll(false); openLesson(opts.lesson); }
   else { boardShowIndex(); }
   if (!B.camSet) fitAll(false);
@@ -87,7 +89,7 @@ function setPanelHidden(v) {
   const B = BOARD; if (!B) return;
   B.hidden = v; B.panel.classList.toggle('hidden', v); B.main.classList.toggle('panel-off', v); B.tab.hidden = !v;
   SFX.toggle();
-  setTimeout(() => { if (L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); }, 60);
+  setTimeout(refit, 60);
 }
 function savePanel() { try { localStorage.setItem(PANEL_KEY, JSON.stringify({ w: BOARD.w, sh: BOARD.sh })); } catch (e) { /* ignore */ } }
 function wireGrip(B) {
@@ -111,7 +113,7 @@ function wireGrip(B) {
       else { B.sh = hh < H * 0.75 ? 58 : 92; B.panel.style.setProperty('--sh', B.sh + '%'); SFX.toggle(); }
     }
     savePanel(); drag = null;
-    setTimeout(() => { if (L && $('.player.docked')) boardFocus(L.lesson); }, 280);
+    setTimeout(refit, 280);
   };
   const g = B.panel.querySelector('.panel-grip');
   g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
@@ -120,15 +122,25 @@ function wireGrip(B) {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { B.w = clamp(B.w + (e.key === 'ArrowLeft' ? 24 : -24), 320, 760); B.main.style.setProperty('--pw', B.w + 'px'); e.currentTarget.setAttribute('aria-valuenow', Math.round(B.w)); savePanel(); }
   });
 }
-function boardDock(player, lesson) {
-  const B = BOARD; if (B.tour) endTour(true); B.panelBody.innerHTML = ''; B.panelBody.append(player);
+// focus=false docks the lesson without selecting its blocks (the map keeps the whole system)
+function boardDock(player, lesson, focus = true) {
+  const B = BOARD; if (B.tour) endTour(true); B.sel = null; B.panelBody.innerHTML = ''; B.panelBody.append(player);
   B.ttl.textContent = `${lesson.idx + 1}. ${lesson.title}`; B.expandBtn.hidden = false;
-  if (B.hidden) { B.hidden = false; B.panel.classList.remove('hidden'); B.tab.hidden = true; }
-  boardFocus(lesson);
+  exPanelOpen();
+  if (focus) boardFocus(lesson); else { B.selLevel = null; exHighlight([]); fitAll(!!B.camSet); }
+  syncTab();
+}
+// re-frames whatever is selected, or the whole diagram when nothing is
+function refit() { const B = BOARD; if (!B) return; if (B.hl.length) fitBox(rawBox(B.hl), true); else fitAll(true); }
+// phones keep the sheet closed until the learner opens it, so the tab names what is waiting inside
+function syncTab() {
+  const B = BOARD; if (!B) return; const lab = $('span', B.tab); if (!lab) return;
+  lab.textContent = B.sel ? 'Details' : B.selLevel != null ? `Level ${B.selLevel + 1}` : 'Lesson panel';
+  B.tab.setAttribute('aria-label', B.sel ? 'Show the details of the selected block' : 'Show the lesson panel');
 }
 function boardShowIndex() {
   const B = BOARD; if (!B) return;
-  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; B.selLevel = null; B.sel = null; exHighlight([]); syncAllChip();
+  B.ttl.textContent = 'Lessons'; B.expandBtn.hidden = true; B.selLevel = null; B.sel = null; exHighlight([]); syncAllChip(); syncTab();
   // pointing at a level or a lesson shows where it sits on the map (only on a real mouse move, so a panel that re-renders
   // under a still cursor never changes the selection by itself); a level heading selects the whole level
   const show = keys => e => { if (e && e.type === 'pointermove' && e.pointerType !== 'mouse') return; if (BOARD && BOARD.view === 'root' && BOARD.selLevel == null) exHighlight(keys); };
@@ -224,7 +236,7 @@ function showLevel(ui) {
       h('button', { class: 'btn btn-ghost', onclick: () => clearSelection() }, 'Whole system')));
   B.ttl.textContent = `Level ${ui + 1}`; B.expandBtn.hidden = true;
   B.panelBody.innerHTML = ''; B.panelBody.append(card); B.panelBody.scrollTop = 0;
-  exPanelOpen();
+  exPanelOpen(); syncTab();
 }
 // back to the whole system (or the whole detailed view): nothing selected, everything framed
 function clearSelection() {
@@ -234,7 +246,7 @@ function clearSelection() {
   if (B.view !== 'root') exShowView(B.view);
   else if (B.parked && L) unparkLesson(); // the lesson returns to the panel...
   else if (!$('.player.docked')) boardShowIndex();
-  exHighlight([]); syncAllChip(); fitAll(true); // ...but the diagram always ends whole and framed
+  exHighlight([]); syncAllChip(); syncTab(); fitAll(true); // ...but the diagram always ends whole and framed
 }
 function syncAllChip() {
   const B = BOARD; if (!B) return; const all = $('.lg.all', B.legend); if (!all) return;
@@ -330,7 +342,7 @@ function setBuildMode(mode, quiet) {
 function toggleCat(cat, btn) {
   const B = BOARD; const on = !btn.classList.contains('on');
   $$('.lg', B.el).forEach(b => { b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
-  if (!on) { exHighlight(B.view === 'root' && L && $('.player.docked') ? L.lesson.hl : []); if (B.view === 'root' && L && $('.player.docked')) boardFocus(L.lesson); else fitAll(true); syncAllChip(); return; }
+  if (!on) { exHighlight([]); fitAll(true); return; } // a filter switched off returns to the whole system
   btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true');
   const ids = B.view === 'root' ? CATS.find(c => c[0] === cat)[3] : SYSV[B.view].nodes.filter(n => n.cat === cat).map(n => n.key);
   exHighlight(ids); fitBox(rawBox(ids), true); syncAllChip();
@@ -409,5 +421,5 @@ function endTour(silent) {
   $$('.sys-e.flowing', B.svg).forEach(e => e.classList.remove('flowing'));
   if (!T.wasHidden) { B.hidden = false; B.panel.classList.remove('hidden'); B.main.classList.remove('panel-off'); B.tab.hidden = true; } else B.tab.hidden = false;
   if (silent) return;
-  if (B.view === 'root' && L && $('.player.docked')) boardFocus(L.lesson); else { exHighlight([]); fitAll(true); }
+  exHighlight([]); fitAll(true);
 }
