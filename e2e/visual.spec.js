@@ -20,6 +20,8 @@ for (const [w, h, name] of SIZES) {
         await expect(page).toHaveScreenshot(`lesson-${name}-${theme}.png`);
         await page.evaluate(() => { closeLesson(); openBoard({}); setCam(0, 0, 1, false); fitAll(false); });
         await page.addStyleTag({ content: FREEZE });
+        await page.waitForFunction(() => BOARD && !BOARD.anim); // camera settled before capturing
+        await page.evaluate(() => fitAll(false));
         await expect(page).toHaveScreenshot(`board-${name}-${theme}.png`);
       });
     });
