@@ -189,6 +189,21 @@ test.describe('moving back and forth inside a lesson', () => {
     await expect(page.locator('.p-steps .p-seg').nth(0)).toBeEnabled();
   });
 
+  test('the theme can be switched from inside a lesson without losing your place', async ({ page }) => {
+    await openApp(page, { hash: 'attention' });
+    await page.evaluate(() => advance());
+    const btn = page.locator('.player .p-top .theme-btn');
+    await expect(btn).toBeVisible();
+    await btn.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await btn.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(await page.evaluate(() => [L.lesson.id, L.si])).toEqual(['attention', 1]);
+    // the choice is remembered and the course map's switch agrees
+    await page.getByRole('button', { name: 'Close lesson' }).click();
+    await expect(page.locator('.top-right .theme-btn')).toHaveAttribute('aria-label', /^Dark theme/);
+  });
+
   test('a lesson is self-contained: other lessons are reached only from the course map', async ({ page }) => {
     await openApp(page, { hash: 'tokens' });
     const player = page.locator('.player');

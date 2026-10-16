@@ -540,7 +540,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .panel-body{min-height:0;position:relative;overflow:hidden;display:grid}
 .panel-body > .player{position:relative;inset:auto;z-index:auto;height:100%;padding-top:0;min-height:0}
 .player.docked .p-body{grid-template-columns:minmax(0,1fr)}
-.player.docked .p-aside,.player.docked .p-title,.player.docked .map-btn{display:none}
+.player.docked .p-aside,.player.docked .p-title,.player.docked .map-btn,.player.docked .p-top .theme-btn{display:none} /* the board's own toolbar carries the theme switch */
 .player.docked .p-main{padding-top:18px}
 .player.docked .p-foot{padding-bottom:12px}
 .panel-tab{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;

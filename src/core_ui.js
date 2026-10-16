@@ -257,7 +257,7 @@ function openLesson(i) {
         h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
       h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => stepBy(1), html: ICON.left }),
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
-      null),
+      themeBtn()),
     h('div', { class: 'p-body' },
       h('main', { class: 'p-main', id: 'p-main', tabindex: '0', 'aria-label': 'Lesson content' }),
       h('aside', { class: 'p-aside', id: 'p-aside' })),
@@ -515,7 +515,7 @@ function finishLesson() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { if (BOARD.tour) { endTour(); return; } if (BOARD.view !== 'root') { exGoUp(1); return; } closeBoard(); return; } if (L) { closeLesson(); return; } }
+  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { if (BOARD.tour) { endTour(); return; } if (BOARD.view !== 'root' || BOARD.trail.length) { exGoUp(1); return; } /* the trail is set the moment a dive starts; the view only when it lands */ closeBoard(); return; } if (L) { closeLesson(); return; } }
   if (!L) return;
   if (BOARD && BOARD.hidden) return;
   const tag = (e.target.tagName || '').toLowerCase();

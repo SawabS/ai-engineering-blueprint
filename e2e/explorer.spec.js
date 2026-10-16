@@ -110,6 +110,15 @@ test('drill down from the blueprint, keep going deeper, and climb back out', asy
   await expect(page.locator('.board')).toHaveCount(0);
 });
 
+test('Esc pressed while a dive is still animating is not lost', async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(() => openBoard({}));
+  await page.evaluate(() => exGoInto('serving'));
+  await page.keyboard.press('Escape'); // straight away, mid-transition
+  await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'root');
+  await expect(page.locator('.board')).toBeVisible(); // climbed one level, did not close the board
+});
+
 test('a deep link opens a detailed view directly', async ({ page }) => {
   await openApp(page, { hash: 'board:rag' });
   await expect(page.locator('.board-canvas')).toHaveAttribute('data-view', 'rag');

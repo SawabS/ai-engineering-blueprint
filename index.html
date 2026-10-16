@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Qqs52WiyTGeq1H5too+upsEmUGjgzL1Y/hvAt1g+rEU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-MWvCjLu9swdhHb5ZanqEhJHlHXM6yYAdC6sP2XihY5w='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Engineering Blueprint</title>
@@ -559,7 +559,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .panel-body{min-height:0;position:relative;overflow:hidden;display:grid}
 .panel-body > .player{position:relative;inset:auto;z-index:auto;height:100%;padding-top:0;min-height:0}
 .player.docked .p-body{grid-template-columns:minmax(0,1fr)}
-.player.docked .p-aside,.player.docked .p-title,.player.docked .map-btn{display:none}
+.player.docked .p-aside,.player.docked .p-title,.player.docked .map-btn,.player.docked .p-top .theme-btn{display:none} /* the board's own toolbar carries the theme switch */
 .player.docked .p-main{padding-top:18px}
 .player.docked .p-foot{padding-bottom:12px}
 .panel-tab{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;
@@ -4889,7 +4889,7 @@ function openLesson(i) {
         h('button', { class: 'p-seg', 'data-k': k, 'aria-label': `Step ${k + 1} of ${n}: ${s.title}`, title: `${k + 1}. ${s.title}`, 'data-sfx': 'none', onclick: () => gotoStep(k) }, h('i', null, h('b'))))),
       h('button', { class: 'step-arrow next', 'aria-label': 'Next step', title: 'Next step (→)', onclick: () => stepBy(1), html: ICON.left }),
       h('button', { class: 'icon-btn map-btn', 'aria-label': 'Open the blueprint board', onclick: () => openBoard({}), html: ICON.board }),
-      null),
+      themeBtn()),
     h('div', { class: 'p-body' },
       h('main', { class: 'p-main', id: 'p-main', tabindex: '0', 'aria-label': 'Lesson content' }),
       h('aside', { class: 'p-aside', id: 'p-aside' })),
@@ -5147,7 +5147,7 @@ function finishLesson() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { if (BOARD.tour) { endTour(); return; } if (BOARD.view !== 'root') { exGoUp(1); return; } closeBoard(); return; } if (L) { closeLesson(); return; } }
+  if (e.key === 'Escape') { if (popEl) { const n = $('.mnode.sel'); closePop(); if (n) n.focus(); return; } if (BOARD) { if (BOARD.tour) { endTour(); return; } if (BOARD.view !== 'root' || BOARD.trail.length) { exGoUp(1); return; } /* the trail is set the moment a dive starts; the view only when it lands */ closeBoard(); return; } if (L) { closeLesson(); return; } }
   if (!L) return;
   if (BOARD && BOARD.hidden) return;
   const tag = (e.target.tagName || '').toLowerCase();
@@ -6274,7 +6274,8 @@ function exGoInto(vid, fromKey) {
   if (!isPhone() || !B.hidden) exShowView(vid);
 }
 function exGoUp(levels = 1) {
-  const B = BOARD; if (!B || !B.trail.length || B.busy) return;
+  const B = BOARD; if (!B || !B.trail.length) return;
+  if (B.busy) { setTimeout(() => exGoUp(levels), 120); return; } // Esc pressed mid-dive: climb once the dive lands
   SFX.back();
   let back = null; for (let i = 0; i < levels && B.trail.length; i++) back = B.trail.pop();
   viewTransition(() => setViewContent(back.view), back.from ? exBox(back.from) : null, 'out');

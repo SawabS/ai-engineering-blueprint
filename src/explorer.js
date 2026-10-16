@@ -142,7 +142,8 @@ function exGoInto(vid, fromKey) {
   if (!isPhone() || !B.hidden) exShowView(vid);
 }
 function exGoUp(levels = 1) {
-  const B = BOARD; if (!B || !B.trail.length || B.busy) return;
+  const B = BOARD; if (!B || !B.trail.length) return;
+  if (B.busy) { setTimeout(() => exGoUp(levels), 120); return; } // Esc pressed mid-dive: climb once the dive lands
   SFX.back();
   let back = null; for (let i = 0; i < levels && B.trail.length; i++) back = B.trail.pop();
   viewTransition(() => setViewContent(back.view), back.from ? exBox(back.from) : null, 'out');
