@@ -307,6 +307,19 @@ function renderAside(animate) {
   if (animate) animateViewBox($('.zoom-card svg', el), [0, 0, 1000, 620], zb, 900);
 }
 
+// the lesson's opening card: the need is an empty slot on the system diagram, and the lesson's blocks drop into it
+function needCard(l) {
+  const keys = lessonKeys(l); const [f0] = BLOCK_LOOK[keys[0]] || ['var(--accent)'];
+  const chip = k => { const [f, t] = BLOCK_LOOK[k] || ['var(--surface)', 'var(--ink)'];
+    return h('button', { class: 'need-chip' + (/soft|surface/.test(f) ? ' soft' : ''), style: { '--cf': f, '--ct': t }, 'data-sfx': 'none', title: 'Show it on the system map',
+      'aria-label': `${BPN[k].t}: show it on the system map`, onclick: () => { openBoard({}); exInspect(k); } }, BPN[k].t); };
+  return h('section', { class: 'need-card', style: { '--nf': f0 }, 'aria-label': 'The need this lesson meets' },
+    h('div', { class: 'need-slot', 'aria-hidden': 'true' }, h('i')),
+    h('div', { class: 'need-body' },
+      h('div', { class: 'need-k' }, 'The need'),
+      h('p', { class: 'need-q' }, l.need),
+      h('div', { class: 'need-fills' }, h('span', { class: 'need-adds' }, 'This lesson adds'), keys.map(chip))));
+}
 function setProgress() {
   if (!L) return;
   const n = L.lesson.steps.length;
@@ -358,7 +371,7 @@ function renderStep(revealAll) {
   beats.forEach((b, k) => { b.hidden = k >= L.beat; });
   const box = h('section', { class: 'step', 'aria-live': 'polite' },
     h('div', { class: 'eyebrow' }, `Step ${L.si + 1} of ${l.steps.length}${st.kind === 'quiz' ? ' · Check your thinking' : st.kind === 'task' ? ' · Your turn' : ''}`),
-    L.si === 0 && l.need ? h('p', { class: 'need' }, h('span', { class: 'need-k' }, 'The need'), l.need) : null,
+    L.si === 0 && l.need ? needCard(l) : null,
     h('h2', null, st.title), beats);
   main.append(box);
   setProgress(); renderFoot();

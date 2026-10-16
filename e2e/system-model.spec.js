@@ -101,3 +101,20 @@ test('the finale maps real products onto the diagram', async ({ page }) => {
   await expect(w.locator('.bp-n.hl[data-id="harness"]')).toHaveCount(1);
   await expect(w.locator('.bp-n.dim[data-id="gpu"]')).toHaveCount(1);
 });
+
+test('each lesson opens with its need, and the blocks it adds open on the system map', async ({ page }) => {
+  await openApp(page, { hash: 'tools' });
+  const card = page.locator('.need-card');
+  await expect(card).toBeVisible();
+  await expect(card.locator('.need-q')).toHaveText(await page.evaluate(() => L.lesson.need));
+  await expect(card.locator('.need-chip')).toHaveText(['Tools', 'Tool definitions', 'Tool results']);
+  await page.evaluate(() => { L.si = 1; L.max = 1; renderStep(true); });
+  await expect(page.locator('.need-card')).toHaveCount(0); // only on the first step
+  await page.evaluate(() => { L.si = 0; renderStep(true); });
+  await page.locator('.need-chip', { hasText: 'Tool results' }).click();
+  await expect(page.locator('.board')).toBeVisible();
+  await expect(page.locator('.insp h3')).toHaveText('Tool results');
+  await expect(page.locator('.board-canvas .bp-n.hl')).toHaveCount(3);
+  await page.locator('.insp').getByRole('button', { name: 'Back to my lesson' }).click();
+  await expect(page.locator('.panel-head .ttl')).toHaveText('9. Tool calling');
+});

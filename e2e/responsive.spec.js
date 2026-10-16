@@ -1,8 +1,8 @@
-// Layout matrix: 12 screen sizes x 2 themes, six app states each.
-// Checks: no sideways scroll, nothing clipped off-screen, touch targets, no overlapping map elements.
+// Layout matrix: 12 screen sizes x 2 themes, thirteen app states each (see audit.js for the checks).
 const path = require('path');
 const fs = require('fs');
 const { test, expect, openApp } = require('./fixtures');
+const { audit } = require('./audit');
 
 const VIEWPORTS = [
   [320, 568, 'small-phone'], [360, 740, 'android'], [375, 667, 'iphone-se'], [390, 844, 'iphone'], [412, 915, 'pixel'],
@@ -10,40 +10,6 @@ const VIEWPORTS = [
   [1440, 900, 'macbook'], [1920, 1080, 'desktop'], [2560, 1440, 'desktop-qhd']
 ];
 const SHOTS = process.env.QA_SHOTS || '';
-
-/** Layout audit run inside the page. Returns a list of human-readable problems. */
-async function audit(page, { touch, scope = 'document' }) {
-  return page.evaluate(({ touch, scope }) => {
-    const out = [];
-    const W = innerWidth, H = innerHeight;
-    if (document.documentElement.scrollWidth > W + 1) out.push(`page scrolls sideways by ${document.documentElement.scrollWidth - W}px`);
-    const inScroller = el => { for (let p = el.parentElement; p; p = p.parentElement) { const o = getComputedStyle(p).overflowX; if ((o === 'auto' || o === 'scroll') && p.scrollWidth > p.clientWidth + 1) return true; } return false; };
-    const visible = el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none' && r.bottom > 0 && r.top < H; };
-    const root = scope === 'document' ? document : document.querySelector(scope);
-    const controls = [...root.querySelectorAll('button, a[href], input, [role="button"]')].filter(visible).filter(el => !el.closest('svg') && !el.closest('[hidden]'));
-    for (const el of controls) {
-      const r = el.getBoundingClientRect();
-      const name = (el.getAttribute('aria-label') || el.textContent || el.className || el.tagName).trim().slice(0, 40);
-      if (!inScroller(el) && !el.closest('.board-canvas') && (r.left < -1 || r.right > W + 1)) out.push(`control off-screen: "${name}" (${Math.round(r.left)}..${Math.round(r.right)} of ${W})`);
-      if (touch && el.tagName !== 'INPUT' && !el.closest('.zoom-ctl') && (r.width < 24 || r.height < 24)) out.push(`touch target under 24px: "${name}" ${Math.round(r.width)}x${Math.round(r.height)}`);
-    }
-    // headings and button labels must not be cut with an ellipsis
-    for (const el of root.querySelectorAll('h1, h2, h3, h4, .btn, .lab')) {
-      if (!visible(el)) continue;
-      const cs = getComputedStyle(el);
-      if (cs.textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1) out.push(`text truncated: "${el.textContent.trim().slice(0, 40)}"`);
-    }
-    // map: nodes, labels and the START tag must never overlap each other
-    const parts = [...document.querySelectorAll('.mnode, .stop .lab, .start-bubble')].filter(visible).map(el => ({ el, r: el.getBoundingClientRect() }));
-    for (let i = 0; i < parts.length; i++) for (let j = i + 1; j < parts.length; j++) {
-      const a = parts[i], b = parts[j];
-      if (a.el.contains(b.el) || b.el.contains(a.el) || a.el.closest('.stop') === b.el.closest('.stop')) continue;
-      const ox = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left), oy = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
-      if (ox > 2 && oy > 2) out.push(`map overlap: "${a.el.textContent.trim().slice(0, 20)}" and "${b.el.textContent.trim().slice(0, 20)}"`);
-    }
-    return [...new Set(out)];
-  }, { touch, scope });
-}
 
 for (const [w, h, name] of VIEWPORTS) {
   for (const theme of ['light', 'dark']) {
@@ -58,7 +24,8 @@ for (const [w, h, name] of VIEWPORTS) {
           if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
           await page.screenshot({ path: file, animations: 'disabled' });
         };
-        const check = async (tag, opts = {}) => { (await audit(page, { touch, ...opts })).forEach(p => problems.push(`[${tag}] ${p}`)); await shot(tag); };
+        const settle = async () => { await page.waitForFunction(() => typeof BOARD === 'undefined' || !BOARD || !BOARD.anim, null, { timeout: 8000 }); await page.waitForTimeout(250); }; // camera glide and marker transitions done
+        const check = async (tag, opts = {}) => { await settle(); (await audit(page, { touch, ...opts })).forEach(p => problems.push(`[${tag}] ${p}`)); await shot(tag); };
 
         await openApp(page, { done: ['two-boxes', 'next-token', 'tokens'], streakDays: [0, 1], theme });
         await check('home');
@@ -82,6 +49,16 @@ for (const [w, h, name] of VIEWPORTS) {
         await check('board', { scope: '.board' });
         await page.locator('.pin[data-u="2"]').click(); // level 3: near the top, clear of the bottom sheet on small phones
         await page.waitForTimeout(700);
+        await check('board-level', { scope: '.board' });
+        await page.evaluate(() => exInspect('tools'));
+        await expect(page.locator('.insp-need')).toBeVisible();
+        await page.waitForTimeout(500);
+        await check('board-inspector', { scope: '.board' });
+        await page.evaluate(() => { const i = document.querySelector('.insp'); i.scrollTop = i.scrollHeight; });
+        await check('board-inspector-scrolled', { scope: '.board' });
+        await page.evaluate(() => openLesson(LESSONS.findIndex(l => l.id === 'tools')));
+        await expect(page.locator('.panel .player.docked')).toBeVisible();
+        await page.waitForTimeout(600);
         await check('board-lesson', { scope: '.board' });
         await page.getByRole('button', { name: /Trace/ }).click();
         await expect(page.locator('.panel')).toBeHidden(); // the tour slides the panel away
@@ -95,6 +72,10 @@ for (const [w, h, name] of VIEWPORTS) {
         await expect.poll(() => page.locator('.panel').evaluate(e => { const r = e.getBoundingClientRect(); return r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1; })).toBe(true);
         await page.waitForTimeout(600);
         await check('explorer', { scope: '.board' });
+        await page.evaluate(() => exShowView('serving'));
+        await expect(page.locator('.insp h3')).toHaveText('Serving layer');
+        await page.waitForTimeout(300);
+        await check('explorer-view', { scope: '.board' });
         await info.attach('layout-problems', { body: problems.join('\n') || 'none', contentType: 'text/plain' });
         expect(problems, problems.join('\n')).toEqual([]);
       });

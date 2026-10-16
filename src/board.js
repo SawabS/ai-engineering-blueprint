@@ -4,8 +4,10 @@
 let BOARD = null;
 const PANEL_KEY = 'ai-eng-blueprint.panel';
 // one marker per level, sitting on the top border of a block that level builds (the top-right corner holds the + badge)
-const LEVEL_MARKS = [[291, 22], [290, 192], [616, 192], [776, 192], [152, 96], [330, 440], [616, 378], [934, 12]]; // left edge of each marker sits here
-const isPhone = () => window.matchMedia('(max-width: 640px), (max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout
+// left edge of each marker; neighbours are at least ~175 units apart across or ~170 down, so they stay clear even fully zoomed out on a 320px phone
+// a third value 'r' anchors the marker's right edge instead (level 8 sits on the far-right evals column)
+const LEVEL_MARKS = [[330, 22], [330, 192], [616, 192], [800, 192], [152, 96], [330, 440], [616, 378], [988, 12, 'r']];
+const isPhone = () => window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches; // bottom-sheet layout; phones held sideways keep the side panel
 
 function openBoard(opts = {}) {
   hideTip(); closePop();
@@ -167,29 +169,31 @@ function applyCam() {
   const pinPx = clamp(Math.round(30 / B.s), coarse ? 30 : 26, 36);
   // markers that would sit under the toolbar, the legend or the panel are hidden rather than half-covered
   const vr = visibleRect(), tb = B.tools.getBoundingClientRect(), lg = B.legend.getBoundingClientRect(), cv = B.canvas.getBoundingClientRect();
-  const under = (px, py, r) => r.width && px > r.left - cv.left - 24 && px < r.right - cv.left + 24 && py > r.top - cv.top - 16 && py < r.bottom - cv.top + 16;
-  B.pins.classList.toggle('compact', 146 / B.s < 72); // zoomed far out: the closest markers (levels 2 and 3) would touch, so show the number only
+  // a marker is hidden when its own outline (left edge at px, centred on py) would touch an overlay
+  const under = (px, py, r, w, hh) => r.width && px + w > r.left - cv.left - 4 && px < r.right - cv.left + 4 && py + hh / 2 > r.top - cv.top - 4 && py - hh / 2 < r.bottom - cv.top + 4;
+  B.pins.classList.toggle('compact', 176 / B.s < 84); // zoomed far out: full labels on the closest neighbours would touch, so show the number only
   $$('.pin', B.pins).forEach(p => {
-    const [X, Y] = LEVEL_MARKS[+p.dataset.u];
-    const px = (X - B.x) / B.s, py = (Y - B.y) / B.s;
-    p.style.visibility = px < 0 || py < 0 || px > vr.w || py > vr.h || under(px, py, tb) || under(px, py, lg) ? 'hidden' : '';
+    const [X, Y, side] = LEVEL_MARKS[+p.dataset.u];
+    p.style.height = p.style.minWidth = pinPx + 'px'; p.style.fontSize = Math.round(pinPx * 0.42) + 'px'; // size first, then measure
+    const w = p.offsetWidth || pinPx, hh = p.offsetHeight || pinPx;
+    const px = (X - B.x) / B.s - (side === 'r' ? w : 0), py = (Y - B.y) / B.s;
+    p.style.visibility = px < 0 || py - hh / 2 < 0 || px + w > vr.w || py + hh / 2 > vr.h || under(px, py, tb, w, hh) || under(px, py, lg, w, hh) ? 'hidden' : '';
     p.style.transform = `translate(${px}px, ${py}px) translate(0, -50%)`;
-    p.style.height = p.style.minWidth = pinPx + 'px'; p.style.fontSize = Math.round(pinPx * 0.42) + 'px';
   });
   B.pct.textContent = Math.round(baseScale() / B.s * 100) + '%';
 }
 function setCam(x, y, s, animate) {
   const B = BOARD; B.camSet = true;
-  if (B.anim) cancelAnimationFrame(B.anim);
+  if (B.anim) { cancelAnimationFrame(B.anim); B.anim = 0; }
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!animate || reduce) { B.x = x; B.y = y; B.s = s; applyCam(); return; }
   const from = [B.x, B.y, B.s], to = [x, y, s], t0 = performance.now(), ms = typeof animate === 'number' ? animate : 650, ease = t => 1 - Math.pow(1 - t, 3);
-  const step = now => { const t = clamp((now - t0) / ms, 0, 1); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); if (t < 1) B.anim = requestAnimationFrame(step); };
+  const step = now => { const t = clamp((now - t0) / ms, 0, 1); const k = ease(t); B.x = from[0] + (to[0] - from[0]) * k; B.y = from[1] + (to[1] - from[1]) * k; B.s = from[2] + (to[2] - from[2]) * k; applyCam(); B.anim = t < 1 ? requestAnimationFrame(step) : 0; };
   B.anim = requestAnimationFrame(step);
 }
 function fitBox(box, animate) {
   const vr = visibleRect(); const m = Math.min(36, vr.w * 0.06);
-  { const top = isPhone() ? 106 : 58, bottom = isPhone() ? 8 : 52; vr.t += top; vr.h = Math.max(120, vr.h - top - bottom); } // keep clear of the toolbar and legend
+  { const top = isPhone() ? 124 : 58, bottom = isPhone() ? 8 : 52; vr.t += top; vr.h = Math.max(120, vr.h - top - bottom); } // keep clear of the toolbar and legend
   const base = baseScale();
   const s = clamp(Math.max(box[2] / (vr.w - 2 * m), box[3] / (vr.h - 2 * m)), base / 1.5, base * 1.6);
   setCam(box[0] + box[2] / 2 - s * (vr.l + vr.w / 2), box[1] + box[3] / 2 - s * (vr.t + vr.h / 2), s, animate);
@@ -289,7 +293,7 @@ function wireCanvas(B) {
     if (!drag || drag.id !== e.pointerId) return;
     const dx = p[0] - drag.p[0], dy = p[1] - drag.p[1];
     if (!drag.moved && Math.hypot(dx, dy) > 6) { drag.moved = true; c.classList.add('dragging'); hideTip(); try { c.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
-    if (drag.moved) { if (B.anim) cancelAnimationFrame(B.anim); B.x -= dx * B.s; B.y -= dy * B.s; drag.p = p; applyCam(); }
+    if (drag.moved) { if (B.anim) { cancelAnimationFrame(B.anim); B.anim = 0; } B.x -= dx * B.s; B.y -= dy * B.s; drag.p = p; applyCam(); }
   });
   const up = e => {
     pts.delete(e.pointerId);

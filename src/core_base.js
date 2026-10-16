@@ -121,6 +121,16 @@ function lessonForNode(id) { const s = BPN[id].s; return LESSONS[s - 1]; }
 // the blocks one lesson adds, and the blocks one level (unit) adds: selections act on these groups
 function lessonKeys(l) { return Object.keys(BPN).filter(k => BPN[k].s === l.stage); }
 function levelKeys(ui) { return Object.keys(BPN).filter(k => lessonForNode(k).ui === ui); }
+// how each block looks on the diagram: [fill, text]; soft fills draw a border in the text colour
+const BLOCK_LOOK = {
+  client: ['var(--surface)', 'var(--ink)'], api: ['var(--surface)', 'var(--ink)'], model: ['var(--model-soft)', 'var(--model-ink)'], context: ['var(--ctx-soft)', 'var(--ctx)'],
+  head: ['var(--model)', 'var(--model-t)'], tok: ['var(--model-2)', 'var(--model-t)'], tf: ['var(--model)', 'var(--model-t)'], weights: ['var(--model-soft)', 'var(--model-ink)'],
+  's-sys': ['var(--ctx)', 'var(--ctx-t)'], 's-hist': ['var(--ctx)', 'var(--ctx-t)'], 's-user': ['var(--ctx)', 'var(--ctx-t)'], 's-schema': ['color-mix(in srgb, var(--ctx) 62%, var(--surface))', 'var(--ctx-t)'],
+  know: ['var(--know)', '#fff'], 's-ret': ['var(--know)', '#fff'], 'rag-adv': ['var(--know-soft)', 'var(--know)'],
+  tools: ['var(--tool)', '#fff'], 's-tooldef': ['var(--tool)', '#fff'], 's-toolres': ['var(--tool)', '#fff'], mcp: ['var(--tool-soft)', 'var(--tool)'],
+  harness: ['var(--harness)', '#fff'], mem: ['var(--harness-soft)', 'var(--harness)'], sub: ['var(--harness-soft)', 'var(--harness)'],
+  gpu: ['var(--hw)', '#fff'], kv: ['var(--serve)', '#fff'], gateway: ['var(--serve)', '#fff'], evals: ['var(--ship)', '#fff']
+};
 function peerKeys(key) { return BPN[key] ? lessonKeys(lessonForNode(key)) : [key]; }
 
 function bpSVG(stage, hl = [], o = {}) {

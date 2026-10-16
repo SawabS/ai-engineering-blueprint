@@ -339,9 +339,28 @@ footer.site a{color:var(--ink);font-weight:700}
 .step{max-width:640px;margin:0 auto;animation:stepIn .4s ease both}
 @keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .step > .eyebrow{color:var(--accent-ink)}
-/* the need that opens each lesson */
-.need{margin:10px 0 0;padding:10px 14px;border-radius:12px;background:var(--sunk);border-left:4px solid var(--accent);font-size:15px;line-height:1.45;color:var(--ink)}
-.need .need-k{display:block;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);font-weight:700;margin-bottom:2px}
+/* the need that opens each lesson: an empty slot of the system diagram (dashed, on the map's dot grid)
+   that the lesson's block drops into, the need in the display face, and the blocks it adds as diagram chips */
+.need-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;margin:12px 0 22px;padding:16px 18px 16px 16px;
+  border:2px solid var(--line);border-radius:var(--r-l);box-shadow:0 4px 0 0 var(--line);
+  background:radial-gradient(var(--grid) 1.2px, transparent 1.3px) 0 0/16px 16px, var(--surface)}
+.need-slot{position:relative;width:56px;height:56px;border-radius:15px;border:2px dashed var(--line-strong);background:var(--paper)}
+.need-slot i{position:absolute;inset:7px;border-radius:10px;background:var(--nf);box-shadow:0 4px 0 0 color-mix(in srgb, var(--nf) 66%, #000);
+  animation:slotIn .7s cubic-bezier(.2,1.5,.4,1) .2s both}
+@keyframes slotIn{from{opacity:0;transform:translateY(-22px) scale(.55) rotate(-8deg)}to{opacity:1;transform:none}}
+.need-body{min-width:0}
+.need-k{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700}
+.need-q{margin:4px 0 12px;font-family:var(--f-display);font-weight:800;font-size:clamp(17px,1.9vw,19.5px);line-height:1.32;letter-spacing:-.01em;color:var(--ink);text-wrap:pretty}
+.need-fills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.need-adds{font-size:13px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.need-adds::after{content:"";width:18px;height:2px;border-radius:2px;background:var(--line-strong)}
+.need-chip{appearance:none;border:1.5px solid color-mix(in srgb, var(--cf) 70%, #000);background:var(--cf);color:var(--ct);font:800 13px var(--f-body);
+  min-height:32px;padding:5px 12px;border-radius:9px;cursor:pointer;box-shadow:0 3px 0 0 color-mix(in srgb, var(--cf) 66%, #000);transition:transform .12s, box-shadow .12s}
+.need-chip.soft{border-color:var(--ct);box-shadow:0 3px 0 0 color-mix(in srgb, var(--ct) 45%, var(--line))}
+.need-chip:hover{transform:translateY(-1px)}
+.need-chip:active{transform:translateY(3px);box-shadow:none}
+.need-chip:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+@media (max-width: 640px){ .need-card{gap:12px;padding:14px} .need-slot{width:46px;height:46px;border-radius:13px} .need-slot i{inset:6px;border-radius:8px} }
 .step h2{font-size:clamp(24px,3vw,30px);font-weight:800;margin:6px 0 16px}
 .beat{animation:beatIn .45s cubic-bezier(.2,.9,.3,1) both}
 .beat + .beat{margin-top:14px}
@@ -523,8 +542,9 @@ footer.site a{color:var(--ink);font-weight:700}
 .board-canvas svg.bp > rect:first-of-type{display:none}
 .pins{position:absolute;inset:0;pointer-events:none}
 .pin{position:absolute;left:0;top:0;pointer-events:auto;width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;border:2.5px solid var(--accent-shadow);background:var(--surface);color:var(--ink);
-  font-weight:900;font-size:13px;display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 0 var(--accent-shadow);transition:transform .12s}
-.pin:hover{transform:scale(1.12)}
+  font-weight:900;font-size:13px;display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 0 var(--accent-shadow)}
+/* markers follow the camera frame by frame, so they never transition their position (a rebuilt marker would fly in from the corner) */
+.pin:hover{filter:brightness(1.06);box-shadow:0 4px 0 0 var(--accent-shadow)}
 .pin.done{background:var(--accent);color:var(--accent-fg);border-color:var(--accent-shadow)}
 .pin.cur{outline:4px solid var(--pear);outline-offset:2px}
 .pin svg{width:14px;height:14px}
@@ -603,7 +623,7 @@ footer.site a{color:var(--ink);font-weight:700}
   .board-top h2{display:none}
   .icon-btn .t{display:none}
 }
-@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+@media (max-width: 900px) and (orientation: portrait){
   /* bottom sheet */
   .panel{top:auto;left:0;right:0;width:auto;height:var(--sh, 58%);border-left:0;border-top:1px solid var(--line);border-radius:22px 22px 0 0;transition:transform .32s cubic-bezier(.2,.9,.3,1), height .25s ease}
   .panel.hidden{transform:translateY(calc(100% + 24px));visibility:hidden;transition:transform .32s cubic-bezier(.2,.9,.3,1), height .25s ease, visibility 0s .32s}
@@ -717,7 +737,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .tour .dots i.on{background:var(--accent-ink)}
 .tour .acts{display:flex;gap:8px;justify-content:flex-end;align-items:center}
 .tour .x{margin-right:auto}
-@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+@media (max-width: 900px) and (orientation: portrait){
   .board-tools{top:10px;left:10px}
   .legend{top:58px;bottom:auto;left:0;right:0;max-width:none!important;flex-wrap:nowrap;overflow-x:auto;padding:2px 10px 6px}
   .tour{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
@@ -725,7 +745,7 @@ footer.site a{color:var(--ink);font-weight:700}
 .board-tools .btn svg{width:16px;height:16px;flex:none}
 .board.touring .legend,.board.touring .board-tools{display:none}
 .board-tools .t-short{display:none}
-@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+@media (max-width: 900px) and (orientation: portrait){
   .board-tools{flex-wrap:nowrap;right:10px;max-width:none!important}
   .board-tools .t-long{display:none}
   .board-tools .t-short{display:inline}
@@ -800,7 +820,7 @@ mi.tt{font-family:var(--f-mono)}
 .refs{margin:0;padding-left:22px;display:grid;gap:10px}
 .refs li{font-size:14.5px;line-height:1.45}
 .refs li::marker{font-family:var(--f-mono);color:var(--muted);font-size:12.5px}
-.refs a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--accent-shadow);text-decoration-thickness:2px;text-underline-offset:3px}
+.refs a{display:inline-block;padding:4px 0;min-height:24px;color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--accent-shadow);text-decoration-thickness:2px;text-underline-offset:3px}
 .refs a:hover{text-decoration-color:var(--accent-ink)}
 .refs span{display:block;color:var(--muted);font-size:13px}
 /* lesson toolkit on the completion screen */
@@ -845,7 +865,8 @@ mi.tt{font-family:var(--f-mono)}
 .board-tools .up-btn{padding:6px 10px;min-width:40px}
 .board-tools .btn svg{width:16px;height:16px;flex:none}
 /* inspector */
-.insp{display:grid;gap:12px;padding:4px 2px 18px}
+/* the inspector fills the panel: rows keep their natural height (no stretching) and it scrolls when taller than the panel */
+.insp{display:grid;gap:12px;padding:4px 2px 18px;align-content:start;overflow-y:auto;overscroll-behavior:contain}
 .insp-cat{display:flex;align-items:center;gap:8px;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .insp-cat i{width:12px;height:12px;border-radius:4px;background:var(--c, var(--accent));flex:none}
 .insp-cat .in-view{text-transform:none;letter-spacing:0;font-weight:600}
@@ -875,7 +896,7 @@ mi.tt{font-family:var(--f-mono)}
 .ex-none{margin:0;color:var(--muted);font-size:14px}
 .ex-all summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--muted);min-height:32px;display:flex;align-items:center}
 .ex-all[open] summary{margin-bottom:8px}
-@media (max-width: 640px), (max-width: 900px) and (orientation: portrait){
+@media (max-width: 900px) and (orientation: portrait){
   .crumbs{max-width:calc(100vw - 150px)}
   .crumbs .crumb,.crumbs .cur{font-size:12.5px;padding:5px 6px}
   .insp h3{font-size:21px}
@@ -905,3 +926,17 @@ mi.tt{font-family:var(--f-mono)}
 @container player (max-width: 420px){ .step-arrow{display:none} .p-steps{gap:3px} }
 
 @media (max-width: 1000px){ .p-title{display:none} }
+
+/* short landscape screens (phones turned sideways): keep the side panel but give the map room,
+   with the compact toolbar of portrait phones and a single scrolling row of legend chips */
+@media (max-height: 520px) and (orientation: landscape){
+  .board-main{--pwe:min(var(--pw, 440px), max(320px, 44%))} /* never narrower than the 320px a docked lesson needs */
+  .board-tools{flex-wrap:nowrap;top:8px;left:8px}
+  .board-tools .t-long{display:none}
+  .board-tools .t-short{display:inline}
+  .board-tools .btn{min-height:34px;padding:6px 12px;font-size:13.5px}
+  .board-tools .seg button{padding:5px 10px;font-size:12.5px;min-height:30px}
+  .legend{bottom:8px;left:8px;flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 4px}
+  .legend .lg{flex:none;padding:4px 10px;font-size:12.5px;min-height:30px}
+  .board-top{padding-top:6px;padding-bottom:6px}
+}

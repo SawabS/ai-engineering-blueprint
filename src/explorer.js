@@ -84,7 +84,7 @@ function exNode(key) {
   return null;
 }
 function exBox(key) { const n = exNode(key); return n ? [n.x, n.y, n.w, n.h] : null; }
-function curBounds() { const B = BOARD; return B && B.view !== 'root' ? SYSV[B.view].bounds : [0, 30, 1000, 590]; }
+function curBounds() { const B = BOARD; return B && B.view !== 'root' ? SYSV[B.view].bounds : [0, -16, 1000, 640]; } // root: headroom so the level 1 marker clears the toolbar
 function viewTitle(vid) { return vid === 'root' ? 'System' : SYSV[vid].title; }
 
 /* ---- view switching with a zoom transition ---- */

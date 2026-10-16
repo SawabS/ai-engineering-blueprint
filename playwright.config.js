@@ -21,7 +21,7 @@ module.exports = defineConfig({
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } }, testIgnore: /visual\.spec/ },
-    { name: 'mobile', use: { ...devices['Pixel 7'] }, testIgnore: /visual\.spec|responsive\.spec|a11y\.spec|security\.spec/ },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testIgnore: /visual\.spec|responsive\.spec|a11y\.spec|security\.spec|mobile\.spec/ },
     { name: 'visual', use: { ...devices['Desktop Chrome'] }, testMatch: /visual\.spec/ },
   ],
   webServer: {
